@@ -85,6 +85,7 @@ entity MASTER_IBAN_COUNTRY{
 }
 
 entity MASTER_IVEN_SAP_VENDOR_NO{
+     // REG_NO : Integer64; 
     SAP_VENDOR_CODE : String(10);
     key IVEN_VENDOR_CODE : Integer64;
     ACCOUNT_GROUP : String(50)
@@ -145,7 +146,7 @@ entity MASTER_REGION{
     key BEZEI : String(20);
     
 }
-entity MASTER_REGISTERATION_EVENT{
+entity MASTER_REQUEST_EVENTS{
     key CODE : Integer;
     DESCRIPTION : String(50);
     TYPE : String(25);
@@ -208,4 +209,19 @@ entity MASTER_ATTACHMENT_TYPES {
 	 GROUP1:String(10);
 	 GROUP2:String(10); // Table group   
 }
+entity MASTER_IVEN_ATTACHMENTS{
+    key SR_NO : Integer;
+    key ENTITY_CODE : String(10);
+    key ATTACH_CODE : Integer;
+    ATTACH_GROUP:String(30);
+    ATTACH_DESC  : String(100);
+    FILE_NAME : String(100);
+    FILE_TYPE : String(100);
+    FILE_MIMETYPE : String(100);
+    FILE_CONTENT : LargeBinary;
+    UPLOADED_ON : Timestamp;
+    ATTACH_TYPE_CODE : String(10);
+    ATTACH_TYPE_DESC : String(100);
+}
+
 

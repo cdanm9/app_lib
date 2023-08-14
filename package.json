@@ -7,8 +7,11 @@
   "private": true,
   "dependencies": {
     "@sap/cds": "^7",
+    "@sap/cds-hana": "^2",
+    "@sap/xssec": "^3.3.3",
     "express": "^4",
-    "@sap/cds-hana": "^2"
+    "hana-cli": "^3.202307.1",
+    "passport": "^0.6.0"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
@@ -19,7 +22,21 @@
   },
   "cds": {
     "requires": {
-      "db": "hana"
+      "db": "hana",
+      "ERP": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "ERP",
+          "path": "/sap/opu/odata/sap/"
+        }
+      },
+      "EMAIL_DEST": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "EMAIL_DEST",
+          "path": "/iVenEmail_V2"
+        }
+      }
     },
     "hana": {
       "deploy-format": "hdbtable"
