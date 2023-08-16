@@ -1661,14 +1661,6 @@ entity ONBOARDING_IAS_LOG{
 	 STATUS_CODE    :Integer;
 	 CREATED_ON    :Timestamp;
 }
-entity ONBOARDING_MATRIX{
-       
-	key APPROVER_LEVEL    :Integer;
-	key USER_ROLE   :String(10);
-	key USER_ID    :String(100);
-	key ENTITY_CODE    :String(10);
-    
-}
 
 entity ONBOARDING_OEM{
 
@@ -1826,15 +1818,6 @@ entity SUPPLIER_PROFILE_LOG{
 
 }
 
-entity SUPPLIER_REQUEST_MATRIX{
-
-    key APPROVER_LEVEL : Integer;
-    key USER_ROLE : String(10);
-    key USER_ID : String(100);
-    key ENTITY_CODE : String(50);
-    key ENTITY_DESC : String(100);
-
-}
 
 entity USER_DELEGATION{
 
@@ -1919,3 +1902,17 @@ entity VENDOR_INVITATION_LOG{
     key REMINDER_COUNT : Integer;
 
 }
+
+// @cds.persistence.exists 
+// @cds.persistence.calcview 
+// entity USERMASTER_ENTITIES {
+// key     USER_NAME: String(500)  @title: 'USER_NAME: USER_NAME' ; 
+//         EMAIL: String(150)  @title: 'EMAIL: EMAIL' ; 
+//         COMPANY_CODE: String(500)  @title: 'COMPANY_CODE: COMPANY_CODE' ; 
+//         CREATED_ON: Timestamp  @title: 'CREATED_ON: CREATED_ON' ; 
+//         ACTIVE: String(1)  @title: 'ACTIVE: ACTIVE' ; 
+//         ENTITY_CODE: String(50)  @title: 'ENTITY_CODE: ENTITY_CODE' ; 
+//         ENTITY_DESC: String(100)  @title: 'ENTITY_DESC: ENTITY_DESC' ; 
+//         USER_ID: String(50)  @title: 'USER_ID: USER_ID' ; 
+//         USER_ROLE: String(50)  @title: 'USER_ROLE: USER_ROLE' ; 
+// }

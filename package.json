@@ -8,14 +8,18 @@
   "dependencies": {
     "@sap/cds": "^7",
     "@sap/cds-hana": "^2",
+    "@sap/hana-client": "^2.17.22",
+    "@sap/hdbext": "^7.7.6",
     "@sap/xssec": "^3.3.3",
     "express": "^4",
     "hana-cli": "^3.202307.1",
-    "passport": "^0.6.0"
+    "passport": "^0.6.0",
+    "sap-hdbext-promisfied": "^2.202307.1"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
-    "@sap/cds-dk": "^7"
+    "@sap/cds-dk": "^7",
+    "@sap/hdi-deploy": "4.8.0"
   },
   "scripts": {
     "start": "cds-serve"

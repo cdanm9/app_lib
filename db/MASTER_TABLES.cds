@@ -98,19 +98,6 @@ entity MASTER_IVEN_SETTINGS{
     TYPE : String(10)
 }
 
-entity MASTER_IVEN_USERS{
-    key SR_NO : Integer;
-    USER_ID : String(50);
-    USER_ROLE : String(50);
-    USER_NAME : String(500);
-    key EMAIL : String(150);
-    COMPANY_CODE : String(500);
-    EMP_NO : String(100);
-    CREATED_ON : Timestamp;
-    UPDATED_ON : Timestamp;
-    ACTIVE : String(1)
-
-}
 
 entity MASTER_ONBOARDING_ATTACHMENTS{
     key OBR_NO : Integer64;
@@ -188,6 +175,22 @@ entity MASTER_TELECODE{
         TELEFTO: String(4);
 }
 
+entity MASTER_IVEN_USERS{
+    key SR_NO : Integer;
+    USER_ID : String(50);
+    USER_ROLE : String(50);
+    USER_NAME : String(500);
+    key EMAIL : String(150);
+    COMPANY_CODE : String(500);
+    EMP_NO : String(100);
+    CREATED_ON : Timestamp;
+    UPDATED_ON : Timestamp;
+    ACTIVE : String(1);
+    TO_USER_ROLE : Association to one MASTER_USER_ROLE on TO_USER_ROLE.CODE = USER_ROLE;
+    TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE on TO_ENTITY_CODE.BUKRS = COMPANY_CODE;
+    TO_USER_ENTITIES : Association to many MASTER_USER_ENTITY_CODES on TO_USER_ENTITIES.USER_ID = USER_ID;
+}
+
 entity MASTER_USER_ENTITY_CODES{
     key USER_ID: String(50);
     key USER_ROLE: String(50);
@@ -223,5 +226,40 @@ entity MASTER_IVEN_ATTACHMENTS{
     ATTACH_TYPE_CODE : String(10);
     ATTACH_TYPE_DESC : String(100);
 }
+
+entity MATRIX_REGISTRATION_APPR{
+       
+	key APPROVER_LEVEL    :Integer;
+	key USER_ROLE   :String(10);
+	key USER_ID    :String(100);
+	key ENTITY_CODE    :String(10);
+    TO_USER_ROLE:Association to one MASTER_USER_ROLE on TO_USER_ROLE.CODE = USER_ROLE;
+    TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
+}
+
+entity MATRIX_REQUEST_APPR{
+
+    key APPROVER_LEVEL : Integer;
+    key USER_ROLE : String(10);
+    key USER_ID : String(100);
+    key ENTITY_CODE : String(50);
+    // key ENTITY_DESC : String(100);
+    TO_USER_ROLE:Association to one MASTER_USER_ROLE on TO_USER_ROLE.CODE = USER_ROLE;
+    TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
+}
+
+// @cds.persistence.exists 
+// @cds.persistence.calcview 
+// entity USERMASTER_ENTITIES {
+// key     USER_NAME: String(500)  @title: 'USER_NAME: USER_NAME' ; 
+//         EMAIL: String(150)  @title: 'EMAIL: EMAIL' ; 
+//         COMPANY_CODE: String(500)  @title: 'COMPANY_CODE: COMPANY_CODE' ; 
+//         CREATED_ON: Timestamp  @title: 'CREATED_ON: CREATED_ON' ; 
+//         ACTIVE: String(1)  @title: 'ACTIVE: ACTIVE' ; 
+//         ENTITY_CODE: String(50)  @title: 'ENTITY_CODE: ENTITY_CODE' ; 
+//         ENTITY_DESC: String(100)  @title: 'ENTITY_DESC: ENTITY_DESC' ; 
+//         USER_ID: String(50)  @title: 'USER_ID: USER_ID' ; 
+//         USER_ROLE: String(50)  @title: 'USER_ROLE: USER_ROLE' ; 
+// }
 
 
