@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="USERMASTER_ENTITIES" 
-applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" 
-hierarchyGeneration="SQL" outputViewType="Projection" cacheInvalidationPeriod="NONE" 
-enforceSqlExecution="false"
->
-<descriptions defaultDescription="USERMASTER_ENTITIES.hdbcalculationview" />
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="USERMASTER_ENTITIES" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="false">
+<descriptions defaultDescription="USERMASTER_ENTITIES.hdbcalculationview"/>
 <localVariables/>
 <variableMappings/>
 <dataSources>
@@ -33,7 +28,7 @@ enforceSqlExecution="false"
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="VENDOR_PORTAL_MASTER_IVEN_USERS"/>
-    <filter>isNull(&quot;ACTIVE&quot;)</filter>
+    <filter>&quot;ACTIVE&quot; = 'X'</filter>
   </calculationView>
   <calculationView xsi:type="Calculation:ProjectionView" id="Projection_2">
     <viewAttributes>
@@ -59,7 +54,6 @@ enforceSqlExecution="false"
       <viewAttribute id="ACTIVE"/>
       <viewAttribute id="ENTITY_CODE"/>
       <viewAttribute id="ENTITY_DESC"/>
-    
       <viewAttribute hidden="true" id="JOIN$EMAIL$EMAIL"/>
       <viewAttribute hidden="true" id="JOIN$USER_ID$USER_ID"/>
     </viewAttributes>
@@ -75,18 +69,15 @@ enforceSqlExecution="false"
       <mapping xsi:type="Calculation:AttributeMapping" target="CREATED_ON" source="CREATED_ON"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="UPDATED_ON" source="UPDATED_ON"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ACTIVE" source="ACTIVE"/>
-    
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$EMAIL$EMAIL" source="EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$USER_ID$USER_ID" source="USER_ID"/>
     </input>
     <input node="Projection_2">
       <mapping xsi:type="Calculation:AttributeMapping" target="ENTITY_CODE" source="ENTITY_CODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="ENTITY_DESC" source="ENTITY_DESC"/>
-    
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$EMAIL$EMAIL" source="EMAIL"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$USER_ID$USER_ID" source="USER_ID"/>
     </input>
-  
     <joinAttribute name="JOIN$EMAIL$EMAIL"/>
     <joinAttribute name="JOIN$USER_ID$USER_ID"/>
   </calculationView>
@@ -141,7 +132,7 @@ enforceSqlExecution="false"
       <upperLeftCorner x="40" y="85"/>
     </shape>
   
-    <shape expanded="true" modelObjectName="Projection_1" modelObjectNameSpace="CalculationView">
+    <shape expanded="false" modelObjectName="Projection_1" modelObjectNameSpace="CalculationView">
       <upperLeftCorner x="-106" y="337"/>
       <rectangleSize height="30" width="160"/>
     </shape>

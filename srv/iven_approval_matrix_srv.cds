@@ -1,4 +1,5 @@
-using {VENDOR_PORTAL} from '../db/MASTER_TABLES';
+using {VENDOR_PORTAL
+} from '../db/MASTER_TABLES';
 
 service approvalMatrixService {
 
@@ -30,10 +31,11 @@ service approvalMatrixService {
        entity MatrixRequestApproval      as projection on VENDOR_PORTAL.MATRIX_REQUEST_APPR;
        entity MatrixRegistrationApproval as projection on VENDOR_PORTAL.MATRIX_REGISTRATION_APPR;
 
+
        //CRUD Payload
        type approvalMatrixPayload {
               ACTION                : String;
-              APP_TYPE              : String;
+              APP_TYPE              : String(30);
               VALUE                 : array of {
                      APPROVER_LEVEL : Integer;
                      USER_ROLE      : String(10);

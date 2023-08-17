@@ -10,6 +10,7 @@ module.exports = cds.service.impl(function () {
       // local variables
       var oReqData = req.data.input
       var aMatrixData = req.data.input.VALUE
+      var sTableName;
 
       // get connection
       var client = await dbClass.createConnectionFromEnv()
@@ -19,11 +20,16 @@ module.exports = cds.service.impl(function () {
       const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MATRIX_APPROVAL_USERS')
       console.log(oReqData)
 
+      //Check for App Type
+      if(oReqData.APP_TYPE == 'REQUEST')
+        sTableName = 'VENDOR_PORTAL_MATRIX_REQUEST_APPR';
+      else if(oReqData.APP_TYPE == 'REGISTRATION')
+        sTableName = 'VENDOR_PORTAL_MATRIX_REGISTRATION_APPR';
+
       // excute procedure
       const result = await dbConn.callProcedurePromisified(loadProc,
-      [oReqData.APP_TYPE, oReqData.ACTION, aMatrixData]);
-
-      return "result"
+      [oReqData.APP_TYPE, oReqData.ACTION, aMatrixData,sTableName]);
+      return result
       
     } catch (error) {
       console.error(error)
