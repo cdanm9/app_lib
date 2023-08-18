@@ -12,6 +12,7 @@ AS
 BEGIN
 	DECLARE LV_APPROVER_LEVEL INTEGER;
 	DECLARE LV_USER_ROLE NVARCHAR(10);
+	DECLARE LV_USER_ROLE_DESC NVARCHAR(100);
 	DECLARE LV_USER_ID NVARCHAR(100);
 	DECLARE LV_ENTITY_CODE NVARCHAR(50);
 	DECLARE LV_SQL_QUERY NVARCHAR(1000);
@@ -19,6 +20,10 @@ BEGIN
 	SELECT 	"APPROVER_LEVEL","USER_ROLE", "USER_ID", "ENTITY_CODE" 
 	INTO LV_APPROVER_LEVEL,LV_USER_ROLE,LV_USER_ID,LV_ENTITY_CODE
 	FROM :ST_MATRIX_REQUEST_APPR;
+
+	SELECT 	"DESCRIPTION" INTO LV_USER_ROLE_DESC
+	FROM "VENDOR_PORTAL_MASTER_USER_ROLE"
+	WHERE "CODE" = :LV_USER_ROLE;
 
 		IF :IN_APP_TYPE = 'REQUEST' THEN
 			IF :IN_ACTION = 'CREATE' THEN
@@ -40,7 +45,7 @@ BEGIN
 				FROM :ST_MATRIX_REQUEST_APPR;
 
 				COMMIT;
-				OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' added as ' || :LV_USER_ROLE || ' in Request matrix';
+				OUT_SUCCESS := 'User: ' ||  :LV_USER_ID || ' added as ' || :LV_USER_ROLE_DESC || ' in Request matrix';
 
 			ELSEIF :IN_ACTION = 'UPDATE'
 			THEN
@@ -54,7 +59,7 @@ BEGIN
 				-- 			   WHERE  "ENTITY_CODE" = :LV_ENTITY_CODE AND "APPROVER_LEVEL" = :LV_APPROVER_LEVEL';
 
 				COMMIT;
-				OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' updated as ' || :LV_USER_ROLE || ' in Request matrix';
+				OUT_SUCCESS := 'User: ' ||  :LV_USER_ID || ' updated as ' || :LV_USER_ROLE_DESC || ' in Request matrix';
 
 			ELSEIF :IN_ACTION = 'DELETE'
 			THEN
@@ -65,7 +70,7 @@ BEGIN
 	   			--  ' WHERE  "ENTITY_CODE" = :LV_ENTITY_CODE AND "APPROVER_LEVEL" = :LV_APPROVER_LEVEL';
 
 				COMMIT;
-				OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' deleted as ' || :LV_USER_ROLE || ' in Request matrix';
+				OUT_SUCCESS := 'User: ' ||  :LV_USER_ID || ' deleted as ' || :LV_USER_ROLE_DESC || ' in Request matrix';
 
 			END IF;	
 		
@@ -81,7 +86,7 @@ BEGIN
 			FROM :ST_MATRIX_REQUEST_APPR;
 
 			COMMIT;
-			OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' added as ' || :LV_USER_ROLE || ' in Request matrix';
+			OUT_SUCCESS := 'User: ' ||  :LV_USER_ID || ' added as ' || :LV_USER_ROLE_DESC || ' in Registration matrix';
 
 			ELSEIF :IN_ACTION = 'UPDATE'
 			THEN
@@ -91,7 +96,7 @@ BEGIN
 				WHERE  "ENTITY_CODE" = :LV_ENTITY_CODE AND "APPROVER_LEVEL" = :LV_APPROVER_LEVEL;
 
 				COMMIT;
-				OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' updated as ' || :LV_USER_ROLE || ' in Request matrix';
+				OUT_SUCCESS := 'User: ' ||  :LV_USER_ID || ' updated as ' || :LV_USER_ROLE_DESC || ' in Registration matrix';
 
 			ELSEIF :IN_ACTION = 'DELETE'
 			THEN
@@ -100,7 +105,7 @@ BEGIN
 				WHERE  "ENTITY_CODE" = :LV_ENTITY_CODE AND "APPROVER_LEVEL" = :LV_APPROVER_LEVEL;
 				
 				COMMIT;
-				OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' deleted as ' || :LV_USER_ROLE || ' in Request matrix';
+				OUT_SUCCESS := 'User: ' ||  :LV_USER_ID || ' deleted as ' || :LV_USER_ROLE_DESC || ' in Registration matrix';
 
 			END IF;	
 

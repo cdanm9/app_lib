@@ -13,6 +13,7 @@ BEGIN
     DECLARE LV_CURR_TIMESTAMP TIMESTAMP;
     DECLARE LV_EMAIL NVARCHAR(150);
     DECLARE LV_USER_ROLE NVARCHAR(50);
+    DECLARE LV_USER_ROLE_DESC NVARCHAR(100);
     DECLARE LV_COUNT INTEGER;
     DECLARE LV_USER_ID NVARCHAR(150);
     DECLARE LV_SR_NO INTEGER;
@@ -22,6 +23,10 @@ BEGIN
     SELECT "SR_NO","USER_ID","EMAIL","USER_ROLE" 
     INTO LV_SR_NO,LV_USER_ID,LV_EMAIL,LV_USER_ROLE 
     FROM :ST_MASTER_IVEN_USERS;
+
+    SELECT 	"DESCRIPTION" INTO LV_USER_ROLE_DESC
+	FROM "VENDOR_PORTAL_MASTER_USER_ROLE"
+    WHERE "CODE" = :LV_USER_ROLE;
             
 	    IF :IN_ACTION = 'CREATE' THEN
 
@@ -44,7 +49,7 @@ BEGIN
     		FROM :ST_ENTITY_CODES;
 
             COMMIT;
-            OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' added as ' || :LV_USER_ROLE || ' in User master';
+            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' added as ' || :LV_USER_ROLE_DESC || ' in User master';
     		
     	ELSEIF :IN_ACTION = 'UPDATE' THEN
     	
@@ -66,7 +71,7 @@ BEGIN
     		FROM :ST_ENTITY_CODES;
 
             COMMIT;
-            OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' updated as ' || :LV_USER_ROLE || ' in User master';
+            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' updated as ' || :LV_USER_ROLE_DESC || ' in User master';
     	
     	ELSEIF :IN_ACTION = 'DELETE' THEN
     	
@@ -78,7 +83,7 @@ BEGIN
             WHERE "USER_ID" = :LV_USER_ID;
 
             COMMIT;
-            OUT_SUCCESS := 'User :' ||  :LV_USER_ID || ' deleted as ' || :LV_USER_ROLE || ' in User master';
+            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' deleted as ' || :LV_USER_ROLE_DESC || ' in User master';
     	
     	END IF;
     

@@ -1,4 +1,5 @@
-using {VENDOR_PORTAL
+using {VENDOR_PORTAL,
+USERMASTER_ENTITIES 
 } from '../db/MASTER_TABLES';
 
 service approvalMatrixService {
@@ -31,6 +32,8 @@ service approvalMatrixService {
        entity MatrixRequestApproval      as projection on VENDOR_PORTAL.MATRIX_REQUEST_APPR;
        entity MatrixRegistrationApproval as projection on VENDOR_PORTAL.MATRIX_REGISTRATION_APPR;
 
+  //Calculation View
+   entity userMasterEntities as projection on USERMASTER_ENTITIES;
 
        //CRUD Payload
        type approvalMatrixPayload {

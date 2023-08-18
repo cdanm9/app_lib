@@ -1,5 +1,4 @@
-using {VENDOR_PORTAL,
-USERMASTER_ENTITIES } from '../db/MASTER_TABLES';
+using {VENDOR_PORTAL} from '../db/MASTER_TABLES';
 
 service userMasterService {
 
@@ -9,8 +8,7 @@ service userMasterService {
   entity MasterUserRole       as projection on VENDOR_PORTAL.MASTER_USER_ROLE;
   entity MasterIvenUserEntity as projection on VENDOR_PORTAL.MASTER_USER_ENTITY_CODES;
 
-  //Calculation View
-   entity userMasterEntities as projection on USERMASTER_ENTITIES;
+
 
 
   //CRUD Payload

@@ -8,33 +8,110 @@ module.exports = cds.service.impl(function () {
   this.on('PostApprovalMatrix', async (req) => {
     try {
       // local variables
-      var oReqData = req.data.input
+      var oReqData = req.data.input;
+      var sAction = oReqData.ACTION
       var aMatrixData = req.data.input.VALUE
-      var sTableName;
+      var sTableName,bCheckDuplicateMatrix;
 
-      // get connection
-      var client = await dbClass.createConnectionFromEnv()
-      let dbConn = new dbClass(client)
+       // get connection
+       var client = await dbClass.createConnectionFromEnv()
+       let dbConn = new dbClass(client)
 
+      //Check for App Type
+      if(oReqData.APP_TYPE == 'REQUEST'){
+        sTableName = 'VENDOR_PORTAL_MATRIX_REQUEST_APPR';
+        bCheckDuplicateMatrix = _checkDuplicateOnReqMatrix(aMatrixData);
+
+      }else if(oReqData.APP_TYPE == 'REGISTRATION'){
+        sTableName = 'VENDOR_PORTAL_MATRIX_REGISTRATION_APPR';
+        bCheckDuplicateMatrix = _checkDuplicateOnRegMatrix(aMatrixData);
+      }
+
+
+      if((bCheckDuplicateMatrix === 0 || bCheckDuplicateMatrix === 1 ) || (sAction === "UPDATE" || sAction === "DELETE") )
+      
+      {
       // load procedure
       const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MATRIX_APPROVAL_USERS')
       console.log(oReqData)
-
-      //Check for App Type
-      if(oReqData.APP_TYPE == 'REQUEST')
-        sTableName = 'VENDOR_PORTAL_MATRIX_REQUEST_APPR';
-      else if(oReqData.APP_TYPE == 'REGISTRATION')
-        sTableName = 'VENDOR_PORTAL_MATRIX_REGISTRATION_APPR';
 
       // excute procedure
       const result = await dbConn.callProcedurePromisified(loadProc,
       [oReqData.APP_TYPE, oReqData.ACTION, aMatrixData,sTableName]);
       return result
+      }
+      else {
+				if (bCheckDuplicateMatrix === "APPR_EXISTS_DIFF_EC") {
+					return  "This approver already exist for another entity.";
+				} else if (bCheckDuplicateMatrix === "APPR_EXISTS_FOR_EC") {
+					return "This matrix for entity " + aMatrixData[0].ENTITY_DESC + " already exist.";
+				}
+			}
       
     } catch (error) {
       console.error(error)
       return error
     }
   })
+
+  async function _checkDuplicateOnReqMatrix(data) {
+     //Connection to database
+     let connection = await cds.connect.to('db');//form connection to database
+     var aResultEntityCode = await connection.run(SELECT .from `${connection.entities['VENDOR_PORTAL.MATRIX_REQUEST_APPR']}`);
+
+
+     var aResultEntityCode = await connection.run(SELECT .from `${connection.entities['VENDOR_PORTAL.MATRIX_REQUEST_APPR']}`
+                                    .where `ENTITY_CODE = ${data[0].ENTITY_CODE}`);
+
+      var aResultEmail = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.MATRIX_REQUEST_APPR']}`
+      .where`USER_ID = ${data[0].USER_ID} AND ENTITY_CODE = ${data[0].ENTITY_CODE} `);
+
+  
+    var aSameEntityCodes = [];
+    var aDiffEntityCodes = [];
+    for (var i = 0; i < aResultEmail.length; i++) {
+      if (aResultEmail[i].ENTITY_CODE !== data[0].ENTITY_CODE) {
+        aDiffEntityCodes.push(aResultEmail[i].ENTITY_CODE);
+      } else {
+          aSameEntityCodes.push(aResultEmail[i].ENTITY_CODE);
+      }
+    }
+  
+    if (aResultEntityCode.length < 2 && aDiffEntityCodes.length === 0) {
+      // Only Max 2 records :  1 PM & 1 BYR
+      return 1;
+    } else if (aResultEntityCode.length === 2 ) {
+        // Already 2 Approvers present for the specified Entity code
+      return "APPR_EXISTS_FOR_EC";
+    } else if (aResultEmail.length > 0 && aDiffEntityCodes.length > 0) {
+         // Already Approver exists with email id for different entity codes
+      return "APPR_EXISTS_DIFF_EC";
+    } else if (aResultEmail.length === 0 && aResultEntityCode.length === 0) {
+        // No combination exists in matrix
+      return 0;
+     }
+  
+  }
+
+ // Checks duplicate for Reqistration Matrix
+async function _checkDuplicateOnRegMatrix(data) {
+	 //Connection to database
+   let connection = await cds.connect.to('db');//form connection to database
+   var sResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.MATRIX_REGISTRATION_APPR']}`
+    .where`ENTITY_CODE = ${data[0].ENTITY_CODE} AND APPROVER_LEVEL = ${data[0].APPROVER_LEVEL} `);
+
+   var aResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.MATRIX_REGISTRATION_APPR']}`
+     .where`USER_ID = ${data[0].USER_ID}  `);
+
+ 	if (sResult.length !== 0) {
+		return sResult;
+ 	} else if (aResult.length !== 0) {
+ 		return "APPR_EXISTS_DIFF_EC";
+        return 0;
+	} else if (aResult.length === 0 && sResult.length === 0) {
+		return 0;
+   	}
+}
+  
 
 })
