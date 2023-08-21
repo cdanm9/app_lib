@@ -118,8 +118,8 @@ async function _checkDuplicateOnRegMatrix(data) {
   //  var aResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.MATRIX_REGISTRATION_APPR']}`
   //    .where`USER_ID = ${data[0].USER_ID}  `);
 
- 	if (sResult.length !== 0 || sResult.length < 3) {
-		return "APPR_EXISTS_FOR_EC";;
+ 	if (sResult.length !== 0 && sResult.length < 3) {
+		return "APPR_EXISTS_FOR_EC";
  	} else if (aResult.length !== 0) {
  		return "APPR_EXISTS_DIFF_EC";
         return 0;
