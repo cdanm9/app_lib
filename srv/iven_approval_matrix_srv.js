@@ -56,11 +56,13 @@ module.exports = cds.service.impl(function () {
       
     } catch (error) {
       console.error(error)
-      return error
+      // return error
+      req.error({code:"500", message: error.message});
     }
   })
 
   async function _checkDuplicateOnReqMatrix(data) {
+    try{
      //Connection to database
     //  let connection = await cds.connect.to('db');//form connection to database
     //  var aResultEntityCode = await SELECT .from `VENDOR_PORTAL.MATRIX_REQUEST_APPR`;
@@ -100,12 +102,13 @@ module.exports = cds.service.impl(function () {
         // No combination exists in matrix
       return 0;
      }
-    // return "success";
-  
+    }
+    catch(error  ){  throw error; }
   }
 
  // Checks duplicate for Reqistration Matrix
 async function _checkDuplicateOnRegMatrix(data) {
+  try{
 	 //Connection to database
    let connection = await cds.connect.to('db');//form connection to database
    var sResult = await SELECT .from `VENDOR_PORTAL.MATRIX_REGISTRATION_APPR`  .where `ENTITY_CODE=${data[0].ENTITY_CODE} AND APPROVER_LEVEL=${data[0].APPROVER_LEVEL}`;
@@ -126,6 +129,8 @@ async function _checkDuplicateOnRegMatrix(data) {
 	} else if (aResult.length === 0 && sResult.length === 0) {
 		return 0;
    	}
+  }
+  catch(error  ){  throw error; }
 }
   
 })
