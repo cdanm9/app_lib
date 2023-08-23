@@ -11,6 +11,8 @@ service adminPanelService {
     entity MasterIvenSettings as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS;
     entity IvenErrorLog as projection on VENDOR_PORTAL.IVEN_ERROR_LOG;
     entity FormFolderIdDesc as projection on VENDOR_PORTAL.REGFORM_FOLDER_ID_DESC; 
+    entity MasterCountry    as projection on VENDOR_PORTAL.MASTER_COUNTRY;
+    entity MasterEntityCode   as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
 
       //Admin Panel GetData Payload
        type adminPanelGetDataPayload {
@@ -19,5 +21,6 @@ service adminPanelService {
              REQUEST_NO:Integer64;
        }
        //CRUD operation action
-       function GetAdminPanelData(input : adminPanelGetDataPayload) returns array of String;  
+       action GetAdminPanelData(input : adminPanelGetDataPayload) returns array of String;  
+       // function simpleFunc(input :String) returns String;
 }

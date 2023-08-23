@@ -3,15 +3,18 @@ const cds = require('@sap/cds')
 const lib = require('./LIB/iven_library_admin_panel')
 
 module.exports = cds.service.impl(function () {
+  // this.on('simpleFunc',async(req) =>{
+  //   return req.data.input
+  // })
 
   this.on('GetAdminPanelData', async (req) => {
     try {
       //trial 
-      var x = await lib.getMasterTablenamesData('Master');
-      var aAllMasterTables = await lib.getMasterTablenamesData(null);
-      var aRowCountsOfAllMasters =await lib.getRowCountsOfAllMasters( aAllMasterTables) || [];
-      var iTotalMastersFilled =await lib.getTotalMasterFilled(aRowCountsOfAllMasters, 'Master');
-      console.log(aRowCountsOfAllMasters);
+      // var x = await lib.getMasterTablenamesData('Master');
+      // var aAllMasterTables = await lib.getMasterTablenamesData(null);
+      // var aRowCountsOfAllMasters =await lib.getRowCountsOfAllMasters( aAllMasterTables) || [];
+      // var iTotalMastersFilled =await lib.getTotalMasterFilled(aRowCountsOfAllMasters, 'Master');
+      // console.log(aRowCountsOfAllMasters);
       // local variables
       var oReqData = req.data.input
       var sAction = oReqData.ACTION
