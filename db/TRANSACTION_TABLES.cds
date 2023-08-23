@@ -13,7 +13,7 @@ entity APPR_VENDOR_REQ {
 }
 
 
-entity ENTITY_FIELDS_MANDATORY {
+entity MASTER_REGFORM_FIELDS_MANDATORY {
     key CCODE     : String(10);
     key TYPE      : Integer;
         // Section 1: General Information -------------------------------------------------------
@@ -334,7 +334,7 @@ entity ENTITY_FIELDS_MANDATORY {
         S7G1D4    : String(1); // Validation of information submitted
 }
 
-entity ENTITY_FIELDS_UPDATED {
+entity MASTER_REGFORM_FIELDS_UPDATED {
     key REQ_NO    : Int64 not null;
         // Section 1: General Information -------------------------------------------------------
         // Group 1: Company Information
@@ -654,7 +654,7 @@ entity ENTITY_FIELDS_UPDATED {
 
 }
 
-entity ENTITY_FIELDS_VISIBLE {
+entity MASTER_REGFORM_FIELDS_VISIBLE {
     key CCODE     : String(10);
     key TYPE      : Integer;
         // Section 1: General Information -------------------------------------------------------
@@ -1408,7 +1408,7 @@ entity ONBOARDING_FINANCIAL {
         CURRENCY        : String(10);
 }
 
-entity REGFORM_FOLDER_ID_DESC {
+entity REGFORM_FOLDER_IDS {
 
     key IVEN_VENDOR_CODE : Int64;
         SAP_VENDOR_CODE  : String(10);

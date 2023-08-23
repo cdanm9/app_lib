@@ -1,4 +1,4 @@
-type "ST_MASTER_REGFORM_FIELDS_VISIBLE"  AS TABLE(
+type "ST_MASTER_REGFORM_FIELDS_MANDATORY"  AS TABLE(
     CCODE NVARCHAR(10) NOT NULL,
     TYPE INTEGER NOT NULL,
 /*Section 1: General Information -------------------------------------------------------

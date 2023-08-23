@@ -57,7 +57,7 @@ entity MASTER_ENTITY_CODE {
 
 }
 
-entity MASTER_FORMFIELDS_ID_DESC {
+entity MASTER_REGFORM_FIELDS_ID_DESC {
 
     key FIELDS      : String(15);
         DESCRIPTION : String(500);

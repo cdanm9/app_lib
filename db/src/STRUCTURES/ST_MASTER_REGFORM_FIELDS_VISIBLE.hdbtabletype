@@ -1,4 +1,4 @@
-type "ST_ENTITY_FIELDS_MANDATORY"  AS TABLE(
+type "ST_ENTITY_FIELDS_VISIBLE"  AS TABLE(
     CCODE NVARCHAR(10) NOT NULL,
     TYPE INTEGER NOT NULL,
 /*Section 1: General Information -------------------------------------------------------

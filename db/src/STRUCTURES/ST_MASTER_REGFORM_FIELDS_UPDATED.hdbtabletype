@@ -1,4 +1,4 @@
-type "ST_MASTER_REGFORM_FIELDS_UPDATED"  AS TABLE(
+type "ST_ENTITY_FIELDS_UPDATED"  AS TABLE(
  
      REQ_NO BIGINT NOT NULL,
   /*Section 1: General Information -------------------------------------------------------
