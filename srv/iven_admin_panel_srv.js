@@ -3,20 +3,11 @@ const cds = require('@sap/cds')
 const lib = require('./LIB/iven_library_admin_panel')
 
 module.exports = cds.service.impl(function () {
-  // this.on('simpleFunc',async(req) =>{
-  //   return req.data.input
-  // })
-
   this.on('GetAdminPanelData', async (req) => {
     try {
-      //trial 
-      // var x = await lib.getMasterTablenamesData('Master');
-      // var aAllMasterTables = await lib.getMasterTablenamesData(null);
-      // var aRowCountsOfAllMasters =await lib.getRowCountsOfAllMasters( aAllMasterTables) || [];
-      // var iTotalMastersFilled =await lib.getTotalMasterFilled(aRowCountsOfAllMasters, 'Master');
-      // console.log(aRowCountsOfAllMasters);
       // local variables
       var oReqData = req.data.input
+      oReqData = JSON.parse(oReqData);
       var sAction = oReqData.ACTION
       var sTableCode = oReqData.TABLE_CODE
       var iRequestNo = oReqData.REQUEST_NO
@@ -33,7 +24,18 @@ module.exports = cds.service.impl(function () {
       }
       else if(sAction === "DASHBOARD")
       {
-            // Get dashboard data from admin panel library
+         // Get dashboard data from admin panel library
+        var oResponse = await lib.getDashboardData();
+           return oResponse
+      }
+      else if (sAction === 'MASTER_FORMS') {
+
+        // responseObj = {
+        //   "Results": getMasterFormsData(conn),
+        //   "ProgressBar" : ADMIN_LIBRARY.getPercentOfConfig(conn)
+        // };
+        // iVen_Content.responseInfo(JSON.stringify(responseObj), "application/json", 200);
+  
       }
      
     } catch (error) {

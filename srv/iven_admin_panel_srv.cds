@@ -15,12 +15,13 @@ service adminPanelService {
     entity MasterEntityCode   as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
 
       //Admin Panel GetData Payload
-       type adminPanelGetDataPayload {
-              ACTION: String;
-             TABLE_CODE: String(25);
-             REQUEST_NO:Integer64;
-       }
+       // type adminPanelGetDataPayload {
+       //        ACTION: String;
+       //       TABLE_CODE: String(25);
+       //       REQUEST_NO:Integer64;
+       // }
        //CRUD operation action
-       action GetAdminPanelData(input : adminPanelGetDataPayload) returns array of String;  
+       // action GetAdminPanelData(input : adminPanelGetDataPayload) returns array of String;  
        // function simpleFunc(input :String) returns String;
+       function GetAdminPanelData(input : String) returns array of String; 
 }
