@@ -3,43 +3,47 @@ const cds = require('@sap/cds')
 const lib = require('./LIB/iven_library_admin_panel')
 const dbClass = require("sap-hdbext-promisfied")
 const hdbext = require("@sap/hdbext")
+const common_lib = require('./LIB/iven_library')
 
 module.exports = cds.service.impl(function () {
   this.on('GetAdminPanelData', async (req) => {
     try {
 
       // local variables
-      var oReqData = req.data.input
-      oReqData = JSON.parse(oReqData);
-      var sAction = oReqData.ACTION
-      var sTableCode = oReqData.TABLE_CODE
-      var iRequestNo = oReqData.REQUEST_NO
+      const {action , tableCode ,requestNo } = req.data;
+      // var oReqData = req.data.input
+      // oReqData = JSON.parse(oReqData);
+      // var sAction = oReqData.ACTION
+      // var sTableCode = oReqData.TABLE_CODE
+      // var iRequestNo = oReqData.REQUEST_NO
       var sQueryResult = null, sTableName = null
 
-      if(sAction === "MASTER_TABLES"){
+      let connection = await cds.connect.to('db');
+
+      if(action === "MASTER_TABLES"){
         //Fetch Table Name from Input Table Code
-        sTableName =await  lib.getTableNameFromTableCode(sTableCode)
+        sTableName =await  lib.getTableNameFromTableCode(connection,tableCode)
 
         //Fetch Data based on Table Name
-        sQueryResult =await lib.getDataFromTableName(sTableName)
+        sQueryResult =await lib.getDataFromTableName(connection,sTableName)
         console.log(sQueryResult)
         return sQueryResult
       }
-      else if(sAction === "DASHBOARD")
+      else if(action === "DASHBOARD")
       {
          // Get dashboard data from admin panel library
-        var oResponse = await lib.getDashboardData();
+        var oResponse = await lib.getDashboardData(connection);
            return oResponse
       }
-      // else if (sAction === 'MASTER_FORMS') {
+      else if (action === 'MASTER_FORMS') {
 
-        // responseObj = {
-        //   "Results": getMasterFormsData(conn),
-        //   "ProgressBar" : ADMIN_LIBRARY.getPercentOfConfig(conn)
-        // };
+      var  responseObj = {
+          "Results": await lib.getMasterFormsData(connection),
+          "ProgressBar" : await lib.getPercentOfConfig(connection)
+        };
         // iVen_Content.responseInfo(JSON.stringify(responseObj), "application/json", 200);
-  
-      // }
+        return responseObj;
+      }
      
     } catch (error) {
       console.error(error)
@@ -63,7 +67,7 @@ module.exports = cds.service.impl(function () {
          var client = await dbClass.createConnectionFromEnv();
          let dbConn = new dbClass(client);
           // load procedure
-          const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_POSTDATA')
+          const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_EDITDATA')
      
      if(sAction === "CREATE")
      {
@@ -144,13 +148,11 @@ module.exports = cds.service.impl(function () {
       var sResponse =null;
         //Local Variable for edit forms
       var masterName, masterData, tableDescription, editType;
-
-
          // get connection
          var client = await dbClass.createConnectionFromEnv();
          let dbConn = new dbClass(client);
           // load procedure
-          const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_POSTDATA')
+          const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_EDITDATA')
           if (sEditType === 'EDIT_MASTERS') {
           if (sTableName === 'Country') {
              sResponse= await dbConn.callProcedurePromisified(loadProc,
@@ -230,18 +232,19 @@ module.exports = cds.service.impl(function () {
                 masterData]);
             }
             // iVen_Content.postErrorLog(conn, Result, null, null, "System Configuration", "PROCEDURE");
-            if (sResponse.OUT_SUCCESS_FLAG === 'Y') {
-              aSuccessArray.push(sResponse.OUT_SUCCESS_FLAG);
-            }
+           if(sResponse !== null){
+            if (sResponse.outputScalar.OUT_SUCCESS_FLAG === 'Y') {
+              aSuccessArray.push(sResponse.outputScalar.OUT_SUCCESS_FLAG);
+            }}
   
           }
         }
-        if (aSuccessArray.length === iChangeCount) {
-          conn.commit();
+        // if (aSuccessArray.length === iChangeCount) {
+        //   // conn.commit();
   
-        }
+        // }
         // Created Success Msg Dynamically Cause Needed Both Master Or One Master at a Time With The Help Change Flag
-        successMsg = await lib.generateSuccessMessage(aTableDesc);
+        successMsg = await common_lib.generateSuccessMessage(aTableDesc);
         return successMsg
         }
       } catch (error) {

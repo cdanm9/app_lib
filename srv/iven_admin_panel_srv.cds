@@ -22,7 +22,7 @@ service adminPanelService {
       //        INPUT_DATA:  String;
       //  }
       
-       function GetAdminPanelData(input : String) returns array of String;
+       function GetAdminPanelData(action : String,tableCode:String,requestNo:Integer) returns array of String;
        action PostAdminPanelData(input : String) returns array of String; 
        action EditAdminPanelData(input : String) returns array of String; 
 }

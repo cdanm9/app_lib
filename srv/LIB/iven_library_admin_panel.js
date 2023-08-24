@@ -1,12 +1,20 @@
 const cds = require("@sap/cds");
 module.exports = {
 
-  getDataFromTableName: async function (sTableName) {
+  // getArrayFromResult: async function (aResult) {
+  //     var aDataObjects = Object.keys(aResult).map(function(key) {
+  //       return aResult[key];
+  //     });
+    
+  //     return aDataObjects;
+  // },
+
+  getDataFromTableName: async function (connection,sTableName) {
     try {
       //local Variables
       var responseObject = {}, TableInfo = null;
 
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let queryResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.' + sTableName]}`);
 
       TableInfo = await this.getMasterTableSchema(sTableName) || [];
@@ -18,17 +26,17 @@ module.exports = {
     catch (error) { throw error; }
   },
 
-  getTableNameFromTableCode: async function (sTableCode) {
+  getTableNameFromTableCode: async function (connection,sTableCode) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let queryResult = await connection.run(SELECT`TABLE_NAME`.from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES']}`
         .where`TABLE_CODE = ${sTableCode}`);
-
       return queryResult[0].TABLE_NAME;
     }
     catch (error) { throw error; }
   },
 
+  // #TabName : Masters
   getMasterTableSchema: async function (sTableName) {
     try {
       let connection = await cds.connect.to('db');
@@ -44,12 +52,12 @@ module.exports = {
 
   },
 
-  getMasterTablenamesData: async function (sTableType) {
+  getMasterTablenamesData: async function (connection,sTableType) {
     try {
       var aResult = null;
       var queryResult
 
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
 
       if (sTableType !== null) {
         queryResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES']}`
@@ -123,9 +131,9 @@ module.exports = {
     return { "TOTAL": iDatalength, "FILLED": iCount, "NOT_FILLED": iNotFilledCount };
   },
 
-  getMasterCredentials: async function () {
+  getMasterCredentials: async function (connection) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let aResult = await connection.run(SELECT`USERNAME,PASSWORD,ADD_INFO1`
         .from`${connection.entities['VENDOR_PORTAL.MASTER_CREDENTIAL']}`);
 
@@ -142,9 +150,9 @@ module.exports = {
     catch (error) { throw error; }
   },
 
-  getMasterClientContactInfo: async function () {
+  getMasterClientContactInfo: async function (connection) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let aResult = await connection.run(SELECT`EMAIL_NOTIF_1,CONTACT_ID_1,CLIENT_FULL_NAME,CLIENT_SHORT_NAME,CLIENT_COUNTRY`
         .from`${connection.entities['VENDOR_PORTAL.MASTER_EMAIL_CONTACT_ID']}`);
 
@@ -163,9 +171,9 @@ module.exports = {
     catch (error) { throw error; }
   },
 
-  getMasterSubaccounttInfo: async function () {
+  getMasterSubaccounttInfo: async function (connection) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let aResult = await connection.run(SELECT`SUBACCOUNT,PORTAL_LINK`
         .from`${connection.entities['VENDOR_PORTAL.MASTER_SUBACCOUNT']}`);
 
@@ -181,10 +189,12 @@ module.exports = {
     catch (error) { throw error; }
   },
 
-  getPercentOfConfig: async function () {
-    var aMasterCredentials = await this.getMasterCredentials();
-    var aMasterClientContactInfo = await this.getMasterClientContactInfo();
-    var aMasterSubaccounttInfo = await this.getMasterSubaccounttInfo();
+
+  // #TabName : Admin (Dashboard)
+  getPercentOfConfig: async function (connection) {
+    var aMasterCredentials = await this.getMasterCredentials(connection);
+    var aMasterClientContactInfo = await this.getMasterClientContactInfo(connection);
+    var aMasterSubaccounttInfo = await this.getMasterSubaccounttInfo(connection);
 
     var aConfigArr = [aMasterCredentials, aMasterClientContactInfo, aMasterSubaccounttInfo, aMasterCredentials];
     var dataArr = [];
@@ -233,8 +243,8 @@ module.exports = {
     };
   },
 
-  getDashboardData: async function () {
-    var aAllMasterTables = await this.getMasterTablenamesData(null);
+  getDashboardData: async function (connection) {
+    var aAllMasterTables = await this.getMasterTablenamesData(connection,null);
     var aRowCountsOfAllMasters = await this.getRowCountsOfAllMasters(aAllMasterTables) || [];
     var iTotalMastersFilled = await this.getTotalMasterFilled(aRowCountsOfAllMasters, 'Master');
     var iTotalConfigFilled = await this.getTotalMasterFilled(aRowCountsOfAllMasters, 'Config');
@@ -244,10 +254,164 @@ module.exports = {
       "TOTAL_NO_OF_MASTERS": iTotalMastersFilled || 0,
       "TOTAL_NO_OF_CONFIGS": iTotalConfigFilled || 0,
       "ALL_MASTERS_ROW_COUNT": aRowCountsOfAllMasters,
-      "ALL_CONGIG_FIELD_PERCENT": await this.getPercentOfConfig()
+      "ALL_CONGIG_FIELD_PERCENT": await this.getPercentOfConfig(connection)
 
     };
 
     return oDataObj;
+  },
+
+  // #TabName : Form Fields
+  getTemplateColumns: async function (conn, data) {
+    let connection = null;
+    try {
+      let aResult = await conn.run(
+          SELECT
+          .from`${conn.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`
+          .where`CCODE = 'TEMPLATE' AND TYPE = 1`
+        );
+  
+        // var aDataObjects = this.getArrayFromResult(aResult)
+        return aResult;
+    }
+    catch (error) { 
+      connection.rollback();
+      throw error; }
+  },
+
+  getFieldsDescData: async function (conn) {
+    try {
+      let aResult = await conn.run(
+        SELECT
+          .from`${conn.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_ID_DESC']}`
+      );
+  
+      // var aDataObjects = this.getArrayFromResult(aResult)
+      return aResult;
+    }
+    catch (error) { throw error; }
+  },
+
+  getVisibleFieldsData: async function (iEntityCode, iType) {
+    try {
+      let connection = await cds.connect.to('db');
+      let aResult = await connection.run(
+        SELECT
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_VISIBLE']}`
+          .where`CCODE = ${iEntityCode} AND TYPE = ${iType}`
+      );
+  
+      // var aDataObjects = this.getArrayFromResult(aResult)
+      return aResult;
+    }
+    catch (error) { throw error; }
+  },
+
+  getMandatoryFieldsData: async function (iEntityCode, iType) {
+    try {
+      let connection = await cds.connect.to('db');
+      let aResult = await connection.run(
+        SELECT
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`
+          .where`CCODE = ${iEntityCode} AND TYPE = ${iType}`
+      );
+  
+      // var aDataObjects = this.getArrayFromResult(aResult)
+      return aResult;
+    }
+    catch (error) { throw error; }
+  },
+   getCountryDesc:async function(connection, countryCode) {
+    try {
+      var sDesc = "";
+      // let connection = await cds.connect.to('db');
+      let aResult = await connection.run(
+        SELECT `LANDX as DESC`
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_COUNTRY']}`
+          .where`LAND1 = ${countryCode} AND TYPE = ${iType}`
+      );
+    // var sQuery =
+    //   'SELECT "LANDX" AS DESC FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_COUNTRY" 
+    //   WHERE LAND1 = ?';
+    // var aResult = conn.executeQuery(sQuery, countryCode);
+  
+    if (aResult.length > 0) {
+      sDesc = aResult[0].DESC;
+    }
+    return sDesc;
   }
+  catch (error) { throw error; }
+  },
+   getClientInfoWithDesc:async function( connection,aClientInfoArr) {
+    var aClientInfoWithDesc = [];
+    if (aClientInfoArr.length > 0) {
+      var dataObj = {};
+      for(var i=0;i<aClientInfoArr.length;i++)
+      {
+        dataObj = JSON.parse(JSON.stringify(aClientInfoArr[i]));
+            if (dataObj.CLIENT_COUNTRY !== "" || dataObj.CLIENT_COUNTRY !== null) {
+          dataObj.CLIENT_COUNTRY_DESC = await getCountryDesc( connection,dataObj.CLIENT_COUNTRY) || "";
+        }
+      aClientInfoWithDesc.push(dataObj);
+      }
+      // aClientInfoWithDesc = Object.keys(aClientInfoArr).map(function(key) {
+      //   dataObj = JSON.parse(JSON.stringify(aClientInfoArr[key]));
+  
+      //   if (dataObj.CLIENT_COUNTRY !== "" || dataObj.CLIENT_COUNTRY !== null) {
+      //     dataObj.CLIENT_COUNTRY_DESC = await getCountryDesc( dataObj.CLIENT_COUNTRY) || "";
+      //   }
+      //   return dataObj;
+      // });
+    }
+  
+    return aClientInfoWithDesc;
+  },
+   getTableData:async function( connection,sTable) {
+    try {
+      // var aDataObjects = [];
+      // let connection = await cds.connect.to('db');
+      let aResult = await connection.run(
+        SELECT 
+          .from`${connection.entities['VENDOR_PORTAL.' + sTable]}`
+      );
+  
+    return aResult;
+  }
+  catch (error) { throw error; }
+  },
+   getAttachmentsTableData:async function(connection,sTable) {
+    try {
+      // var aDataObjects = [];
+      // let connection = await cds.connect.to('db');
+      let aResult = await connection.run(
+        SELECT `SR_NO,ENTITY_CODE,ATTACH_CODE,ATTACH_GROUP,ATTACH_DESC,FILE_NAME,FILE_TYPE,FILE_MIMETYPE,UPLOADED_ON,ATTACH_TYPE_CODE,ATTACH_TYPE_DESC`
+          .from`${connection.entities['VENDOR_PORTAL.' + sTable]}`
+      );
+    // var aDataObjects = [];
+    // var sQuery =
+    //   'SELECT "SR_NO","ENTITY_CODE","ATTACH_CODE","ATTACH_GROUP","ATTACH_DESC","FILE_NAME","FILE_TYPE","FILE_MIMETYPE","UPLOADED_ON","ATTACH_TYPE_CODE","ATTACH_TYPE_DESC"';
+    // sQuery += 'FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::' + sTable + '"';
+    // var aResult = conn.executeQuery(sQuery);
+    // if (aResult.length > 0) {
+    //   aDataObjects = Object.keys(aResult).map(function(key) {
+    //     return aResult[key];
+    //   });
+    // }
+    return aResult;
+  }
+  catch (error) { throw error; }
+  },
+  
+   getMasterFormsData:async function(connection) {
+    var oMasterobj = {
+      "Client_Info":await this.getClientInfoWithDesc(connection, this.getTableData( connection,"MASTER_EMAIL_CONTACT_ID")),
+      "Sap_Info": await this.getTableData(connection, "MASTER_SAP_CLIENT"),
+      "SubAccount_Info": await this.getTableData( connection,"MASTER_SUBACCOUNT"),
+      "MasterCredential_Info": await this.getTableData(connection, "MASTER_CREDENTIAL"),
+      "IvenAttachments":await this.getAttachmentsTableData(connection, "MASTER_IVEN_ATTACHMENTS")
+    };
+    return oMasterobj;
+  }
+
+
 }
