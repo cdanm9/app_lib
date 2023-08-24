@@ -62,8 +62,9 @@ module.exports = cds.service.impl(function () {
          var client = await dbClass.createConnectionFromEnv();
          let dbConn = new dbClass(client);
           // load procedure
-          const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_EDITDATA')
-     
+          const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_POSTDATA')
+    
+
      if(sAction === "CREATE")
      {
         

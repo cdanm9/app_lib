@@ -89,7 +89,7 @@ module.exports = {
   },
 
   // This funtion gives row counts of all Master Tables maintained in MASTER_TABLENAMES
-  getRowCountsOfAllMasters: async function (aAllMasterTables) {
+  getRowCountsOfAllMasters: async function (connection,aAllMasterTables) {
     try {
       var iCount = 0, aDataObjects = [], oDataObj = {}, that = this;
       if (aAllMasterTables.length > 0) {
@@ -245,7 +245,7 @@ module.exports = {
 
   getDashboardData: async function (connection) {
     var aAllMasterTables = await this.getMasterTablenamesData(connection,null);
-    var aRowCountsOfAllMasters = await this.getRowCountsOfAllMasters(aAllMasterTables) || [];
+    var aRowCountsOfAllMasters = await this.getRowCountsOfAllMasters(connection,aAllMasterTables) || [];
     var iTotalMastersFilled = await this.getTotalMasterFilled(aRowCountsOfAllMasters, 'Master');
     var iTotalConfigFilled = await this.getTotalMasterFilled(aRowCountsOfAllMasters, 'Config');
 
