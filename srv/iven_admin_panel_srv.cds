@@ -14,15 +14,14 @@ service adminPanelService {
     entity MasterCountry    as projection on VENDOR_PORTAL.MASTER_COUNTRY;
     entity MasterEntityCode   as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
 
-       //Admin Panel PostDelete Data Payload
-      //  type adminPanelPostDeleteDataPayload {
-      //         ACTION: String;
-      //        TABLE_NAME: String(50);
-      //        TABLE_DESCRIPTION:String(100);
-      //        INPUT_DATA:  String;
-      //  }
-      
+     
+      //Get data for Admin Panel
        function GetAdminPanelData(action : String,tableCode:String,requestNo:Integer) returns array of String;
+       //Post Data for Admin Panel
        action PostAdminPanelData(input : String) returns array of String; 
-       action EditAdminPanelData(input : String) returns array of String; 
+       //Admin Panel Edit Functionality
+       action EditAdminPanelData(input : String) returns array of String;
+       //Get Visible and Mandatory Fields
+        function GetVisbleMandatoryFields(requestType : Integer, entityCode : String) returns array of String;
+ 
 }

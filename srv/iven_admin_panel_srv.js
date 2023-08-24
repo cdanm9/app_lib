@@ -11,11 +11,6 @@ module.exports = cds.service.impl(function () {
 
       // local variables
       const {action , tableCode ,requestNo } = req.data;
-      // var oReqData = req.data.input
-      // oReqData = JSON.parse(oReqData);
-      // var sAction = oReqData.ACTION
-      // var sTableCode = oReqData.TABLE_CODE
-      // var iRequestNo = oReqData.REQUEST_NO
       var sQueryResult = null, sTableName = null
 
       let connection = await cds.connect.to('db');
@@ -251,5 +246,77 @@ module.exports = cds.service.impl(function () {
         req.error({code:"500", message: error.message});
       }
     })
+
+     //Function to get all Registraion Form Mandatory & Visible fields
+  this.on('GetVisbleMandatoryFields', async (req) => {
+   
+    try {
+      // local variables
+      const { requestType, entityCode } = req.data;
+  
+      let conn = await cds.connect.to('db');
+      var aVisiMandatArrFields = [], responseObj = {};
+
+      var columnTemplate = await lib.getTemplateColumns(conn);
+      var aFieldDescData = await lib.getFieldsDescData(conn);
+      var aFieldDescObj = {};
+
+      var aTemplateKeys = Object.keys(columnTemplate[0]);
+      var sTempCcode = null, iTempType = null, obj = {};
+
+      if (entityCode === "TEMPLATE") {
+
+        for (var i = 0; i < aTemplateKeys.length; i++) {
+          if (aTemplateKeys[i] === "CCODE") {
+            sTempCcode = entityCode;
+          } else if ((aTemplateKeys[i] === "TYPE")) {
+            iTempType = 1;
+          } else {
+            obj["SRNO"] = i - 1;
+            obj["FIELDS"] = aTemplateKeys[i];
+            obj["VISIBILITY"] = null;
+            obj["MANDATORY"] = null;
+            obj["DESCRIPTION"] = null;
+            obj["SECTION"] = null;
+            aVisiMandatArrFields.push(JSON.parse(JSON.stringify(obj)));
+          }
+        }
+
+      } else {
+        var aVisibleFieldsData =await lib.getVisibleFieldsData(conn, entityCode, requestType);
+        var aMandatoryFieldsData = await lib.getMandatoryFieldsData(conn, entityCode, requestType);
+
+        for (var i = 0; i < aTemplateKeys.length; i++) {
+          if (aTemplateKeys[i] === "CCODE") {
+            sTempCcode = aVisibleFieldsData[0][aTemplateKeys[i].toString()];
+          } else if ((aTemplateKeys[i] === "TYPE")) {
+            iTempType = parseInt(aVisibleFieldsData[0][aTemplateKeys[i].toString()], 10);
+          } else {
+            aFieldDescObj = await lib.getFieldsDesc(aTemplateKeys[i], aFieldDescData);
+            obj["SRNO"] = i - 1;
+            obj["FIELDS"] = aTemplateKeys[i];
+            obj["VISIBILITY"] = aVisibleFieldsData[0][aTemplateKeys[i].toString()];
+            obj["MANDATORY"] = aMandatoryFieldsData[0][aTemplateKeys[i].toString()];
+            obj["DESCRIPTION"] = aFieldDescObj.DESCRIPTION || "NA";
+            obj["SECTION"] = aFieldDescObj.SECTION || "NA";
+            obj["CATEGORY"] = aFieldDescObj.CATEGORY || "NA";
+            aVisiMandatArrFields.push(JSON.parse(JSON.stringify(obj)));
+          }
+        }
+      }
+
+      responseObj = {
+        "CCODE": sTempCcode,
+        "TYPE": iTempType,
+        "DATA": aVisiMandatArrFields.length > 0 ? aVisiMandatArrFields : []
+      };
+
+      return responseObj
+
+    } catch (error) {
+      req.error({ code: "500", message: error.message });
+    }
+
+  })
 
 })

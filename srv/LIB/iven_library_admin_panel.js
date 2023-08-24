@@ -17,7 +17,7 @@ module.exports = {
       // let connection = await cds.connect.to('db');
       let queryResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.' + sTableName]}`);
 
-      TableInfo = await this.getMasterTableSchema(sTableName) || [];
+      TableInfo = await this.getMasterTableSchema(connection ,sTableName) || [];
       responseObject['sTableName'] = queryResult || [];
       responseObject['TableColumns'] = TableInfo;
       responseObject['TableColumnsCount'] = TableInfo.length;
@@ -37,9 +37,9 @@ module.exports = {
   },
 
   // #TabName : Masters
-  getMasterTableSchema: async function (sTableName) {
+  getMasterTableSchema: async function (connection,sTableName) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let queryResult = await connection.run(SELECT`COLUMN_NAME ,DATA_TYPE_NAME`.from`TABLE_COLUMNS`
         .where`TABLE_NAME = ${'VENDOR_PORTAL_' + sTableName}`);
 
@@ -73,9 +73,9 @@ module.exports = {
     catch (error) { throw error; }
   },
 
-  getRowCountOfTables: async function (sTableName) {
+  getRowCountOfTables: async function (connection,sTableName) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let queryResult = await connection.run(SELECT`COUNT(*) as COUNT`
         .from`${connection.entities['VENDOR_PORTAL.' + sTableName]}`);
 
@@ -96,7 +96,7 @@ module.exports = {
 
         for (var i = 0; i < aAllMasterTables.length; i++) {
           oDataObj = {}
-          iCount = await that.getRowCountOfTables(aAllMasterTables[i].TABLE_NAME);
+          iCount = await that.getRowCountOfTables(connection,aAllMasterTables[i].TABLE_NAME);
           oDataObj.TABLE_NAME = aAllMasterTables[i].TABLE_NAME;
           oDataObj.TABLE_DESCRIPTION = aAllMasterTables[i].TABLE_DESCRIPTION;
           oDataObj.COUNT = iCount;
@@ -262,20 +262,18 @@ module.exports = {
   },
 
   // #TabName : Form Fields
-  getTemplateColumns: async function (conn, data) {
-    let connection = null;
+  getTemplateColumns: async function (conn) {
     try {
+      // var aResult = await SELECT .from `VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY`  .where `CCODE = 'TEMPLATE' AND TYPE = 1`;
+      
       let aResult = await conn.run(
           SELECT
-          .from`${conn.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`
-          .where`CCODE = 'TEMPLATE' AND TYPE = 1`
+          .from `${conn.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`
+          .where `CCODE = 'TEMPLATE' AND TYPE = 1`
         );
-  
-        // var aDataObjects = this.getArrayFromResult(aResult)
         return aResult;
     }
     catch (error) { 
-      connection.rollback();
       throw error; }
   },
 
@@ -291,10 +289,21 @@ module.exports = {
     }
     catch (error) { throw error; }
   },
+   getFieldsDesc:function(sFieldId, aArrayData) {
+    // var index = myArray.findIndex(item => item.id === 2);
+    var index = aArrayData.findIndex(function(items) {
+        return items.FIELDS === sFieldId;
+    });
+    if (aArrayData[index] !== undefined) {
+        return aArrayData[index];
+    } else {
+        return {};
+    }
+},
 
-  getVisibleFieldsData: async function (iEntityCode, iType) {
+  getVisibleFieldsData: async function (connection ,iEntityCode, iType) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let aResult = await connection.run(
         SELECT
           .from`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_VISIBLE']}`
@@ -307,9 +316,9 @@ module.exports = {
     catch (error) { throw error; }
   },
 
-  getMandatoryFieldsData: async function (iEntityCode, iType) {
+  getMandatoryFieldsData: async function (connection ,iEntityCode, iType) {
     try {
-      let connection = await cds.connect.to('db');
+      // let connection = await cds.connect.to('db');
       let aResult = await connection.run(
         SELECT
           .from`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`
