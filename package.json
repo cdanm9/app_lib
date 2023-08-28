@@ -6,13 +6,16 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@cap-js-community/odata-v2-adapter": "^1.11.6",
+    "@sap-cloud-sdk/http-client": "^3.4.0",
+    "@sap-cloud-sdk/resilience": "^3.4.0",
     "@sap/cds": "^7",
     "@sap/cds-hana": "^2",
     "@sap/hdbext": "^7.7.6",
     "@sap/xssec": "^3.3.3",
     "express": "^4",
-    "sap-hdbext-promisfied": "2.202307.1",
-    "passport": "^0.6.0"
+    "passport": "^0.6.0",
+    "sap-hdbext-promisfied": "2.202307.1"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
@@ -42,6 +45,9 @@
     },
     "hana": {
       "deploy-format": "hdbtable"
+    },
+    "cov2ap": {
+      "plugin": true
     }
   }
 }

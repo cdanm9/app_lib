@@ -171,6 +171,23 @@ module.exports = {
     catch (error) { throw error; }
   },
 
+  getMasterSapClient: async function (connection) {
+    try {
+      // let connection = await cds.connect.to('db');
+      let aResult = await connection.run(SELECT`CLIENT,DESTINTAION`
+        .from`${connection.entities['VENDOR_PORTAL.MASTER_SAP_CLIENT']}`);
+
+      if (aResult[0] === undefined || aResult[0] === null) {
+        aResult[0] = {
+          "CLIENT": null,
+          "DESTINTAION": null
+        };
+      }
+
+      return aResult[0] || null;
+    }
+    catch (error) { throw error; }
+  },
   getMasterSubaccounttInfo: async function (connection) {
     try {
       // let connection = await cds.connect.to('db');
@@ -195,8 +212,9 @@ module.exports = {
     var aMasterCredentials = await this.getMasterCredentials(connection);
     var aMasterClientContactInfo = await this.getMasterClientContactInfo(connection);
     var aMasterSubaccounttInfo = await this.getMasterSubaccounttInfo(connection);
+    var aMasterSapClientials = await this.getMasterSapClient(connection);
 
-    var aConfigArr = [aMasterCredentials, aMasterClientContactInfo, aMasterSubaccounttInfo, aMasterCredentials];
+    var aConfigArr = [aMasterClientContactInfo, aMasterSubaccounttInfo, aMasterSapClientials];
     var dataArr = [];
     var aReturnArr = [];
     var oIterationObj = {};
@@ -337,7 +355,7 @@ module.exports = {
       let aResult = await connection.run(
         SELECT `LANDX as DESC`
           .from`${connection.entities['VENDOR_PORTAL.MASTER_COUNTRY']}`
-          .where`LAND1 = ${countryCode} AND TYPE = ${iType}`
+          .where`LAND1 = ${countryCode}`
       );
     // var sQuery =
     //   'SELECT "LANDX" AS DESC FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_COUNTRY" 
@@ -359,7 +377,7 @@ module.exports = {
       {
         dataObj = JSON.parse(JSON.stringify(aClientInfoArr[i]));
             if (dataObj.CLIENT_COUNTRY !== "" || dataObj.CLIENT_COUNTRY !== null) {
-          dataObj.CLIENT_COUNTRY_DESC = await getCountryDesc( connection,dataObj.CLIENT_COUNTRY) || "";
+          dataObj.CLIENT_COUNTRY_DESC = await this.getCountryDesc( connection,dataObj.CLIENT_COUNTRY) || "";
         }
       aClientInfoWithDesc.push(dataObj);
       }
@@ -412,8 +430,9 @@ module.exports = {
   },
   
    getMasterFormsData:async function(connection) {
+   var aTableResponse = await this.getTableData( connection,"MASTER_EMAIL_CONTACT_ID")
     var oMasterobj = {
-      "Client_Info":await this.getClientInfoWithDesc(connection, this.getTableData( connection,"MASTER_EMAIL_CONTACT_ID")),
+      "Client_Info":await this.getClientInfoWithDesc(connection, aTableResponse),
       "Sap_Info": await this.getTableData(connection, "MASTER_SAP_CLIENT"),
       "SubAccount_Info": await this.getTableData( connection,"MASTER_SUBACCOUNT"),
       "MasterCredential_Info": await this.getTableData(connection, "MASTER_CREDENTIAL"),
