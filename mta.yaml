@@ -25,6 +25,7 @@ modules:
     requires:
       - name: VENDOR_PORTAL-db
       - name: VENDOR_PORTAL-destination
+      - name: VENDOR_PORTAL-connectivity
   - name: VENDOR_PORTAL-db-deployer
     type: hdb
     path: gen/db
@@ -44,4 +45,9 @@ resources:
     description: iVen Service Destination
     parameters:
       service: destination
+      service-plan: lite
+  - name: VENDOR_PORTAL-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
       service-plan: lite
