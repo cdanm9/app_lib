@@ -1,0 +1,95 @@
+{
+  "name": "VENDOR_PORTAL",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@cap-js-community/odata-v2-adapter": "^1.11.6",
+    "@sap-cloud-sdk/core": "^1.54.2",
+    "@sap-cloud-sdk/http-client": "^3.4.0",
+    "@sap-cloud-sdk/resilience": "^3.4.0",
+    "@sap/cds": "^7.3.1",
+    "@sap/cds-hana": "^2",
+    "@sap/hana-client": "^2.18.22",
+    "@sap/hdbext": "^7.7.6",
+    "@sap/xssec": "^3.3.3",
+    "axios": "^1.5.1",
+    "express": "^4",
+    "flat": "^6.0.1",
+    "fs": "^0.0.1-security",
+    "logger": "^0.0.1",
+    "moment": "^2.29.4",
+    "nodemailer": "^6.9.7",
+    "passport": "^0.6.0",
+    "path": "^0.12.7",
+    "sap-cf-axios": "^0.4.10",
+    "sap-hdbext-promisfied": "2.202307.1",
+    "unzipper": "^0.10.14",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^7",
+    "@sap/hdi-deploy": "^4.8.0"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "db": "hana",
+      "ERP": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "ERP",
+          "path": "/sap/opu/odata/sap/"
+        }
+      },
+      "EMAIL_DEST": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "EMAIL_DEST",
+          "path": "/iVenEmail_V2"
+        }
+      },
+      "IAS_DEST": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "IAS_DEST",
+          "path": "/scim"
+        }
+      },
+      "ZIVN_VENDOR_REG_SRV": {
+        "kind": "odata-v2",
+        "model": "srv/external/ZIVN_VENDOR_REG_SRV",
+        "csrf": true,
+        "csrfInBatch": true,
+        "credentials": {
+          "destination": "ERP",
+          "path": "sap/opu/odata/sap/ZIVN_VENDOR_REG_SRV",
+          "forwardAuthToken": true,
+          "timeout": 100000
+        }
+      },
+      "ZMDG_VENDOR_REG_SRV": {
+        "kind": "rest",
+        "model": "srv/external/ZMDG_VENDOR_REG_SRV",
+        "csrf": true,
+        "csrfInBatch": true,
+        "credentials": {
+          "destination": "ERP",
+          "path": "/sap/opu/odata/sap/ZMDG_VENDOR_REG_SRV"
+        }
+      },
+      "connectivity": true
+    },
+    "hana": {
+      "deploy-format": "hdbtable"
+    },
+    "cov2ap": {
+      "plugin": true
+    }
+  }
+}

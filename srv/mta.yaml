@@ -1,0 +1,53 @@
+_schema-version: '3.1'
+ID: VENDOR_PORTAL
+version: 1.0.0
+description: A simple CAP project.
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx cds build --production
+modules:
+  - name: VENDOR_PORTAL-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 500M
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: '${default-url}'
+    requires:
+      - name: VENDOR_PORTAL-db
+      - name: VENDOR_PORTAL-destination
+      - name: VENDOR_PORTAL-connectivity
+  - name: VENDOR_PORTAL-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+    requires:
+      - name: VENDOR_PORTAL-db
+resources:
+  - name: VENDOR_PORTAL-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: VENDOR_PORTAL-destination
+    type: org.cloudfoundry.managed-service
+    description: iVen Service Destination
+    parameters:
+      service: destination
+      service-plan: lite
+  - name: VENDOR_PORTAL-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
