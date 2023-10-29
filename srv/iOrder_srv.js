@@ -26,19 +26,19 @@ module.exports = cds.service.impl(function () {
   }),
     this.on('GET', 'IASet', async (req) => {
       //** Update vendor email id */
-      let response = await lib_ias.UpdateVendorEmailIdIAS("500000111","test");
-      throw response;
+      // let response = await lib_ias.UpdateVendorEmailIdIAS("500000111","test");
+      // throw response;
       //*** to get IAS user and srore in db */
       // let response = await lib_ias.getIASUser();
       //** Create vendor and assign roles(vendor group) */
-      // var sSAPVendoCode = "500000111";
-      // var sName1 = "CAP Test vendor";
-      // var sName2 = "CapM";
+      var sSAPVendoCode = "500000111";
+      var sName1 = "CAP Test vendor";
+      var sName2 = "CapM";
       // var sEmaiID = "captestmail@testcap.com"
       // let response = await lib_ias.CreateVendorIdIAS(sSAPVendoCode, sName1, sName2, sEmaiID);
       // // response.message = response.body;
       // throw response;
-
+//darshan
       //**email test  */
       
     //   var ToEmails = "darshan.l@intellectbizware.com;darsh2269@gmail.com";
