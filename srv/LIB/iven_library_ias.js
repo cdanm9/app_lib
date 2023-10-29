@@ -191,36 +191,60 @@ module.exports = {
 
         try {
             var IASConnection = await cds.connect.to('IAS_DEST');
-           
+
             var IASVendorResult = await IASConnection.send('GET', '/Users?filter=userName%20eq%20%22' + sapVendoCode + '%22', '',
                 { "Accept": "*/*", "Content-Type": "application/scim+json", "DataServiceVersion": "2.0" });
-          
-                if (IASVendorResult.totalResults == 1) {
-               
-                    // let update_body = "{ \"schemas\": [  \"urn:ietf:params:scim:schemas:core:2.0:User\",  \"urn:ietf:params:scim:schemas:extension:sap:2.0:User\" ]," +
-                //     "      \"userName\": \"" + username + "\",   \"displayName\": \"" + displayName +
-                //     "\"  ,  \"name\": { \"familyName\": \"" + familyName + "\", \"givenName\" : \"" + givenName + "\", \"honorificPrefix\": \"" + honorificPrefix + "\" }, " +
-                //     " \"userType\": \"" + userType + "\",    \"active\": true, \"emails\": [        {   \"value\": \"" + newemail + "\" ,     \"primary\": true     } ]} ";
 
+            if (IASVendorResult.totalResults == 1) {
+                var username, uuid, displayName, familyName, givenName, userType, honorificPrefix, newemail;
+                newemail = newEmaiID;
+                uuid = IASVendorResult.Resources[0].id;
+                username = IASVendorResult.Resources[0].userName;
+                displayName = IASVendorResult.Resources[0].displayName;
+                familyName = IASVendorResult.Resources[0].name.familyName;
+                givenName = IASVendorResult.Resources[0].name.givenName;
+                honorificPrefix = IASVendorResult.Resources[0].name.honorificPrefix;
+                userType = IASVendorResult.Resources[0].userType;
 
-                // var IASVendorUpdateResult = await IASConnection.send('PUT', '/Users/'+IASVendorResult.Resources[0].id, update_body,
-                // { "Accept": "*/*", "Content-Type": "application/scim+json", "DataServiceVersion": "2.0" });
-                
-                
+                if (givenName == 'null' || givenName == '' || givenName == undefined || givenName == '[null]') {
+                    givenName = familyName;
+                }
+                if (honorificPrefix == 'null' || honorificPrefix == '' || honorificPrefix == undefined || honorificPrefix == '[null]') {
+                    honorificPrefix = "Mr.";
+                }
+                var update_body = {
+                    "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"
+                        , "urn:ietf:params:scim:schemas:extension:sap:2.0:User"],
+                    "userName": username,
+                    "displayName": displayName,
+                    "name": {
+                        "familyName": familyName,
+                        "givenName": givenName,
+                        "honorificPrefix": honorificPrefix
+                    },
+                    "userType": userType,
+                    "active": true,
+                    "emails": [{ "value": newemail, "primary": true }]
+                };
+
+                var IASVendorUpdateResult = await IASConnection.send('PUT', '/Users/' + IASVendorResult.Resources[0].id, update_body,
+                    { "Accept": "*/*", "Content-Type": "application/scim+json", "DataServiceVersion": "2.0" });
+
+                return IASVendorUpdateResult;
             } else {
                 var errores = {
                     "status": 404,
-                    "message": "Request Failed or User Not Found"
+                    "message": "User Not Found"
                 };
                 return errores
             }
-            return IASVendorResult;
+
         } catch (error) {
             var errores = {
                 "status": error.reason.response.body.status,
                 "message": error.reason.response.body.detail
             };
-            throw errores;
+
         }
     }
 }
