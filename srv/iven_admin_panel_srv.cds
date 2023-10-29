@@ -1,7 +1,8 @@
 using {VENDOR_PORTAL} from '../db/MASTER_TABLES';
 using {
   VENDOR_PORTAL.IVEN_ERROR_LOG,
-  VENDOR_PORTAL.REGFORM_FOLDER_IDS
+  VENDOR_PORTAL.REGFORM_FOLDER_IDS,
+  VENDOR_PORTAL.REGFORM_ADDRESS
 } from '../db/TRANSACTION_TABLES';
 
 
@@ -16,17 +17,21 @@ service adminPanelService {
   entity RegFormFolderIds      as projection on VENDOR_PORTAL.REGFORM_FOLDER_IDS;
   entity MasterCountry         as projection on VENDOR_PORTAL.MASTER_COUNTRY;
   entity MasterEntityCode      as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
+  entity EmailConfig           as projection on VENDOR_PORTAL.EMAIL_CONFIG;
 
-
+  //TEST
+  // entity region as projection on VENDOR_PORTAL.MASTER_REGION;
+  // entity address as projection on VENDOR_PORTAL.REGFORM_ADDRESS;
 
   //Get data for Admin Panel
+  // function GetAdminPanelData(action : String, tableCode : MasterTableNames:TABLE_CODE, requestNo : Integer) returns array of String;
   function GetAdminPanelData(action : String, tableCode : String, requestNo : Integer) returns array of String;
   //Get Visible and Mandatory Fields
   function GetVisbleMandatoryFields(requestType : Integer, entityCode : String)        returns array of String;
-  
   //Post Data for Admin Panel
   action   PostAdminPanelData(input : String)                                          returns array of String;
   //Post Admin Panel Edits
   action   EditAdminPanelData(input : String)                                          returns array of String;
-  
+  function TestOnPremiseConnection(sapClient : String, destFileName : String)          returns array of String;
+
 }

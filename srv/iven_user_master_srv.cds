@@ -8,9 +8,6 @@ service userMasterService {
   entity MasterUserRole       as projection on VENDOR_PORTAL.MASTER_USER_ROLE;
   entity MasterIvenUserEntity as projection on VENDOR_PORTAL.MASTER_USER_ENTITY_CODES;
 
-
-
-
   //CRUD Payload
   type UserMasterPayload {
     ACTION         : String;

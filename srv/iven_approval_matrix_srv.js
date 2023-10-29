@@ -2,7 +2,7 @@
 const cds = require('@sap/cds')
 const dbClass = require("sap-hdbext-promisfied")
 const hdbext = require("@sap/hdbext")
-const lib = require('./LIB/iven_library')
+const lib_common = require('./LIB/iven_library')
 
 module.exports = cds.service.impl(function () {
   this.on('PostApprovalMatrix', async (req) => {
@@ -13,12 +13,13 @@ module.exports = cds.service.impl(function () {
       var aMatrixData = req.data.input.VALUE;
       var sTableName,bCheckDuplicateMatrix,sEntityDescription;
 
-      //getEntity Description against Entity Code from library
-      sEntityDescription = await lib.getEntityDesc(aMatrixData[0].ENTITY_CODE);
-
        // get connection
        var client = await dbClass.createConnectionFromEnv();
        let dbConn = new dbClass(client);
+       let connection = await cds.connect.to('db');
+
+       // getEntity Description against Entity Code from library
+      sEntityDescription = await lib_common.getEntityDesc(connection, aMatrixData[0].ENTITY_CODE);
 
       //Check for App Type
       if(oReqData.APP_TYPE == 'REQUEST'){
@@ -32,8 +33,7 @@ module.exports = cds.service.impl(function () {
       }
 
 
-      if((bCheckDuplicateMatrix === 0 || bCheckDuplicateMatrix === 1 ) || (sAction === "UPDATE" || sAction === "DELETE") )
-      
+      if((bCheckDuplicateMatrix === 0 || bCheckDuplicateMatrix === 1 ) || (sAction === "UPDATE" || sAction === "DELETE") )    
       {
       // load procedure
       const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MATRIX_APPROVAL_USERS')
@@ -46,9 +46,9 @@ module.exports = cds.service.impl(function () {
       }
       else {
 				if (bCheckDuplicateMatrix === "APPR_EXISTS_DIFF_EC") {
-					return  "This approver already exist for another entity.";
+					throw {message : "This approver already exist for another entity."} ;
 				} else if (bCheckDuplicateMatrix === "APPR_EXISTS_FOR_EC") {
-					return "This matrix for entity " + sEntityDescription + " already exist.";
+					throw {message:"This matrix for entity " + sEntityDescription + " already exist."};
 				}
        
 			}

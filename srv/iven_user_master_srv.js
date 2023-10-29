@@ -32,12 +32,12 @@ module.exports = cds.service.impl(function () {
       var aEntityData = oReqData.VALUE[0].ENTITYDATA
       var bIsDuplicateUser = null
 
-      if(sAction === "CREATE"){
-      // Check Duplicate User
-       bIsDuplicateUser = await _checkDuplicateUser(aUserData);
+      if (sAction === "CREATE") {
+        // Check Duplicate User
+        bIsDuplicateUser = await _checkDuplicateUser(aUserData);
       }
 
-      if (!bIsDuplicateUser  || (sAction === "UPDATE" || sAction === "DELETE") ) {
+      if (!bIsDuplicateUser || (sAction === "UPDATE" || sAction === "DELETE")) {
         // get connection
         var client = await dbClass.createConnectionFromEnv()
         let dbConn = new dbClass(client)
@@ -59,26 +59,27 @@ module.exports = cds.service.impl(function () {
     } catch (error) {
       console.error(error)
       // return error.messsage
-      req.error({code:"500", message: error.message});
+      req.error({ code: "500", message: error.message });
     }
   })
 
   async function _checkDuplicateUser(data) {
-    try{
-    //Connection to database
-    let connection = await cds.connect.to('db');//form connection to database
-    queryResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_USERS']}`
-      .where`EMAIL = ${data[0].EMAIL} AND ACTIVE = 'X'`);
-   
+    try {
+      //Connection to database
+      let connection = await cds.connect.to('db');//form connection to database
+      queryResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_USERS']}`
+        .where`EMAIL = ${data[0].EMAIL} AND ACTIVE = 'X'`);
 
-    if (queryResult.length === 0) {
-      return false;
-    } else {
-      return true;
+
+      if (queryResult.length === 0) {
+        return false;
+      } else {
+        return true;
+      }
     }
-  }
-  catch(error  ){  throw error;
-  }
+    catch (error) {
+      throw error;
+    }
   }
 
 })
