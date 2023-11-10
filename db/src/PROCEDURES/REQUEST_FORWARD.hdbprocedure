@@ -56,7 +56,7 @@ BEGIN
     	        UPDATE "VENDOR_PORTAL_REQUEST_INFO"
                 SET 
                 "REQUESTER_ID" = :REASSIGN_TO_ID
-                WHERE "REQUEST_NO" = :LV_INV_REQUEST_NO;
+                WHERE "REQUEST_NO" = :LV_INV_REQUEST_NO;  
     	    
     	        -- UPDATE "VENDOR_PORTAL_ONBOARDING_FORM"
                 -- SET "NEXT_APPROVER" = :REASSIGN_TO_ID
