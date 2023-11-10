@@ -237,8 +237,10 @@ module.exports = cds.service.impl(function () {
 				    // var oEmaiContent = EMAIL_LIBRARY.getEmailData("INTERNALREQ", "REGISTER", oEmailData, null);
             oEmaiContent = await lib_email_content.getEmailContent(connection, "INTERNALREQ", "REGISTER", oEmailData, null)
             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
-            await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null, null)
-
+            // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null, null)
+            var sCCEmail = await lib_email.setSampleCC( null);
+            await  lib_email.sendivenEmail(oEmailData.Next_Approver,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+        
           }
 			}
 
@@ -338,8 +340,10 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 						    // setEmailData(supplierReq);
                 oEmaiContent = await lib_email_content.getEmailContent(connection, "DATA_MIGRATION", "DATA_MIGRATION", oEmailData, null)
                 // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
-                await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.MailTo], null, null)
-    
+                // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.MailTo], null, null)
+                var sCCEmail = await lib_email.setSampleCC(null );
+                await  lib_email.sendivenEmail(oEmailData.MailTo,sCCEmail,'html',  oEmaiContent.subject, oEmaiContent.emailBody)
+            
 						}
 					}
 					// conn.close();
@@ -405,7 +409,7 @@ this.on('DataMigrationConfiguration',async(req) =>{
   var response = {
     "FieldConfiguration" : await getDMFieldData(connection),
     "DMLimit": await getDMLimit(connection),
-    "AllFieldID" : await getAllFieldID(connection)
+    "AllMandatoryFieldID" : await AllMandatoryFieldID(connection)
   }
   return JSON.stringify(response);
  }else if(action === "POST")
@@ -435,19 +439,20 @@ this.on('DataMigrationConfiguration',async(req) =>{
   }
 })
 
-async function getAllFieldID(connection){
+async function AllMandatoryFieldID(connection){
   try{
     var aResult = null,oObj = {},aResponse =[];
    aResult = await connection.run(
-    SELECT 
+    SELECT `FIELD_ID`
         .from`${connection.entities['VENDOR_PORTAL.DATA_MIGRATION_FIELD_CONFIGURATION']}`
+        .where `IS_MANDATORY = 'X'`
        );
        if(aResult.length > 0)
          {
           aResult.map(function(record){
-            oObj = {}
-            oObj[record.FIELD_ID]  = record.IS_MANDATORY
-            aResponse.push( oObj);
+            // oObj = {}
+            // oObj[record.FIELD_ID]  = record.IS_MANDATORY
+            aResponse.push( record.FIELD_ID);
           })
          }
       return aResponse;

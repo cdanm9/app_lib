@@ -81,7 +81,7 @@ BEGIN
     	SELECT :IN_REQUEST_NO, :LV_EVENT_NO, "EVENT_CODE", "USER_ID", "USER_NAME", "REMARK", "COMMENT", "EVENT_TYPE", :LV_CURR_TIMESTAMP
     	FROM :ST_REQUEST_EVENTS_LOG;
     	
-        OUT_SUCCESS := 'Email sent to ' || :LV_MAIL_TO;
+        OUT_SUCCESS := 'Message sent to ' || :LV_MAIL_TO;
         OUT_EMAIL_TO := :LV_MAIL_TO;
     --   OUT_SUCCESS := 'Email sent to ' || :IN_MAIL_TO || ' - ' || :USER_ID; 
 

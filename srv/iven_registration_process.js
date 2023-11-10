@@ -164,7 +164,7 @@ module.exports = cds.service.impl(function () {
                 OUT_ERROR_CODE: null,
                 OUT_ERROR_MESSAGE: error.message ? error.message : error
             }
-            lib_common.postErrorLog( Result, iReqNo, sUserID, "Vendor Registration Form", "Js",dbConn,hdbext);
+            lib_common.postErrorLog( Result, iReqNo, sUserID, "Vendor Registration Form", "Node Js",dbConn,hdbext);
             
             req.error({ code: "500", message: error.message ? error.message : error });
         }
@@ -179,8 +179,6 @@ module.exports = cds.service.impl(function () {
             //intialize connection to database
             // var connection = await cds.connect.to('db');
              // get connection
-          
-
 
             if (vendorEmail !== "" && vendorEmail !== null && vendorEmail !== undefined) {
                 let connection = await cds.connect.to('db');//form connection to database
@@ -199,20 +197,26 @@ module.exports = cds.service.impl(function () {
                         req.reply(sResult[0]);
                     }
                     else{
-                        throw "Generate Security Pin against email id";
+                        throw {"message": "Generate Security Pin against email id",
+                               "errorType":"Warning"};
                     }
                 }
                 else{
-                    throw "Please enter Registered Email Id";
+                    throw  {"message":"Please enter Registered Email Id",
+                    "errorType":"Warning"};
                 }
-            } else throw "Vendor email id is missing for security pin check."
+            } else throw {"message": "Vendor email id is missing for security pin check.",
+                            "errorType":"Warning"}
 
         } catch (error) {
+           
+          
             Result = {
                 OUT_ERROR_CODE: null,
                 OUT_ERROR_MESSAGE: error.message ? error.message : error
             }
-            lib_common.postErrorLog( Result, 1, vendorEmail, "Vendor Registration Form, Check Security Pin", "Js",dbConn,hdbext);
+            if(error.errorType !== "Warning")
+                 lib_common.postErrorLog( Result, 1, vendorEmail, "Vendor Registration Form", "Node Js",dbConn,hdbext);
             
             req.error({ code: "500", message: error.message ? error.message : error });
         }
@@ -261,7 +265,10 @@ module.exports = cds.service.impl(function () {
 
                 if (isEmailNotificationEnabled) {
                     var oEmaiContent = await lib_email_content.getEmailContent(connection, null, "SEC_PIN", oPinEmailData, null);
-                    await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sSupplierEmail], [sBuyerEmail], null);
+                    // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sSupplierEmail], [sBuyerEmail], null);
+                    var sCCEmail = await lib_email.setSampleCC( [sBuyerEmail]);
+                    await  lib_email.sendivenEmail(sSupplierEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+              
                 }
 
                 req.reply({ "SUCCESS": 'Yes' });
@@ -284,10 +291,17 @@ module.exports = cds.service.impl(function () {
                 Result = {},
                 sUserID = null,
                 sTypeDesc = null;
+              //intialize connection to database
+               let connection = await cds.connect.to('db');
+            var client = await dbClass.createConnectionFromEnv();
+            var dbConn = new dbClass(client);  
 
-            //intialize connection to database
-            let connection = await cds.connect.to('db');
+          
 
+            //fetch registered id against request no
+            var registeredUser =await  lib_common.getRegisteredId(requestNo,connection);
+
+          
             // try {
             if (entityCode === undefined || entityCode === null || entityCode === "" || creationType === undefined || creationType === null || creationType === "") {
 
@@ -361,6 +375,91 @@ module.exports = cds.service.impl(function () {
 
 
         } catch (error) {
+            Result = {
+                OUT_ERROR_CODE: null,
+                OUT_ERROR_MESSAGE: error.message ? error.message : error
+            }
+            if(error.errorType !== "Warning")
+                 lib_common.postErrorLog( Result, requestNo, registeredUser, "Vendor Registration Form", "Node Js",dbConn,hdbext);
+            
+            req.error({ code: "500", message: error.message ? error.message : error });
+        }
+    })
+    this.on('MDGPosting', async (req) => {
+        try {
+
+
+            var { action, inputData,addressData,contactsData,bankData, eventsData } = req.data;
+            var isEmailNotificationEnabled = false;
+            // get connection
+            var client = await dbClass.createConnectionFromEnv();
+            let dbConn = new dbClass(client);
+            // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::ONBOARDING_REJECT');
+
+            //intialize connection to database
+            var connection = await cds.connect.to('db');
+
+            //Check if email notification is enabled
+            isEmailNotificationEnabled = await lib_email.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
+
+            var iReqNo = inputData[0].REQUEST_NO || null;
+            var sEntityCode = inputData[0].ENTITY_CODE || null;
+            var iRequestType = inputData[0].REQUEST_TYPE || null;
+            var sSupplierEmail = inputData[0].REGISTERED_ID || null;
+            var sUserId = eventsData[0].USER_ID || null;
+            var iLevel = inputData[0].APPROVER_LEVEL || null;
+            var sBuyerEmail = inputData[0].REQUESTER_ID || null;
+            var sIvenNo = inputData[0].IVEN_VENDOR_CODE || null;
+            var sSupplerName = inputData[0].VENDOR_NAME1 || null;
+            var sChangeRequestNo = null;
+            var iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
+            var sCompareValue = "A";
+
+            
+             if (action === "APPROVE") { //-----------------------------------------------------------------------------
+                //////////////////FOrtesting 
+                isEmailNotificationEnabled = 0;
+                ///////////////
+                
+                var sSapVendorCode = null;
+                // ------------- MDG Posting Start------------------
+                var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
+
+                var iVenVendorCode = null;
+                var oMDGResponse = null;
+                var iMDGStatus = null;
+                var oMDGPayload = null;
+                var bMDGComparison = null;
+                var bAttachmentComparison = null;
+                var oActiveData = null;
+                var CurrAttachment = null;
+                var bNoChange = false;
+                var oDataStatus = null;
+                var ODataResponse = null;
+                var sCompareValue = null;
+
+                if (iLevel === iMaxLevelCount) {
+                    oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
+                    iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
+                    sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
+
+                    // ------------------------START: Direct MDG Call for testing-------------------------
+                     var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
+                     req.reply(MDGResult)
+                    //  console.log(MDGResult);
+                    // iMDGStatus = MDGResult.iStatusCode;
+                    // oMDGResponse = MDGResult.oResponse;
+                    // sChangeRequestNo = MDGResult.oResponse.length === 12 ? MDGResult.oResponse : null;
+                    // sCompareValue = "M";
+
+                }
+
+                // ------------- MDG Posting End------------------
+
+            }
+           
+
+        } catch (error) {
             req.error({ code: "500", message: error.message ? error.message : error });
         }
     })
@@ -377,7 +476,7 @@ module.exports = cds.service.impl(function () {
             // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::ONBOARDING_REJECT');
 
             //intialize connection to database
-            let connection = await cds.connect.to('db');
+            var connection = await cds.connect.to('db');
 
             //Check if email notification is enabled
             isEmailNotificationEnabled = await lib_email.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
@@ -430,14 +529,18 @@ module.exports = cds.service.impl(function () {
                         // var oEmaiContent = EMAIL_LIBRARY.getEmailData(action, "REGISTER", oEmailData, null);
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sSupplierEmail], null);
                         oEmaiContent = await lib_email_content.getEmailContent(connection, action, "REGISTER", oEmailData, null)
-                        await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sSupplierEmail], null, null)
+                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sSupplierEmail], null, null)
 
-
+                        var sCCEmail = await lib_email.setSampleCC( null);
+                        await  lib_email.sendivenEmail(sSupplierEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                  
                         // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [sBuyerEmail], null);
                         oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
-                        await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null, null)
-
+                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null, null)
+                        var sCCEmail = await lib_email.setSampleCC( null);
+                        await  lib_email.sendivenEmail(sBuyerEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                  
                     }
 
                     statusCode = 200;
@@ -454,6 +557,10 @@ module.exports = cds.service.impl(function () {
 
             }
             else if (action === "APPROVE") { //-----------------------------------------------------------------------------
+                //////////////////FOrtesting 
+                isEmailNotificationEnabled = 0;
+                ///////////////
+                
                 var sSapVendorCode = null;
                 // ------------- MDG Posting Start------------------
                 var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
@@ -476,13 +583,13 @@ module.exports = cds.service.impl(function () {
                     iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
                     sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
 
-                    //------------------------START: Direct MDG Call for testing-------------------------
-                     var MDGResult = lib_mdg.PostToMDG(oMDGPayload);
-                     console.log(MDGResult);
-                    // iMDGStatus = MDGResult.iStatusCode;
-                    // oMDGResponse = MDGResult.oResponse;
-                    // sChangeRequestNo = MDGResult.oResponse.length === 12 ? MDGResult.oResponse : null;
-                    // sCompareValue = "M";
+                    // ------------------------START: Direct MDG Call for testing-------------------------
+                     var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
+                    //  console.log(MDGResult);
+                    iMDGStatus = MDGResult.iStatusCode;
+                    oMDGResponse = MDGResult.oResponse;
+                    sChangeRequestNo = MDGResult.oResponse.length === 12 ? MDGResult.oResponse : null;
+                    sCompareValue = "M";
 
                 }
 
@@ -505,12 +612,12 @@ module.exports = cds.service.impl(function () {
                             sCompareValue]);
                     var responseObj = {
                         "Message": Result.outputScalar.OUT_SUCCESS !== null ? Result.outputScalar.OUT_SUCCESS : "Approval failed!",
-                        // "MDG_status": iMDGStatus,
-                        // "MDG_Payload": oMDGPayload,
-                        // "ODataResponse": ODataResponse,
-                        // "bMDGComparison": bMDGComparison,
-                        // "bAttachmentComparison": bAttachmentComparison,
-                        // "CurrAttachment": CurrAttachment,
+                        "MDG_status": iMDGStatus,
+                        "MDG_Payload": oMDGPayload,
+                        "ODataResponse": ODataResponse,
+                        "bMDGComparison": bMDGComparison,
+                        "bAttachmentComparison": bAttachmentComparison,
+                        "CurrAttachment": CurrAttachment,
                         "sChangeRequestNo": sChangeRequestNo
 
                     };
@@ -536,14 +643,16 @@ module.exports = cds.service.impl(function () {
                                 // var oEmaiContent = EMAIL_LIBRARY.getEmailData(action, "REGISTER", oEmailData, null);
                                 // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
                                 oEmaiContent = await lib_email_content.getEmailContent(connection, action, "REGISTER", oEmailData, null)
-                                await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null, null)
-
+                                // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null, null)
+                                var sCCEmail = await lib_email.setSampleCC( null);
+                                await  lib_email.sendivenEmail(oEmailData.Next_Approver,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                                 // Approval done - notification to Buyer
                                 // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
                                 // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer], null);
                                 oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
-                                await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer], null, null)
-
+                                // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer], null, null)
+                                var sCCEmail = await lib_email.setSampleCC( null);
+                                await  lib_email.sendivenEmail(oEmailData.Buyer,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                             }
 
                         } else if (action === "FINAL_APPROVAL") {
@@ -553,8 +662,10 @@ module.exports = cds.service.impl(function () {
                                 // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
                                 // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null);
                                 oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
-                                await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null, null)
-
+                                // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null, null)
+                                var sCCEmail = await lib_email.setSampleCC( null);
+                                var sToEmail = [oEmailData.Buyer, oEmailData.Approver_Email].toString();
+                                await  lib_email.sendivenEmail(sToEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                             }
                         }
 
@@ -571,18 +682,18 @@ module.exports = cds.service.impl(function () {
                     return responseObj;
                 } else {
                     return "Max level reached";
-                    //     responseObj = {
-                    //         "Message": "MDG posting failed!",
-                    //         "MDG_status": iMDGStatus,
-                    //         "MDG_Payload": oMDGPayload,
-                    //         "SAP_Code": sSapVendorCode,
-                    //         "MDG_Response": oMDGResponse
+                        // responseObj = {
+                        //     "Message": "MDG posting failed!",
+                        //     "MDG_status": iMDGStatus,
+                        //     "MDG_Payload": oMDGPayload,
+                        //     "SAP_Code": sSapVendorCode,
+                        //     "MDG_Response": oMDGResponse
 
-                    //     }
-                    //     Result = {
-                    //         "OUT_ERROR_CODE": iMDGStatus,
-                    //         "OUT_ERROR_MESSAGE": JSON.stringify(oMDGResponse)
-                    //     }
+                        // }
+                        // Result = {
+                        //     "OUT_ERROR_CODE": iMDGStatus,
+                        //     "OUT_ERROR_MESSAGE": JSON.stringify(oMDGResponse)
+                        // }
                     //     iVen_Content.postErrorLog(conn, Result, iReqNo, sUserId, "Supplier Registration Approval", "API");
 
                     //     if (bNoChange === true) {
@@ -679,7 +790,10 @@ module.exports = cds.service.impl(function () {
                     // var oEmaiContent = EMAIL_LIBRARY.getEmailData(sAction, "COMMUNCATION", oEmailData, null);
                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.To_Email], [sPmId]);
                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "COMMUNCATION", oEmailData, null)
-                    await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.To_Email], [sPmId], null)
+                    // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.To_Email], [sPmId], null)
+                    var sCCEmail = await lib_email.setSampleCC( [sPmId]);
+                    await  lib_email.sendivenEmail(oEmailData.To_Email,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                
                 }
 
                 statusCode = 200;

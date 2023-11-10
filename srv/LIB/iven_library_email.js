@@ -134,8 +134,9 @@ module.exports = {
             // var sQuery = 'SELECT TOP 1 "CLIENT" AS CLIENT FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_SAP_CLIENT" ';
             // var aResult = conn.executeQuery(sQuery);
             let aResult = await conn.run(
-                SELECT`TOP 1 CLIENT AS CLIENT`
+                SELECT`CLIENT`
                     .from`${conn.entities['VENDOR_PORTAL.MASTER_SAP_CLIENT']}`
+                    
             );
             if (aResult.length > 0) {
                 iClient = aResult[0].CLIENT !== undefined ? aResult[0].CLIENT : null;
@@ -154,7 +155,7 @@ module.exports = {
             // var sQuery = 'SELECT TOP 1 "DESTINTAION" AS DESTINTAION FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_SAP_CLIENT" ';
             // var aResult = conn.executeQuery(sQuery);
             let aResult = await conn.run(
-                SELECT`TOP 1 DESTINTAION AS DESTINTAION`
+                SELECT`DESTINTAION`
                     .from`${conn.entities['VENDOR_PORTAL.MASTER_SAP_CLIENT']}`
             );
             if (aResult.length > 0) {
@@ -172,6 +173,11 @@ module.exports = {
     },
     sendivenEmail: async function (ToEmails, CCEmail, type, subject, body) {
         try {
+              // CC added for developers to receive emails while testing 
+        // var aSampleCC = ["siddhesh.d@intellectbizware.com", "supritha.m@intellectbizware.com", "farzeen.s@intellectbizware.com", "amit.m@intellectbizware.com", "vishal.s@intellectbizware.com"];
+        // if (CCEmail === null || CCEmail.length < 0) CCEmail = aSampleCC
+        // else if (CCEmail.length > 0) CCEmail.push(aSampleCC.toString());
+
             const lvEmailConfig = await this.getEmailConfig();
             const transporter = nodemailer.createTransport({
                 host: lvEmailConfig.HOST,
@@ -183,6 +189,8 @@ module.exports = {
                 },
             });
             var senderEmail = lvEmailConfig.SENDER_EMAIL;
+            // var sToEmails = ToEmails.toString();
+            // var sCCEmail = CCEmail.toString();
             if (type == 'html') {
                 var mailOptions = {
                     from: senderEmail,
@@ -255,5 +263,12 @@ module.exports = {
 
         }
 
+    },
+    setSampleCC:async function(aEmailCC){
+        var aSampleCC =  ["supritha.m@intellectbizware.com","siddhesh.d@intellectbizware.com" , "farzeen.s@intellectbizware.com", "vishal.s@intellectbizware.com"];
+        if (aEmailCC === null || aEmailCC.length < 0) aEmailCC = aSampleCC
+        else if (aEmailCC.length > 0) aEmailCC.push(aSampleCC.toString());
+
+       return aEmailCC.toString();
     }
 }

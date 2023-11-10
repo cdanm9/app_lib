@@ -1,12 +1,13 @@
 const cds = require("@sap/cds");
 const lib_email = require("./iven_library_email.js");
 const SequenceHelper = require("./SequenceHelper");
+const lib_admin = require('./iven_library_admin_panel');
 
 module.exports = {
      getMDGPayload:async function(oHanaPayload,addressData,contactsData,bankData, conn) {
 		try{
-        var iVenVendorCode = oHanaPayload[0].IVEN_VENDOR_CODE.toString() || "";
-        var sSAPVendorCode = oHanaPayload[0].SAP_VENDOR_NO || "";
+        var iVenVendorCode = oHanaPayload[0].IVEN_VENDOR_CODE ? oHanaPayload[0].IVEN_VENDOR_CODE.toString() : "";
+        var sSAPVendorCode = oHanaPayload[0].SAP_VENDOR_CODE || "";
         var iRequestType = oHanaPayload[0].REQUEST_TYPE;
         var iSupplierType = oHanaPayload[0].SUPPL_TYPE;
         var sBP_Type = oHanaPayload[0].BP_TYPE_CODE || "";
@@ -73,58 +74,39 @@ try{
 		iStatusCode: 0
 	};
 
-	var iSapDest = lib_email.getSAPDestination(conn);
-	if (iSapDest === null || iSapDest === "") {
-		throw "SAP Destination missing";
-	}
+	// var iSapDest =await lib_email.getSAPDestination(conn);
+	// if (iSapDest === null || iSapDest === "") {
+	// 	throw "SAP Destination missing";
+	// }
 
-	try {
+	// try {
 		if (dataobj !== undefined || dataobj !== "" || dataobj !== null) {
 			var iVenVendorConnection = await cds.connect.to('ZMDG_VENDOR_REG_SRV');
-			var response = await iVenVendorConnection.send({
+			var sResponse = await iVenVendorConnection.send({
 			  method: 'POST',
 			  path: "/GeneralDataSet",
+			  data:dataobj,
 			  headers: { 'Content-Type': 'application/json',
 						  "accept": "application/json",
 						  "X-Requested-With": "XMLHttpRequest"}
 			})
-	console.log(response);
-
-			// var destination_package = "VENDOR_PORTAL.XSJS";
-			// var destination_name = iSapDest;
-			// 	
-			// var dest = $.net.http.readDestination(destination_package, destination_name);
-
-			// var client = new $.net.http.Client();
-			// var CSRF = getCSRFTokenMDG(dest, client);
-
-			// var url = "/ZMDG_VENDOR_REG_SRV/GeneralDataSet";
-			// url = encodeURI(url);
-
-			// var req = new $.web.WebRequest($.net.http.POST, url); //Entity Set 
-			// req.headers.set("x-csrf-token", CSRF);
-			// req.headers.set("Content-Type", "application/json");
-			// req.headers.set("accept", "application/json");
-			// req.headers.set("X-Requested-With", "XMLHttpRequest");
-			// $.response.contentType = "application/json";
-
-			// var postObj = JSON.stringify(dataobj);
-			// req.setBody(postObj);
-
-			// client.request(req, dest);
-			var sClientResponse = client.getResponse();
-
-			var sResponse = sClientResponse.body.asString();
-
-			if (sResponse.includes("html")) {
-				oResponseObj = "MDG CR generation failed. Unauthorized User.";
-			} else {
-				oResponseObj = JSON.parse(sResponse);
-			}
-			var iStatus = parseInt(sClientResponse.status, 10);
-
-			if (oResponseObj && oResponseObj.d) {
-				resultData.oResponse = oResponseObj.d.ChangeRequest;
+	// console.log(response);
+			
+// return response;
+			
+// var sResponse = response;
+			// if (sResponse.includes("html")) {
+			// 	oResponseObj = "MDG CR generation failed. Unauthorized User.";
+			// } 
+			// else {
+			// 	// oResponseObj = JSON.parse(sResponse);
+			// 	oResponseObj = sResponse;
+			// }
+			sResponse.value ? 	oResponseObj = sResponse : oResponseObj = "MDG CR generation failed. Unauthorized User.";
+			// var iStatus = parseInt(sClientResponse.status, 10);
+var iStatus = 200;
+			if (oResponseObj && oResponseObj.value) {
+				resultData.oResponse = oResponseObj.value[0].d.ChangeRequest;
 				// resultData.oResponse = oResponseObj;
 				resultData.iStatusCode = iStatus;
 				// resultData.iStatusCode = 200;
@@ -138,10 +120,10 @@ try{
 			resultData.iStatusCode = 400;
 		}
 
-	} catch (e) {
-		resultData.oResponse = e.toString();
-		resultData.iStatusCode = 400;
-	}
+	// } catch (e) {
+	// 	resultData.oResponse = e.toString();
+	// 	resultData.iStatusCode = 400;
+	// }
 
 	// throw JSON.stringify(resultData);
 	return resultData;
@@ -334,14 +316,16 @@ try{
 	var oPayload = {
 		"Lifnr": sSAPVendorCode,
 		"Land1": aAddressDataArr.COUNTRY || "",
-		"Name1": sName1.substring(0, 40) || "",
+		// "Name1": sName1 !== "" ?( sName1.substring(0, 40) ): "",
+		"Name1":  sName1.substring(0, 40)  ||  "",
 		"Name2": sName1.substring(40, sName1.length <= 80 ? sName1.length : 80) || "",
+		// "Name2": await sName1 !== "" ?( sName1.substring(40, sName1.length <= 80 ? sName1.length : 80)) : "",
 		"Ort01": aAddressDataArr.CITY || "",
 		"Ort02": aAddressDataArr.DISTRICT || "",
 		"Pfach": "", // PO Box
 		"Pstlz": aAddressDataArr.POSTAL_CODE || "", // Pin Code
 		"Regio": aAddressDataArr.STATE || "",
-		"Sortl": await this.getSearchTerm(aGeneralDataArr.COMPANY_NAME1) || "",
+		"Sortl": await this.getSearchTerm(aGeneralDataArr.COMPANY_NAME1 || "") || "",
 		"Stras": aAddressDataArr.STREET1 || "",
 		"STR_SUPPL1": aAddressDataArr.STREET2 || "",
 		"STR_SUPPL2": aAddressDataArr.STREET3 || "",
@@ -363,10 +347,10 @@ try{
 		"Idnumber": iVenVendorCode,
 		"BP_Type": sBP_Type, //classification
 		"VAT_RegNo": aGeneralDataArr.VAT_REG_NUMBER || "",
-		"BU_Group": aGeneralDataArr.SUPPL_TYPE || "",
-		"TaxExempt": aGeneralDataArr.VAT_CHECK === "N" ? "X" : "", // 12/09/2022 changes done to accomodate Tax exemption changes
-		"TaxExemptReason": sExemptionReason || "", // 12/09/2022 changes done to accomodate Tax exemption changes
-		"Qualifier": this.getQualiferfromReqType(aGeneralDataArr.REQUEST_TYPE) || '', //13/04/2023 to add Qualifer for Quick Registration
+		// "BU_Group": aGeneralDataArr.SUPPL_TYPE || "",
+		// "TaxExempt": aGeneralDataArr.VAT_CHECK === "N" ? "X" : "", // 12/09/2022 changes done to accomodate Tax exemption changes
+		// "TaxExemptReason": sExemptionReason || "", // 12/09/2022 changes done to accomodate Tax exemption changes
+		// "Qualifier": await this.getQualiferfromReqType(aGeneralDataArr.REQUEST_TYPE) || '', //13/04/2023 to add Qualifer for Quick Registration
 		// 		"Qualifier" : "",
 		"BankDetailsSet": [],
 		"ContactPersonSet": []
@@ -379,6 +363,7 @@ try{
 }   ,
 
  getSearchTerm:async function(sValue) {
+
 	var checkSpace = sValue.match(/^(\S+)\s(.*)/);
 	var sSearchTerm = "";
 	if (checkSpace !== null) {
@@ -507,7 +492,139 @@ try{
 }catch(error){
 	throw error;
 }
+},
+
+ getActiveDataPayload:async function(conn, iIvenNo) {
+	try{
+    var sReqNo=iIvenNo;
+    // var sReqNo=getActiveReqNo(conn, iIvenNo);
+    var aActiveData=await this.getActiveData(conn, sReqNo); 
+    
+    var oMDGPayload =await  this.getMDGPayload(aActiveData.MAIN,aActiveData.ADDRESS,aActiveData.CONTACTS,aActiveData.BANK, conn);
+    
+    return oMDGPayload;
+}catch(error){
+	throw error;
 }
+},
+ getActiveData:async function(conn, iReqNo) {
+	try{
+    
+    var oDataObj = {
+		    "MAIN":await this.getTableData(conn, iReqNo, "REQUEST_INFO") || [],
+		    "ADDRESS": await this.getAddressWithDesc(conn,await this.getTableData(conn, iReqNo, "REGFORM_ADDRESS") || []),
+		    "CONTACTS": await this.getTableData(conn, iReqNo, "REGFORM_CONTACTS") || [],
+		    "BANK": await this.getPaymentsWithDesc(conn, await this.getTableData(conn, iReqNo, "REGFORM_BANKS") || [])
+    };
+
+
+	return oDataObj;
+}catch(error){
+	throw error;
+}
+},
+ getPaymentsWithDesc:function(conn, paymentArr) {
+	try{
+    var paymentWithDesc = [];
+    if (paymentArr.length > 0) {
+        var dataObj = {};
+		paymentWithDesc = Object.keys(paymentArr).map(function(key) {
+		    dataObj = JSON.parse(JSON.stringify(paymentArr[key]));
+		    
+			if (dataObj.BANK_COUNTRY !== "" || dataObj.BANK_COUNTRY !== null) {
+				dataObj.COUNTRY_DESC = lib_admin.getCountryDesc(conn, dataObj.BANK_COUNTRY) || "";
+			}
+			
+			return dataObj;
+		});
+	}
+	
+	return paymentWithDesc;
+}catch(error){
+	throw error;
+}
+},
+ getTableData:async function(conn, iRegNo, sTable) {
+	try{
+	// var sQuery =
+	// 	'SELECT * FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::' + sTable + '" WHERE OBR_NO = ?';
+	// var aResult = conn.executeQuery(sQuery, iRegNo);
+	let aResult = await conn.run(
+        SELECT
+          .from`${conn.entities['VENDOR_PORTAL.' + sTable]}`
+		  .where `REQUEST_NO=${iRegNo}`
+      );
+
+	// var aDataObjects = Object.keys(aResult).map(function(key) {
+	// 	return aResult[key];
+	// });
+
+	// return aDataObjects;
+	return aResult;
+}catch(error){
+	throw error;
+}	
+},
+ getRegionDesc:async function(conn, countryCode, regionCode) {
+	try{
+    var sDesc = "";
+    
+	// var sQuery =
+	// 	'SELECT "BEZEI" AS DESC FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_REGION" WHERE LAND1 = ? AND BLAND = ?';
+	// var aResult = conn.executeQuery(sQuery, countryCode, regionCode);
+	let aResult = await conn.run(
+        SELECT `BEZEI AS DESC`
+          .from`${conn.entities['VENDOR_PORTAL.MASTER_REGION']}`
+		  .where `LAND1=${countryCode} AND BLAND=${regionCode}`
+      );
+    if(aResult.length > 0){
+        sDesc = aResult[0].DESC;
+    }
+
+	return sDesc;
+}catch(error){
+	throw error;
+}
+},
+
+
+ getAddressWithDesc:async function(conn, addressArr) {
+	try{
+    var addressWithDesc = [];
+    if (addressArr.length > 0) {
+        var dataObj = {};
+		for(var i=0;i<addressArr.length;i++)
+		{
+			dataObj = JSON.parse(JSON.stringify(addressArr[i]));
+			if (dataObj.COUNTRY !== "" || dataObj.COUNTRY !== null) {
+				dataObj.COUNTRY_DESC = await lib_admin.getCountryDesc(conn, dataObj.COUNTRY) || "";
+			}
+			if (dataObj.STATE !== "" || dataObj.STATE !== null) {
+				dataObj.REGION_DESC =await this.getRegionDesc(conn, dataObj.COUNTRY, dataObj.STATE) || "";
+			}
+				addressWithDesc.push(dataObj);
+		}
+		// addressWithDesc = Object.keys(addressArr).map(function(key) {
+		//     dataObj = JSON.parse(JSON.stringify(addressArr[key]));
+		    
+		// 	if (dataObj.COUNTRY !== "" || dataObj.COUNTRY !== null) {
+		// 		dataObj.COUNTRY_DESC =  lib_admin.getCountryDesc(conn, dataObj.COUNTRY) || "";
+		// 	}
+		// 	if (dataObj.STATE !== "" || dataObj.STATE !== null) {
+		// 		dataObj.REGION_DESC = this.getRegionDesc(conn, dataObj.COUNTRY, dataObj.STATE) || "";
+		// 	}
+			
+		// 	return dataObj;
+		// });
+	}
+	
+	return addressWithDesc;
+}catch(error){
+	throw error;
+}
+}
+
+
 
 
     

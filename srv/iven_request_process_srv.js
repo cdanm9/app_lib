@@ -137,8 +137,9 @@ module.exports = cds.service.impl(function () {
                                 // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null);
                                 oEmaiContent = await lib_email_content.getEmailContent(connection, "QUICK_REG", "REGISTER", oEmailData, null)
                                 // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], [], null)
-                                await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null, null)
-
+                                // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null, null)
+                                var sCCEmail = await lib_email.setSampleCC(null);
+                                lib_email.sendivenEmail(sBuyerEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                             }
                         } else {
                             // iVen_Content.postErrorLog(conn, Result, iREQUEST_NO, sUserID, "Supplier Request Creation", "PROCEDURE",dbConn,hdbext);
@@ -153,7 +154,11 @@ module.exports = cds.service.impl(function () {
                                 // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [aResult[0].EMAIL], null);
                                 oEmaiContent = await lib_email_content.getEmailContent(connection, "CREATE", "REQUEST", oEmailData, null)
                                 // await lib_email.sendEmail(connection, 'TEST', 'Create Request', [email], [], null)
-                                await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [email], null, null)
+                                // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [email], null, null)
+                                //  lib_email.sendivenEmail(email[0].USER_ID,"supritha.m@intellectbizware.com",'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                                var sCCEmail = await lib_email.setSampleCC(null);
+                                await  lib_email.sendivenEmail(email[0].USER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                          
                             }
                         }
                         let Result2 = {
@@ -162,6 +167,7 @@ module.exports = cds.service.impl(function () {
                         return Result2;
                         // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 200);
                     } else {
+                        iREQUEST_NO = 0;
                         throw {"message":"Vendor Request Creation failed. Please contact admin."}
                         // let Result2 = {
                         //     OUT_SUCCESS: "Supplier Request Creation failed. Please contact admin."
@@ -172,11 +178,13 @@ module.exports = cds.service.impl(function () {
                     }
                 } else {
                     if (valid === 'ErrorEmail') {
+                        iREQUEST_NO = 0;
                         // var Result2 = {
                         //     OUT_SUCCESS: "Supplier Email " + aInputData[0].REGISTERED_ID + " already exist."
                         // };
                         throw {"message":"Vendor Email " + aInputData[0].REGISTERED_ID + " already exist."}
                     } else {
+                        iREQUEST_NO = 0;
                         // var Result2 = {
                         //     OUT_SUCCESS: "Supplier " + aInputData[0].VENDOR_NAME1 + " already exist. Previous request is in process.",
                         // };
@@ -190,12 +198,12 @@ module.exports = cds.service.impl(function () {
                     Result2 = {
                         OUT_SUCCESS: e.message || ""
                     };
-
+                    iREQUEST_NO = 0;
                     Result = {
-                        OUT_ERROR_CODE: null,
+                        OUT_ERROR_CODE: 500,
                         OUT_ERROR_MESSAGE:  e.message ? e.message : e
                     }
-                    lib_common.postErrorLog( Result, iREQUEST_NO, sUserID, "Vendor Request Form", "Js",dbConn,hdbext);
+                    lib_common.postErrorLog( Result, iREQUEST_NO, sUserID, "Vendor Request Form", "Node Js",dbConn,hdbext);
                     // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                     req.error({ code: "500", message: e.message });
                 } 
@@ -252,12 +260,19 @@ module.exports = cds.service.impl(function () {
 
                         // var oEmaiContent1 = EMAIL_LIBRARY.getEmailData("INVITE", "REQUEST", oEmailData, null);
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent1.emailBody, oEmaiContent1.subject, [aInputData[0].REGISTERED_ID], null);
+
+                         // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REQUESTER_ID], null, null)
                         oEmaiContent = await lib_email_content.getEmailContent(connection, "APPROVE", "REQUEST", oEmailData, null)
-                        await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REQUESTER_ID], null, null)
-
+                        var sCCEmail = await lib_email.setSampleCC(null);
+                        await  lib_email.sendivenEmail(aInputData[0].REQUESTER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                
+                        
+                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null)
                         oEmaiContent = await lib_email_content.getEmailContent(connection, "INVITE", "REQUEST", oEmailData, null)
-                        await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null)
-
+                        var sCCEmail = await lib_email.setSampleCC(null);
+                        await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                
+                       
                     }
                     let Result2 = {};
                     Result2.OUT_SUCCESS = sResponse.outputScalar.OUT_SUCCESS || "";
@@ -284,7 +299,7 @@ module.exports = cds.service.impl(function () {
                         OUT_ERROR_CODE: null,
                         OUT_ERROR_MESSAGE:  e.message ? e.message : e
                     }
-                    lib_common.postErrorLog( Result, reqNo, sUserID, "Supplier Request Approval", "Js",dbConn,hdbext);
+                    lib_common.postErrorLog( Result, reqNo, sUserID, "Supplier Request Approval", "Node Js",dbConn,hdbext);
                     // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                     // throw {"message":"Supplier Request Approval failed. Please contact admin."}
                     req.error({ code: "500", message: "Vendor Request Approval failed. Please contact admin." });
@@ -321,11 +336,13 @@ module.exports = cds.service.impl(function () {
 
                         // oEmaiContent = EMAIL_LIBRARY.getEmailData("REJECT", "REQUEST", oEmailData, null);
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [inviteReq[0].REQUESTER_ID], null)
+                        
                         oEmaiContent = await lib_email_content.getEmailContent(connection, sAction, "REQUEST", oEmailData, null)
-
-                        await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REQUESTER_ID], ["supritha.m@intellectbizware.com"], null)
-                        // await lib_email.sendEmail(connection,oEmaiContent.emailBody, oEmaiContent.subject, ["supritha.m@intellectbizware.com"], [], null)
-
+                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REQUESTER_ID], ["supritha.m@intellectbizware.com"], null)
+                        var sCCEmail = await lib_email.setSampleCC(null);
+                        await  lib_email.sendivenEmail(aInputData[0].REQUESTER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                
+                    
                     }
                     let Result2 = {};
                     Result2.OUT_SUCCESS = sResponse.outputScalar.OUT_SUCCESS || "";
@@ -370,7 +387,7 @@ module.exports = cds.service.impl(function () {
                     OUT_ERROR_CODE: null,
                     OUT_ERROR_MESSAGE:  e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result, reqNo, sUserID, "Vendor Request Approval", "Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result, reqNo, sUserID, "Vendor Request Approval", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 
@@ -390,9 +407,16 @@ module.exports = cds.service.impl(function () {
                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [inviteReq[0].REGISTERED_ID], null);
                     oEmaiContent = await lib_email_content.getEmailContent(connection, "RE_INVITE", "REQUEST", oEmailData, null)
 
-                    sResponse = await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null);
-
-                    return sResponse === "Email sent" ? "Invite Notification Resent" : "";
+                    // sResponse = await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null);
+                    var sCCEmail = await lib_email.setSampleCC( null);
+                     await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject,oEmaiContent.emailBody)
+                
+                    // if( sResponse === "Email sent") {
+                    //    return  "Invite Notification Resent";
+                    // } else{
+                    //     throw "Failed to send email";
+                    // } 
+                    return "Invite Notification Resent";
                 }
                 else {
                     sResponse = "Email Notification disabled";
@@ -447,7 +471,7 @@ module.exports = cds.service.impl(function () {
             }
         } catch (error) {
             
-            req.error({ code: "500", message: error.message });
+            req.error({ code: "500",  message: error.message ? error.message : error });
         }
     })
 
@@ -529,8 +553,10 @@ module.exports = cds.service.impl(function () {
                     if (isEmailNotificationEnabled) {
                         oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REQ_TYPE_CHANGE", oEmailData, null)
 
-                        await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerId], null, null)
-
+                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerId], null, null)
+                        var sCCEmail = await lib_email.setSampleCC(null);
+                        await  lib_email.sendivenEmail(sBuyerId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                
                         // var oEmaiContent = EMAIL_LIBRARY.getEmailData(null, "REQ_TYPE_CHANGE", oEmailData, null);
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerId], null);
                     }
@@ -548,7 +574,7 @@ module.exports = cds.service.impl(function () {
                     OUT_ERROR_CODE: null,
                     OUT_ERROR_MESSAGE:   e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Request Edit", "Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Request Edit", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 
@@ -602,7 +628,10 @@ module.exports = cds.service.impl(function () {
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Changed_To], [oEmailData.sBuyerId, oEmailData.Changed_From]);
                             oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REG_EMAILID_CHANGE", oEmailData, null)
 
-                            await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
+                            // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
+                            var sCCEmail = await lib_email.setSampleCC( [sBuyerId, sOldRegId]);
+                            await  lib_email.sendivenEmail(sNewRegId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                      
                         }
                     } else {
                         // Result = execProcedure(iRequestNo, iStatus, sNewRegId, aEventObj);
@@ -617,7 +646,10 @@ module.exports = cds.service.impl(function () {
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Changed_To], [oEmailData.sBuyerId, oEmailData.Changed_From]);
                             oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REG_EMAILID_CHANGE", oEmailData, null)
 
-                            await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
+                            // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
+                            var sCCEmail = await lib_email.setSampleCC( [sBuyerId, sOldRegId]);
+                            await  lib_email.sendivenEmail(sNewRegId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                      
                         }
                         //CPI Update change
                         // var S_iSapCode =  "\"" + iSAPCode + "\"" ;
@@ -677,7 +709,10 @@ module.exports = cds.service.impl(function () {
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Changed_To], [oEmailData.sBuyerId, oEmailData.Changed_From]);
                         oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REG_EMAILID_CHANGE", oEmailData, null);
 
-                        await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
+                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
+                        var sCCEmail = await lib_email.setSampleCC( [sBuyerId, sOldRegId]);
+                        await  lib_email.sendivenEmail(sNewRegId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                  
                     }
                 }
                 //-------------------------------------------------------------------------------------------------------------
@@ -690,7 +725,7 @@ module.exports = cds.service.impl(function () {
                     OUT_ERROR_CODE: null,
                     OUT_ERROR_MESSAGE:   e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Registered ID Edit", "Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Registered ID Edit", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 
@@ -749,7 +784,10 @@ module.exports = cds.service.impl(function () {
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, aEmailto, null);
                             oEmaiContent = await lib_email_content.getEmailContent(connection, sAction, "USER_DELEGATE", oEmailData, aRequests[i].STATUS);
 
-                            await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, aEmailto, null, null)
+                            // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, aEmailto, null, null)
+                            var sCCEmail = await lib_email.setSampleCC( null);
+                            await  lib_email.sendivenEmail(aEmailto,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                      
                         }
                     }
 
@@ -771,7 +809,7 @@ module.exports = cds.service.impl(function () {
                     OUT_ERROR_CODE: null,
                     OUT_ERROR_MESSAGE:  e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result,  aRequests[i].REQUEST_NO, sUserID, "Vendor Request Forwarding", "Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result,  aRequests[i].REQUEST_NO, sUserID, "Vendor Request Forwarding", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 
@@ -786,7 +824,7 @@ module.exports = cds.service.impl(function () {
             }
 
         } catch (error) {
-            req.error({ code: "500", message: error.message });
+            req.error({ code: "500",  message: error.message ? error.message : error });
         }
     })
 
@@ -848,7 +886,7 @@ module.exports = cds.service.impl(function () {
     async function checkVendor(connection, data, val) {
         try {
             let aQuery1Result = await connection.run(
-                SELECT
+                SELECT 
                     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
                     .where`STATUS NOT IN (3,8) AND VENDOR_NAME1 = ${data[0].VENDOR_NAME1}`
             );

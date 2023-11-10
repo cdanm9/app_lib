@@ -41,24 +41,24 @@ module.exports = cds.service.impl(function () {
 // darshan
 //       **email test  */
       
-//       var ToEmails = "darshan.l@intellectbizware.com;darsh2269@gmail.com";
-//       var CCEmails = "darsh3799@me.com";
-//       var type = 'html' ; //html or text
-//       var subject = "CAPM iVen Mail test";
-//       // var body = "CAPM iVen Mail test";
+      var ToEmails = "darshan.l@intellectbizware.com,darsh2269@gmail.com";
+      var CCEmails = "supritha.m@intellectbizware.com";
+      var type = 'html' ; //html or text
+      var subject = "CAPM iVen Mail test";
+      // var body = "CAPM iVen Mail test";
 
-//       var body =    '<!DOCTYPE html>'+
-//      '<html><head>    <title>Email Example</title></head><body>'+
-//     '<p>Dear [Recipients Name],</p>    <p>This is a sample email to demonstrate the HTML format for email bodies.</p>'+
-//         '<h2>[Email Subject]</h2>   <p>'+
-//         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '+
-//         'Nulla eget libero nec massa tincidunt varius ac eu justo.'+
-//         '</p>  <p>'+
-//         'Phasellus bibendum [Your Message]. Sed lacinia, justo et '+
-//         'rhoncus fringilla, risus sapien vulputate nunc.'+
-//     '</p><p>Sincerely,</p> <p>Your Name</p></body></html>';
+      var body =    '<!DOCTYPE html>'+
+     '<html><head>    <title>Email Example</title></head><body>'+
+    '<p>Dear [Recipients Name],</p>    <p>This is a sample email to demonstrate the HTML format for email bodies.</p>'+
+        '<h2>[Email Subject]</h2>   <p>'+
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '+
+        'Nulla eget libero nec massa tincidunt varius ac eu justo.'+
+        '</p>  <p>'+
+        'Phasellus bibendum [Your Message]. Sed lacinia, justo et '+
+        'rhoncus fringilla, risus sapien vulputate nunc.'+
+    '</p><p>Sincerely,</p> <p>Your Name</p></body></html>';
 
-//      await lib_mail.sendivenEmail(ToEmails,CCEmails,type,subject,body);
+     await lib_mail.sendivenEmail(ToEmails,CCEmails,type,subject,body);
       var resp = { "MATERIAL_ID": "1234", "MATERIAL_DSC": "response.itemsPerPage" }
       return resp;
     })

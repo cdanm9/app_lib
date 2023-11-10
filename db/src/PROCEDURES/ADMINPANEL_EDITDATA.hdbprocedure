@@ -21,6 +21,7 @@ PROCEDURE "ADMINPANEL_EDITDATA" (
     IN ST_SUBACC "ST_MASTER_SUBACCOUNT",
     IN ST_CRED "ST_MASTER_CREDENTIAL", 
     IN ST_NDAATTACH "ST_MASTER_IVEN_ATTACHMENTS", 
+    IN ST_EMAIL_CONFIG "ST_EMAIL_CONFIG",
    
 
     OUT OUT_SUCCESS String,
@@ -337,7 +338,23 @@ BEGIN
             IF ( LV_COUNT > 0) THEN
                 OUT_SUCCESS_FLAG := 'Y';    
             END IF;
-    	   
+        ELSEIF ( :IN_MASTER_NAME = 'Smtp_Config' ) THEN   
+        
+            SELECT count("SR_NO") INTO LV_COUNT FROM "VENDOR_PORTAL_EMAIL_CONFIG";
+  	
+            SELECT "SR_NO" into LV_SR_NO FROM :ST_EMAIL_CONFIG;
+            
+  	        IF ( :LV_COUNT > 0 ) THEN
+  	            DELETE FROM "VENDOR_PORTAL_EMAIL_CONFIG"
+  	            WHERE "SR_NO" = :LV_SR_NO;
+    	    END IF;
+            INSERT INTO "VENDOR_PORTAL_EMAIL_CONFIG" ("SR_NO","HOST", "PORT","SECURE","SENDER_EMAIL","USERNAME","PASSWORD","CREATED_ON")
+    	    SELECT "SR_NO","HOST", "PORT","SECURE","SENDER_EMAIL","USERNAME","PASSWORD","CREATED_ON" FROM :ST_EMAIL_CONFIG;
+
+            SELECT count("SR_NO") INTO LV_COUNT FROM "VENDOR_PORTAL_EMAIL_CONFIG" WHERE "SR_NO" = :LV_SR_NO;
+            IF ( LV_COUNT > 0) THEN
+                OUT_SUCCESS_FLAG := 'Y';    
+            END IF; 
         END IF;
     
     -- Start of Main IF (A.3)

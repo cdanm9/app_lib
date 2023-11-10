@@ -353,6 +353,19 @@ module.exports = {
 		var sLogID = 'LOG' + oDate.getFullYear() + (sMonth).slice(-2) + ('00' + oDate.getDate()).slice(-2) + ('00' + oDate.getHours()).slice(-2) +
 			('00' + oDate.getMinutes()).slice(-2) + ('00' + oDate.getSeconds()).slice(-2) + ('000' + oDate.getMilliseconds()).slice(-3);
 		return sLogID;
+	},
+	getRegisteredId:async function(iReqNo,connection){
+		try {
+			// let connection = await cds.connect.to('db');
+			let aResult = await connection.run(
+				SELECT `REGISTERED_ID`
+					.from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
+					.where({ REQUEST_NO: iReqNo }));
+			if (aResult.length > 0) return aResult[0].REGISTERED_ID;
+			else return null;       
+
+		}
+		catch (error) { throw error; }
 	}
 
 

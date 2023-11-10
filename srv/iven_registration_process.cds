@@ -80,21 +80,30 @@ service registrationProcessService {
   action   PostRegFormData(action : String, stepNo : Integer, reqHeader : many RequestInfo, addressData : many RegFormAddress, contactsData : many RegFormContacts, bankData : many RegFormBanks, financeData : many RegFormFinancial, ownersData : many RegFormOwners, prodServData : many RegFormProdServ, capacityData : many RegFormCapacity, customerData : many RegFormCustomers, oemData : many RegFormOEM, discFieldsData : many RegFormDiscInfo, discRelativesData : many RegFormDiscRelatives, discQaCertiData : many RegFormDiscQaCertif, attachmentFieldsData : many RegFormAttachFields, attachmentData : many RegFormAttachments, updatedFields : many String, eventsData : many RegEventsLog) returns many String;
 
   action   EditRegFormData(action : String, // APPROVER | VENDOR
-                           stepNo : Integer,
-                           reqHeader : many RequestInfo,
-                           addressData : many RegFormAddress,
-                           contactsData : many RegFormContacts,
-                           updatedFields : many String,
-                           editLog : many RegSupplierLog)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns many String;
+                          stepNo : Integer,
+                          reqHeader : many RequestInfo,
+                          addressData : many RegFormAddress,
+                          contactsData : many RegFormContacts,
+                          updatedFields : many String,
+                          editLog : many RegSupplierLog)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns many String;
 
   //Action for Approval
   action   RegFormDataApproval(action : String,
-                             inputData : many RequestInfo,
-                          addressData : many RegFormAddress,
-                           contactsData : many RegFormContacts,
-                            bankData : many RegFormBanks,
-                           eventsData : many RegEventsLog
-                           )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                returns many String;
+                              inputData : many RequestInfo,
+                              addressData : many RegFormAddress,
+                              contactsData : many RegFormContacts,
+                              bankData : many RegFormBanks,
+                              eventsData : many RegEventsLog
+                            )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                returns many String;
+
+//Test MDG posting
+ action   MDGPosting(action : String,
+                              inputData : many RequestInfo,
+                              addressData : many RegFormAddress,
+                              contactsData : many RegFormContacts,
+                              bankData : many RegFormBanks,
+                              eventsData : many RegEventsLog
+                            )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                returns many String;
 
   type MessengerData {
     loginId : String;

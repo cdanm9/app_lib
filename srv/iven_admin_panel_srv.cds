@@ -1,5 +1,6 @@
 using {VENDOR_PORTAL} from '../db/MASTER_TABLES';
 using {
+    VENDOR_PORTAL.REQUEST_INFO,
   VENDOR_PORTAL.IVEN_ERROR_LOG,
   VENDOR_PORTAL.REGFORM_FOLDER_IDS,
   VENDOR_PORTAL.REGFORM_ADDRESS
@@ -18,6 +19,9 @@ service adminPanelService {
   entity MasterCountry         as projection on VENDOR_PORTAL.MASTER_COUNTRY;
   entity MasterEntityCode      as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
   entity EmailConfig           as projection on VENDOR_PORTAL.EMAIL_CONFIG;
+  entity RequestInfo               as projection on VENDOR_PORTAL.REQUEST_INFO;
+   entity MasterStatus              as projection on VENDOR_PORTAL.MASTER_STATUS;
+ 
 
   //TEST
   // entity region as projection on VENDOR_PORTAL.MASTER_REGION;
