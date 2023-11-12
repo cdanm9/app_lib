@@ -57,6 +57,13 @@ module.exports = {
                     str = str.replace("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", "extensionorgUser");
                     str = str.replace("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", "extensionorgUser");
                     var JsonData = JSON.parse(str);
+                    var mobileNo = "+910000000000"
+                    let prop = 'phoneNumber';
+                    console.log(JsonData);
+                    if (JsonData.hasOwnProperty(prop)) {
+                        console.log("yessssssss" + JsonData.phoneNumber[0].value)
+                    }
+
                     if (JsonData.extensionorgUser === undefined) {
                         var company = 'null';
                         var employeeNumber = 'null';
@@ -85,7 +92,8 @@ module.exports = {
                         "FIRST_NAME": Resources[i].name.familyName,
                         "LAST_NAME": lastname,
                         "COMPANY_CODE": company,
-                        "EMP_NO": employeeNumber
+                        "EMP_NO": employeeNumber,
+                        "MOBILE_NO": mobileNo
                     };
                     output.records.push(myJson);
                     mail = null;

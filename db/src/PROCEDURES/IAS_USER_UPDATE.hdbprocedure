@@ -26,7 +26,8 @@ INSERT INTO "VENDOR_PORTAL_MASTER_IAS_USER"(
     "FIRST_NAME",
     "LAST_NAME",
     "COMPANY_CODE",
-    "EMP_NO"
+    "EMP_NO",
+    "MOBILE_NO"
   )
 SELECT "USER_ID",
   "STATUS",
@@ -35,7 +36,8 @@ SELECT "USER_ID",
   "FIRST_NAME",
   "LAST_NAME",
   "COMPANY_CODE",
-  "EMP_NO"
+  "EMP_NO",
+  "MOBILE_NO"
 FROM :STRUCT_IAS;
 COMMIT;
 OUT_SUCCESS := 'IAS User successfully uploaded via job at : ' || :LV_CURRENT_TIME;

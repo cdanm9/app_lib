@@ -81,11 +81,12 @@ context VENDOR_PORTAL {
         key USER_ID      : String(50);
             STATUS       : String(50);
             LOGIN        : String(50);
-        key EMAIL        : String(150);
+        key EMAIL        : String(150)@Communication.IsEmailAddress;
             FIRST_NAME   : String(250);
             LAST_NAME    : String(250);
             COMPANY_CODE : String(100);
             EMP_NO       : String(100);
+            MOBILE_NO : String(15) @Communication.IsPhoneNumber;
 
     }
 
