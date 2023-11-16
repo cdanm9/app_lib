@@ -267,8 +267,7 @@ module.exports = {
     setSampleCC:async function(aEmailCC){
         var aSampleCC =  ["supritha.m@intellectbizware.com","siddhesh.d@intellectbizware.com" , "farzeen.s@intellectbizware.com", "vishal.s@intellectbizware.com","chandan.m@intellectbizware.com"];
         if (aEmailCC === null || aEmailCC.length < 0) aEmailCC = aSampleCC
-        else if (aEmailCC.length > 0) aEmailCC.push(aSampleCC.toString());
-
+        else if (aEmailCC.length > 0) aEmailCC.push(aSampleCC.toString());   
        return aEmailCC.toString();
     }
 }

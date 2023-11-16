@@ -556,6 +556,161 @@ module.exports = cds.service.impl(function () {
                 // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
 
             }
+            // else if (action === "APPROVE") { //-----------------------------------------------------------------------------
+            //     //////////////////FOrtesting 
+            //     isEmailNotificationEnabled = 0;
+            //     ///////////////
+                
+            //     var sSapVendorCode = null;
+            //     // ------------- MDG Posting Start------------------
+            //     var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
+
+            //     var iVenVendorCode = null;
+            //     var oMDGResponse = null;
+            //     var iMDGStatus = null;
+            //     var oMDGPayload = null;
+            //     var bMDGComparison = null;
+            //     var bAttachmentComparison = null;
+            //     var oActiveData = null;
+            //     var CurrAttachment = null;
+            //     var bNoChange = false;
+            //     var oDataStatus = null;
+            //     var ODataResponse = null;
+            //     var sCompareValue = 'A';
+
+            //     if (iLevel === iMaxLevelCount) {
+            //         oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
+            //         iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
+            //         sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
+
+            //         // ------------------------START: Direct MDG Call for testing-------------------------
+            //          var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
+            //         //  console.log(MDGResult);
+            //         iMDGStatus = MDGResult.iStatusCode;
+            //         oMDGResponse = MDGResult.oResponse;
+            //         sChangeRequestNo = MDGResult.oResponse.length === 12 ? MDGResult.oResponse : null;
+            //         // sCompareValue = "M";
+
+            //     }
+
+            //     // ------------- MDG Posting End------------------
+
+            //     // if (iLevel < iMaxLevelCount || sChangeRequestNo !== null) {
+            //     if (iLevel <= iMaxLevelCount) {
+            //         // 			if (iLevel <= iMaxLevelCount && bNoChange === false && oDataStatus !== 400 && iMDGStatus !== 500) {
+
+            //         // eventsData = getEventObjRegApproval(eventsData, iLevel, iMaxLevelCount, sChangeRequestNo);
+
+            //         // Result = execProcedure(iReqNo, sEntityCode, iRequestType,
+            //         //     sSupplierEmail, sBuyerEmail, sUserId, iLevel, aEventObj, sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
+            //         //     sCompareValue);
+            //         const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_APPROVAL')
+
+            //         Result = await dbConn.callProcedurePromisified(loadProc,
+            //             [iReqNo, sEntityCode, iRequestType,
+            //                 sSupplierEmail, sBuyerEmail, sUserId, iLevel, eventsData, sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
+            //                 sCompareValue]);
+            //         var responseObj = {
+            //             "Message": Result.outputScalar.OUT_SUCCESS !== null ? Result.outputScalar.OUT_SUCCESS : "Approval failed!",
+            //             "MDG_status": iMDGStatus,
+            //             "MDG_Payload": oMDGPayload,
+            //             "ODataResponse": ODataResponse,
+            //             "bMDGComparison": bMDGComparison,
+            //             "bAttachmentComparison": bAttachmentComparison,
+            //             "CurrAttachment": CurrAttachment,
+            //             "sChangeRequestNo": sChangeRequestNo
+
+            //         };
+
+            //         if (Result.outputScalar.OUT_SUCCESS !== null) {
+
+            //             var oEmailData = {
+            //                 "ReqNo": iReqNo,
+            //                 "ReqType": iRequestType,
+            //                 "SupplierName": sSupplerName,
+            //                 "SupplerEmail": sSupplierEmail,
+            //                 "Approver_Email": sUserId,
+            //                 "Approver_Level": iLevel,
+            //                 "Next_Approver": Result.outputScalar.OUT_EMAIL_TO, // Proc Manager
+            //                 "Buyer": sBuyerEmail
+            //             };
+
+            //             action = Result.outputScalar.OUT_MAX_LEVEL === iLevel ? "FINAL_APPROVAL" : "APPROVE";
+
+            //             if (action === "APPROVE") {
+            //                 // pending for approval - notification to Proc Manager
+            //                 if (isEmailNotificationEnabled) {
+            //                     // var oEmaiContent = EMAIL_LIBRARY.getEmailData(action, "REGISTER", oEmailData, null);
+            //                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
+            //                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "REGISTER", oEmailData, null)
+            //                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null, null)
+            //                     var sCCEmail = await lib_email.setSampleCC( null);
+            //                     await  lib_email.sendivenEmail(oEmailData.Next_Approver,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+            //                     // Approval done - notification to Buyer
+            //                     // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
+            //                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer], null);
+            //                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
+            //                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer], null, null)
+            //                     var sCCEmail = await lib_email.setSampleCC( null);
+            //                     await  lib_email.sendivenEmail(oEmailData.Buyer,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+            //                 }
+
+            //             } else if (action === "FINAL_APPROVAL") {
+
+            //                 // Approval done - notification to Buyer & Proc Manager
+            //                 if (isEmailNotificationEnabled) {
+            //                     // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
+            //                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null);
+            //                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
+            //                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null, null)
+            //                     var sCCEmail = await lib_email.setSampleCC( null);
+            //                     var sToEmail = [oEmailData.Buyer, oEmailData.Approver_Email].toString();
+            //                     await  lib_email.sendivenEmail(sToEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+            //                 }
+            //             }
+
+            //             statusCode = 200;
+            //         } else {
+            //             // iVen_Content.postErrorLog(conn, Result, iReqNo, sUserId, APP_NAME, "PROCEDURE");
+            //             statusCode = parseInt(Result.outputScalar.OUT_ERROR_CODE);
+            //             responseObj.ERROR_CODE = parseInt(Result.outputScalar.OUT_ERROR_CODE);
+            //             responseObj.ERROR_DESC = Result.outputScalar.OUT_ERROR_MESSAGE;
+            //             throw JSON.stringify(responseObj);
+            //         }
+
+            //         // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
+            //         return responseObj;
+            //     } else {
+            //         return "Max level reached";
+            //             // responseObj = {
+            //             //     "Message": "MDG posting failed!",
+            //             //     "MDG_status": iMDGStatus,
+            //             //     "MDG_Payload": oMDGPayload,
+            //             //     "SAP_Code": sSapVendorCode,
+            //             //     "MDG_Response": oMDGResponse
+
+            //             // }
+            //             // Result = {
+            //             //     "OUT_ERROR_CODE": iMDGStatus,
+            //             //     "OUT_ERROR_MESSAGE": JSON.stringify(oMDGResponse)
+            //             // }
+            //         //     iVen_Content.postErrorLog(conn, Result, iReqNo, sUserId, "Supplier Registration Approval", "API");
+
+            //         //     if (bNoChange === true) {
+            //         //         responseObj.Message = "No Change Found in Data for Approval!"
+            //         //     } else if (oDataStatus && oDataStatus === 400) {
+            //         //         responseObj.Message = ODataResponse.oResponse;
+            //         //     } else if (iMDGStatus && iMDGStatus === 500) {
+            //         //         responseObj.Message = JSON.stringify(oMDGResponse);
+            //         //     }
+
+            //         //     iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", 400);
+            //         //     if (iRequestType !== 5) {
+            //         //         // 	MDG_LIBRARY.rollbackSAPVendorCodeInSeq(conn);
+            //         //     }
+            //     }
+
+            // }
             else if (action === "APPROVE") { //-----------------------------------------------------------------------------
                 //////////////////FOrtesting 
                 isEmailNotificationEnabled = 0;
@@ -576,7 +731,7 @@ module.exports = cds.service.impl(function () {
                 var bNoChange = false;
                 var oDataStatus = null;
                 var ODataResponse = null;
-                var sCompareValue = null;
+                var sCompareValue = 'A';
 
                 if (iLevel === iMaxLevelCount) {
                     oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
@@ -588,8 +743,10 @@ module.exports = cds.service.impl(function () {
                     //  console.log(MDGResult);
                     iMDGStatus = MDGResult.iStatusCode;
                     oMDGResponse = MDGResult.oResponse;
-                    sChangeRequestNo = MDGResult.oResponse.length === 12 ? MDGResult.oResponse : null;
-                    sCompareValue = "M";
+                    // sChangeRequestNo = oMDGResponse.changerequestNo.length === 12 ?  oMDGResponse.changerequestNo : null;
+             sChangeRequestNo =oMDGResponse.changerequestNo;
+                    //   sChangeRequestNo = oMDGResponse;
+                    // sCompareValue = "M";
 
                 }
 
@@ -614,11 +771,13 @@ module.exports = cds.service.impl(function () {
                         "Message": Result.outputScalar.OUT_SUCCESS !== null ? Result.outputScalar.OUT_SUCCESS : "Approval failed!",
                         "MDG_status": iMDGStatus,
                         "MDG_Payload": oMDGPayload,
-                        "ODataResponse": ODataResponse,
+                        "ODataResponse": oMDGResponse,
                         "bMDGComparison": bMDGComparison,
                         "bAttachmentComparison": bAttachmentComparison,
                         "CurrAttachment": CurrAttachment,
-                        "sChangeRequestNo": sChangeRequestNo
+                        "sChangeRequestNo": sChangeRequestNo,
+                        "sChangeRequestNo1": sChangeRequestNo
+                        // "MDG_Response":oMDGResponse
 
                     };
 
@@ -711,6 +870,7 @@ module.exports = cds.service.impl(function () {
                 }
 
             }
+			
             else if (action === "DUPLICATECHECK") {
                 var sTradeLicense = (inputData[0].TRADE_LIC_NO === null || inputData[0].TRADE_LIC_NO === "") ? "" : inputData[0].TRADE_LIC_NO.toUpperCase();
                 var sVatNumber = (inputData[0].VAT_REG_NUMBER === null || inputData[0].VAT_REG_NUMBER === "") ? "" : inputData[0].VAT_REG_NUMBER.toUpperCase();

@@ -71,7 +71,8 @@ try{
 	var oResponseObj = null;
 	var resultData = {
 		oResponse: "",
-		iStatusCode: 0
+		iStatusCode: 0,
+		changerequestNo:null
 	};
 
 	// var iSapDest =await lib_email.getSAPDestination(conn);
@@ -90,29 +91,21 @@ try{
 						  "accept": "application/json",
 						  "X-Requested-With": "XMLHttpRequest"}
 			})
-	// console.log(response);
+			// return sResponse;
+
 			
-// return response;
-			
-// var sResponse = response;
-			// if (sResponse.includes("html")) {
-			// 	oResponseObj = "MDG CR generation failed. Unauthorized User.";
-			// } 
-			// else {
-			// 	// oResponseObj = JSON.parse(sResponse);
-			// 	oResponseObj = sResponse;
-			// }
-			sResponse.value ? 	oResponseObj = sResponse : oResponseObj = "MDG CR generation failed. Unauthorized User.";
-			// var iStatus = parseInt(sClientResponse.status, 10);
+
+			// sResponse.value ? 	oResponseObj = sResponse : oResponseObj = "MDG CR generation failed. Unauthorized User.";
+			oResponseObj = sResponse 
 var iStatus = 200;
 			if (oResponseObj && oResponseObj.value) {
-				resultData.oResponse = oResponseObj.value[0].d.ChangeRequest;
-				// resultData.oResponse = oResponseObj;
+				resultData.changerequestNo = oResponseObj.value[0].d.ChangeRequest;
+			resultData.oResponse = oResponseObj;
 				resultData.iStatusCode = iStatus;
-				// resultData.iStatusCode = 200;
+		
 			} else {
+				resultData.changerequestNo =oResponseObj;
 				resultData.oResponse = oResponseObj;
-				// resultData.oResponse = "MDG CR generation failed";
 				resultData.iStatusCode = iStatus;
 			}
 		} else {

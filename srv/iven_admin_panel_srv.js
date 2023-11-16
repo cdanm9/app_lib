@@ -127,107 +127,150 @@ module.exports = cds.service.impl(function () {
       // }
 
       if (sAction === "CREATE" || sAction === "IMPORT_CSV") {
+
+        try{
         //Refactor payload for Import CSV
-        if(sAction === "IMPORT_CSV")
-          aInputData =await lib_admin_panel.removeMetadata(aInputData);
+          if(sAction === "IMPORT_CSV")
+            aInputData =await lib_admin_panel.removeMetadata(aInputData);
 
-        // excute procedure for requested master table
-        if (sTableName === 'Country') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", aInputData, [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
-        }
-        else if (sTableName === 'Currency') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], aInputData, [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'EntityCode') {
-        //Refactor payload for Import CSV
-        if(sAction === "IMPORT_CSV")
-          aInputData = await lib_admin_panel.convertIntegerToString(aInputData);
+          // excute procedure for requested master table
+          if (sTableName === 'Country') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", aInputData, [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          }
+          else if (sTableName === 'Currency') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], aInputData, [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'EntityCode') {
+          //Refactor payload for Import CSV
+          if(sAction === "IMPORT_CSV")
+            aInputData = await lib_admin_panel.convertIntegerToString(aInputData);
 
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], aInputData, [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'IBANCountry') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], aInputData, [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'MasterTableNames') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], aInputData, [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'RegexPostalCode') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], aInputData, [], [], [], [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'Region') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], aInputData, [], [], [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'UserRole') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], aInputData, [], [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'Status') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], aInputData, [], [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'Telecode') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], aInputData, [], [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'RequestType') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], aInputData, [], [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'AttachmentTypes') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], aInputData, [], [], [],[],[],[],[]]);
-        } else if (sTableName === 'IvenAttachments') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], aInputData, [], [],[],[],[],[]]);
-        } else if (sTableName === 'FormFields') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], aInputData, [],[],[],[],[]]);
-        } else if (sTableName === 'iVenSettings') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [], aInputData,[],[],[],[]]);
-        }
-        else if(sTableName === 'Mandatory') {
-            //Refactor payload for Import CSV
-        if(sAction === "IMPORT_CSV")
-          aInputData = await lib_admin_panel.getUpdatedFieldsData(aInputData,conn);
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], aInputData, [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'IBANCountry') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], aInputData, [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'MasterTableNames') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], aInputData, [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'RegexPostalCode') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], aInputData, [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'Region') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], aInputData, [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'UserRole') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], aInputData, [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'Status') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], aInputData, [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'Telecode') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], aInputData, [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'RequestType') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], aInputData, [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'AttachmentTypes') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], aInputData, [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'IvenAttachments') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], aInputData, [], [],[],[],[],[]]);
+          } else if (sTableName === 'FormFields') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], aInputData, [],[],[],[],[]]);
+          } else if (sTableName === 'iVenSettings') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [], aInputData,[],[],[],[]]);
+          }
+          else if(sTableName === 'Mandatory') {
+              //Refactor payload for Import CSV
+          if(sAction === "IMPORT_CSV")
+            aInputData = await lib_admin_panel.getUpdatedFieldsData(aInputData,conn);
 
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],aInputData,[],[],[]]);
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],aInputData,[],[],[]]);
+          }
+          else if(sTableName === 'Visible') {
+              //Refactor payload for Import CSV
+          if(sAction === "IMPORT_CSV")
+            aInputData = await lib_admin_panel.getUpdatedFieldsData(aInputData,conn);
+            
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],aInputData,[],[]]);
+          }
+          else if(sTableName === 'Events') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],[],aInputData,[]]);
+          }
+          else if(sTableName === 'IVENUsers') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],[],[],aInputData]);
+          }
+          return sResponse
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          let Result = {
+              OUT_ERROR_CODE: 500,
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
         }
-        else if(sTableName === 'Visible') {
-            //Refactor payload for Import CSV
-        if(sAction === "IMPORT_CSV")
-          aInputData = await lib_admin_panel.getUpdatedFieldsData(aInputData,conn);
-          
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],aInputData,[],[]]);
-        }
-        else if(sTableName === 'Events') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],[],aInputData,[]]);
-        }
-        else if(sTableName === 'IVENUsers') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],[],[],aInputData]);
-        }
-        return sResponse
 
       }
       else if (sAction === "DELETE") {
-        var ID = oReqData.ID;
-        sResponse = await dbConn.callProcedurePromisified(loadProc,
-          [sAction, sTableName, sTableDesc, ID, "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
-        return sResponse;
+        try{
+          var ID = oReqData.ID;
+          sResponse = await dbConn.callProcedurePromisified(loadProc,
+            [sAction, sTableName, sTableDesc, ID, "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          return sResponse;
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          Result = {
+              OUT_ERROR_CODE: 500,   
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
+        }
       }
       else if (sAction === "TEST_EMAIl") {
-        let connection = await cds.connect.to('db');
-        var sEmailBody = aInputData[0].EMAIL_BODY;
-        var sEmailSubject = aInputData[0].EMAIL_SUBJECT;
-        var aEmailTo = aInputData[0].EMAIL_TO;
-        var aEmailCC = aInputData[0].EMAIL_CC;
-        var sEmailSender = aInputData[0].EMAIL_SENDER;
-        // sResponse = await lib_email.sendEmail(connection, sEmailBody, sEmailSubject, aEmailTo, aEmailCC, sEmailSender)
-        var sCCEmail = await lib_email.setSampleCC( [aEmailCC]);
-        await  lib_email.sendivenEmail(aEmailTo,sCCEmail,'html', sEmailSubject,sEmailBody)
-    
-        return sResponse
+        //Changes By Chandan M Start 15/11/23
+        try{
+          let connection = await cds.connect.to('db');
+          var sEmailBody = aInputData[0].EMAIL_BODY;
+          var sEmailSubject = aInputData[0].EMAIL_SUBJECT;
+          var aEmailTo = aInputData[0].EMAIL_TO;
+          var aEmailCC = aInputData[0].EMAIL_CC;
+          var sEmailSender = aInputData[0].EMAIL_SENDER;
+          // sResponse = await lib_email.sendEmail(connection, sEmailBody, sEmailSubject, aEmailTo, aEmailCC, sEmailSender)
+          var sCCEmail = await lib_email.setSampleCC( [aEmailCC]);
+          await  lib_email.sendivenEmail(aEmailTo,sCCEmail,'html', sEmailSubject,sEmailBody)
+      
+          return sResponse
+        }catch(oError){     
+          Result2 = {
+              OUT_SUCCESS: oError.message || ""
+          };
+          Result = {
+              OUT_ERROR_CODE: 500,
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
+        }
+
+        //Changes By Chandan M End 15/11/23   
       }
 
 
@@ -261,111 +304,138 @@ module.exports = cds.service.impl(function () {
       // load procedure
       const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_EDITDATA')
       if (sEditType === 'EDIT_MASTERS') {
-        if (sTableName === 'Country') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'Currency') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'EntityCode') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'IBANCountry') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'MasterTableNames') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'RegexPostalCode') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'Region') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'UserRole') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'Status') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'Telecode') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'RequestType') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'AttachmentTypes') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'OTFolderId') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [],[] ]);
-        } else if (sTableName === 'iVenSettings') {
-          sResponse = await dbConn.callProcedurePromisified(loadProc,
-            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [],[] ]);
+        try{
+          if (sTableName === 'Country') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'Currency') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'EntityCode') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'IBANCountry') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'MasterTableNames') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'RegexPostalCode') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'Region') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'UserRole') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'Status') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'Telecode') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'RequestType') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'AttachmentTypes') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'OTFolderId') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [], [],[] ]);
+          } else if (sTableName === 'iVenSettings') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], [], [], aMasterData, [], [], [], [], [],[] ]);
+          }
+          return sResponse;
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          let Result = {
+              OUT_ERROR_CODE: 500,
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
         }
-        return sResponse;
       }
       else if (sEditType === 'EDIT_FORMS') {
-        var successMsg = '',
-          aTableDesc = [],
-          iChangeCount = 0,
-          aSuccessArray = [];
+        try{
+          var successMsg = '',
+            aTableDesc = [],
+            iChangeCount = 0,
+            aSuccessArray = [];
 
-        for (var i = 0; i < oReqData.VALUE.length; i++) {
+          for (var i = 0; i < oReqData.VALUE.length; i++) {
 
-          if (oReqData.VALUE[i].CHANGE_FLAG === "YES") {
-            iChangeCount = iChangeCount + 1;
-            masterName = oReqData.VALUE[i].TABLE_NAME;
-            editType = oReqData.EDIT_TYPE;
-            masterData = oReqData.VALUE[i].TABLE_DATA;
-            tableDescription = oReqData.VALUE[i].TABLE_DESCRIPTION;
-            aTableDesc.push(tableDescription)
+            if (oReqData.VALUE[i].CHANGE_FLAG === "YES") {
+              iChangeCount = iChangeCount + 1;
+              masterName = oReqData.VALUE[i].TABLE_NAME;
+              editType = oReqData.EDIT_TYPE;
+              masterData = oReqData.VALUE[i].TABLE_DATA;
+              tableDescription = oReqData.VALUE[i].TABLE_DESCRIPTION;
+              aTableDesc.push(tableDescription)
 
-            if (masterName === 'Client_Info') {
-              sResponse = await dbConn.callProcedurePromisified(loadProc,
-                [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
-                [], [], masterData, [], [], [], [],[]]);
-            } else if (masterName === 'Sap_Info') {
-              sResponse = await dbConn.callProcedurePromisified(loadProc,
-                [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
-                [], [], [], masterData, [], [], [],[]]);
-            } else if (masterName === 'SubAccount_Info') {
-              sResponse = await dbConn.callProcedurePromisified(loadProc,
-                [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
-                [], [], [], [], masterData, [], [],[] ]);
-            } else if (masterName === 'MasterCredential_Info') {
-              sResponse = await dbConn.callProcedurePromisified(loadProc,
-                [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
-                [], [], [], [], [], masterData, [],[] ]);
-            } else if (masterName === 'IvenAttachments') {
-              sResponse = await dbConn.callProcedurePromisified(loadProc,
-                [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
-                [], [], [], [], [], [], masterData,[] ]);
-            }
-            else if (masterName === 'Smtp_Config') {
-              sResponse = await dbConn.callProcedurePromisified(loadProc,
-                [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
-                [], [], [], [], [], [], [],masterData]);
-            }
-            // iVen_Content.postErrorLog(conn, Result, null, null, "System Configuration", "PROCEDURE");
-            if (sResponse !== null) {
-              if (sResponse.outputScalar.OUT_SUCCESS_FLAG === 'Y') {
-                aSuccessArray.push(sResponse.outputScalar.OUT_SUCCESS_FLAG);
+              if (masterName === 'Client_Info') {
+                sResponse = await dbConn.callProcedurePromisified(loadProc,
+                  [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
+                  [], [], masterData, [], [], [], [],[]]);
+              } else if (masterName === 'Sap_Info') {
+                sResponse = await dbConn.callProcedurePromisified(loadProc,
+                  [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
+                  [], [], [], masterData, [], [], [],[]]);
+              } else if (masterName === 'SubAccount_Info') {
+                sResponse = await dbConn.callProcedurePromisified(loadProc,
+                  [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
+                  [], [], [], [], masterData, [], [],[] ]);
+              } else if (masterName === 'MasterCredential_Info') {
+                sResponse = await dbConn.callProcedurePromisified(loadProc,
+                  [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
+                  [], [], [], [], [], masterData, [],[] ]);
+              } else if (masterName === 'IvenAttachments') {
+                sResponse = await dbConn.callProcedurePromisified(loadProc,
+                  [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
+                  [], [], [], [], [], [], masterData,[] ]);
               }
+              else if (masterName === 'Smtp_Config') {
+                sResponse = await dbConn.callProcedurePromisified(loadProc,
+                  [editType, masterName, tableDescription, [], [], [], [], [], [], [], [], [], [], [], [], 
+                  [], [], [], [], [], [], [],masterData]);
+              }
+              // iVen_Content.postErrorLog(conn, Result, null, null, "System Configuration", "PROCEDURE");
+              if (sResponse !== null) {
+                if (sResponse.outputScalar.OUT_SUCCESS_FLAG === 'Y') {
+                  aSuccessArray.push(sResponse.outputScalar.OUT_SUCCESS_FLAG);
+                }
+              }
+
             }
-
           }
-        }
-        // if (aSuccessArray.length === iChangeCount) {
-        //   // conn.commit();
+          // if (aSuccessArray.length === iChangeCount) {
+          //   // conn.commit();
 
-        // }
-        // Created Success Msg Dynamically Cause Needed Both Master Or One Master at a Time With The Help Change Flag
-        successMsg = await lib_common.generateSuccessMessage(aTableDesc);
-        return successMsg
+          // }
+          // Created Success Msg Dynamically Cause Needed Both Master Or One Master at a Time With The Help Change Flag
+          successMsg = await lib_common.generateSuccessMessage(aTableDesc);
+          return successMsg
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          let Result = {
+              OUT_ERROR_CODE: 500,
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
+        }
       }
       else if (sEditType === "FORM_FIELDS") {
+        try{
         // conn = $.hdb.getConnection();
         let conn = await cds.connect.to('db');
   
@@ -409,18 +479,51 @@ module.exports = cds.service.impl(function () {
   
      var   results = await lib_admin_panel.updateData(conn, oVisibilityObj, oMandatoryObj, oFieldDescObj);
   return results;
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          let Result = {
+              OUT_ERROR_CODE: 500,
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
+        }
         // responseInfo(JSON.stringify(results), "text/plain", 200);
       }
       else if (sEditType === "FORM_SETTINGS") {
-        sResponse = await dbConn.callProcedurePromisified(loadProc,
-          [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], [], [], aData, [], [], [], [], [],[] ]);
-     
-        // aData = oPayload.VALUE.DATA || [];
-        // results = updateSettings(conn, aData);
-return sResponse
+        try{
+          sResponse = await dbConn.callProcedurePromisified(loadProc,
+            [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], [], [], aData, [], [], [], [], [],[] ]);
+      
+          // aData = oPayload.VALUE.DATA || [];
+          // results = updateSettings(conn, aData);
+          return sResponse
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          let Result = {
+              OUT_ERROR_CODE: 500,   
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
+        }
     }
 
     } catch (error) {
+      let Result2 = {
+        OUT_SUCCESS: error.message || ""
+      };
+      let Result = {
+          OUT_ERROR_CODE: 500,
+          OUT_ERROR_MESSAGE:  error.message ? error.message : error
+      }
+      lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
       req.error({ code: "500", message: error.message });
     }
   })

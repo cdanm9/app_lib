@@ -57,11 +57,10 @@ module.exports = {
                     str = str.replace("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", "extensionorgUser");
                     str = str.replace("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User", "extensionorgUser");
                     var JsonData = JSON.parse(str);
-                    var mobileNo = "+910000000000"
-                    let prop = 'phoneNumber';
-                    console.log(JsonData);
-                    if (JsonData.hasOwnProperty(prop)) {
-                        console.log("yessssssss" + JsonData.phoneNumber[0].value)
+                    var mobileNo = "";
+
+                    if (JsonData.hasOwnProperty('phoneNumbers')) {
+                        mobileNo = JsonData.phoneNumbers[0].value;
                     }
 
                     if (JsonData.extensionorgUser === undefined) {

@@ -347,7 +347,7 @@ module.exports = {
 
 		}
 	},
-	createLogID: function () {
+	createLogID: function () {   
 		var oDate = new Date();
 		var sMonth = '00' + String(oDate.getMonth() + 1);
 		var sLogID = 'LOG' + oDate.getFullYear() + (sMonth).slice(-2) + ('00' + oDate.getDate()).slice(-2) + ('00' + oDate.getHours()).slice(-2) +

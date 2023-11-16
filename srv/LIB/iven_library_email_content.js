@@ -5,7 +5,7 @@ const { Connection } = require("@sap/hana-client");
 // App paths from portal
 const sLink_Registration_Report = "#Supplier_Registration_Report-Display&/vendorReportDetail/";
 const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/RouteMasterPage/";
-const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster";
+const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster/";
 
 module.exports = {
 
@@ -50,7 +50,7 @@ module.exports = {
 		// var sLink_Portal_LoginAccess = sDetails.PORTAL_LINK + "/iven";
 		var sLink_Portal_LoginAccess = sDetails.PORTAL_LINK ;
 
-		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "d6c42621-0dc7-4a69-a65c-3ee082ca5470.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome";
+		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "d6c42621-0dc7-4a69-a65c-3ee082ca5470.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome/";
 					
 		
 		var greetingsTo;

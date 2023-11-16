@@ -438,6 +438,39 @@ this.on('DataMigrationConfiguration',async(req) =>{
     req.error({ code: "500", message:  error.message ? error.message : error });
   }
 })
+this.on('getBackendAvailability',async(req)=>{
+  try{
+    
+    // var {sapClient,destFileName} = req.data;
+    var response = {"onPremise":null,"Cloud":null};
+    var sapClient ='';
+    //   set connection to ZIVN_VENDOR_REG_SRV Destination
+    var iVenVendorConnection = await cds.connect.to('ZIVN_VENDOR_REG_SRV');
+    var onPremResponse = await iVenVendorConnection.send({
+      method: 'GET',
+      // path: '/GetCitySet',
+      path:'/BPTypeSet',
+      // path:'/',
+      headers: { 'Content-Type': 'application/json' ,
+      "sap-client":sapClient 
+    }
+    })
+    if( onPremResponse.length >= 0)
+      response.onPremise = "Loaded"
+
+    let connection = await cds.connect.to('db');
+    let cloudResponse =  await connection.run(SELECT
+      .from`${connection.entities['VENDOR_PORTAL.MASTER_SUBACCOUNT']}`);
+
+      if( cloudResponse.length >= 0)
+      response.Cloud = "Loaded"
+ req.reply(response);   
+}
+catch(error)
+{
+  throw error;
+}
+})
 
 async function AllMandatoryFieldID(connection){
   try{
