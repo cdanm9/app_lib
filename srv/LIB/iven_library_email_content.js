@@ -50,7 +50,7 @@ module.exports = {
 		// var sLink_Portal_LoginAccess = sDetails.PORTAL_LINK + "/iven";
 		var sLink_Portal_LoginAccess = sDetails.PORTAL_LINK ;
 
-		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "d6c42621-0dc7-4a69-a65c-3ee082ca5470.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome/";
+		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "31f0823a-bdc7-470e-ad35-1f94f827afd5.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome";
 					
 		
 		var greetingsTo;
