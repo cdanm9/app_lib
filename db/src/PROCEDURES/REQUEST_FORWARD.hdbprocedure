@@ -97,8 +97,11 @@ BEGIN
     END IF;
 	    
 	 
-	-- OUT_SUCCESS := :LV_REQCOUNT || LV_REQ_STRING || ' re-assigned from ' || :CURR_APPROVER_ID || ' to ' || :REASSIGN_TO_ID; 
-	OUT_SUCCESS :=  LV_REQ_STRING || ' re-assigned from ' || :CURR_APPROVER_ID || ' to ' || :REASSIGN_TO_ID; 
-	
-	
+	IF :CURR_APPROVER_ID IS NULL or :CURR_APPROVER_ID = ''
+    THEN 
+    OUT_SUCCESS :=  LV_REQ_STRING || ' re-assigned to ' || :REASSIGN_TO_ID; 
+    ELSE 
+        OUT_SUCCESS :=  LV_REQ_STRING || ' re-assigned from ' || :CURR_APPROVER_ID || ' to ' || :REASSIGN_TO_ID; 
+    END IF;
+    
 END

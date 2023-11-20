@@ -1,0 +1,43 @@
+//Vendor Internal Request
+
+POST https://localhost:4004/odata/v4/copyaddtional-process/VendorInternalRequest
+Content-Type: application/json
+
+{
+    "action":"",
+    "stepNo":1,
+    "comment":"String",
+    "srNo":1,
+    "attachCode":1,
+    "ndaStatus":"",
+    "reqHeader":[],
+    "addressData":[],
+    "contactsData":[],
+    "bankData":[],
+    "financeData":[],
+    "ownersData":[],
+    "prodServData":[],
+    "capacityData":[],
+    "customerData":[],
+    "oemData":[],
+    "discFieldsData":[],
+    "discRelativesData":[],
+    "discQaCertiData":[],
+    "attachmentFieldsData":[],
+    "attachmentData":[],
+    "updatedFields":[],
+    "eventsData":[],
+    "supplierLogData":[]
+}
+
+###Vendor Data Migration
+POST https://localhost:4004/odata/v4/copyaddtional-process/VendorDataMigration
+Content-Type: application/json
+
+{
+    "action": "DATA_MIGRATION",
+    "reqHeader":[],
+    "contactsData": [],
+    "addressData": [],
+    "bankData": []
+}

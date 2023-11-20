@@ -608,7 +608,8 @@ module.exports = cds.service.impl(function () {
                     "Changed_From": sOldRegId,
                     "Changed_To": sNewRegId,
                     "sBuyerId": sBuyerId,
-                    "RequestType": iRequestType
+                    "RequestType": iRequestType,
+                    "Status":iStatus
                 };
 
                 //-----------------Updateof registered email id on iVen & CPI-----------------------------------------------------------------------
@@ -809,7 +810,7 @@ module.exports = cds.service.impl(function () {
                     OUT_ERROR_CODE: null,
                     OUT_ERROR_MESSAGE:  e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result,  aRequests[i].REQUEST_NO, sUserID, "Vendor Request Forwarding", "Node Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result,  aRequests[0].REQUEST_NO, sUserID, "Vendor Request Forwarding", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 

@@ -4,7 +4,7 @@ const { Connection } = require("@sap/hana-client");
 
 // App paths from portal
 const sLink_Registration_Report = "#Supplier_Registration_Report-Display&/vendorReportDetail/";
-const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/RouteMasterPage/";
+const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/vendorDetails/";
 const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster/";
 
 module.exports = {
@@ -866,6 +866,10 @@ module.exports = {
 			} else {
 				sLink = sLink_Registation_Form;
 			}
+			var linkStatement = "";
+			if(oEmailData.Status !== 1)
+				linkStatement = "Please login to the following " + sClientShortName + " portal using the link " +
+				"<a href=" + sLink + ">here</a><br><br>";
 
 			oEmailContent.subject = "Registered Email ID changed for - " + oEmailData.SupplierName;
 
@@ -875,11 +879,7 @@ module.exports = {
 
 			oEmailContent.emailBody += " has been changed from " + oEmailData.Changed_From + " to <strong>" +
 				oEmailData.Changed_To + "</strong>.<br><br>" +
-
-				"Please login to the following " + sClientShortName + " portal using the link " +
-				"<a href=" + sLink + ">here</a>" + "<br>" +
-
-				"<br>" +
+				linkStatement +
 				"Should you have any questions, please do not hesitate to reach out to us via email at " +
 				"<strong><a href=" + sClientContactEmail + ">" + sClientContactEmail + "</a></strong> " + "<br>" +
 				"<br>" +

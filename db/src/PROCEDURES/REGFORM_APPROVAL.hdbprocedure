@@ -159,7 +159,8 @@ SELECT "SAP_VENDOR_CODE".NEXTVAL INTO SAP_VENDOR_CODE FROM DUMMY;
 	    IF :COMPARE_TYPE = 'A'
 	    THEN
 	        LV_STATUS := 11; -- Registered
-		    OUT_SUCCESS := 'Supplier Registered as SAP Vendor No.: ' || :SAP_VENDOR_CODE;
+		    -- OUT_SUCCESS := 'Supplier Registered as SAP Vendor No.: ' || :SAP_VENDOR_CODE;
+			OUT_SUCCESS := 'Supplier ' || :SUPPLIER_NAME || 'Registered';
         ELSE
             LV_STATUS := 10; -- in Approval - MDG
 		    OUT_SUCCESS := 'Supplier registration completed for : ' || :SUPPLIER_NAME;
