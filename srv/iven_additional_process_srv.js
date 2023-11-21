@@ -9,6 +9,9 @@ const lib_email_content = require('./LIB/iven_library_email_content')
 
 module.exports = cds.service.impl(function () {
   this.on('VendorInternalRequest', async (req) => {
+    // get connection
+    var client = await dbClass.createConnectionFromEnv();
+       var dbConn = new dbClass(client); 
     try {
       // local variables
       var {
@@ -43,9 +46,9 @@ module.exports = cds.service.impl(function () {
        //Check if email notification is enabled
        isEmailNotificationEnabled = await lib_email.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
 
-       // get connection
-       var client = await dbClass.createConnectionFromEnv();
-       let dbConn = new dbClass(client);
+       
+      //  var client = await dbClass.createConnectionFromEnv();
+      //  let dbConn = new dbClass(client);
 
     if (action === "EDIT") { //-----------------------------------------------------------------------------
 
@@ -122,7 +125,7 @@ module.exports = cds.service.impl(function () {
 				throw "Invalid Payload";
 			}
 
-			var sUserId = reqHeader[0].REGISTERED_ID;
+			var sUserId = reqHeader[0].REGISTERED_ID || null; //Minor Changes By Chandan M 21/11
 			var sSupplerName = reqHeader[0].VENDOR_NAME1;
 			var sEntityCode = reqHeader[0].ENTITY_CODE;
 			var sIsResend = reqHeader[0].REQUEST_RESENT;
@@ -256,6 +259,15 @@ module.exports = cds.service.impl(function () {
 		}
 
     } catch (error) {
+
+      let Result2 = {
+        OUT_SUCCESS: error.message || ""
+      };
+      let Result = {
+          OUT_ERROR_CODE: 500,
+          OUT_ERROR_MESSAGE:  error.message ? error.message : error
+      }
+      lib_common.postErrorLog(Result,iReqNo,sUserId,"Data Migration","Node Js",dbConn,hdbext);  
       
       // return error.messsage
       req.error({ code: "500", message: error.message });
@@ -263,6 +275,11 @@ module.exports = cds.service.impl(function () {
   })
 
 this.on('VendorDataMigration',async (req) =>{
+  //Changes by Chandan M 20/11 Start
+  var client = await dbClass.createConnectionFromEnv();
+  var dbConn = new dbClass(client);
+  //Changes by Chandan M 20/11 End
+
   try{
       // local variables
       var {
@@ -279,8 +296,8 @@ this.on('VendorDataMigration',async (req) =>{
        isEmailNotificationEnabled = await lib_email.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
 
        // get connection
-       var client = await dbClass.createConnectionFromEnv();
-       let dbConn = new dbClass(client);
+      //  var client = await dbClass.createConnectionFromEnv();
+      //  let dbConn = new dbClass(client);
 
 // load procedure
 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DATA_MIGRATION')
@@ -299,16 +316,16 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 				for (var i = 0; i < reqHeader.length; i++) {
 					// conn = $.hdb.getConnection();
 					// execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::SUPPLIER_DATA_MIGRATION');
-					var sapVendorCode = reqHeader[0].SAP_VENDOR_CODE;
-					var reqType = reqHeader[0].REQUEST_TYPE;
+					var sapVendorCode = reqHeader[i].SAP_VENDOR_CODE;
+					var reqType = reqHeader[i].REQUEST_TYPE;
 					var onbContact =await getONBContacts(contactsData, sapVendorCode);
 					var onbAddress =await getONBAddress(addressData, sapVendorCode);
 					var onbBank =await getONBBank(bankData, sapVendorCode);
 					// Added on 02jul2023 by InderSingh to remove Extra zeros
 					sapVendorCode = parseInt(sapVendorCode, 10).toString();
-					reqHeader[0].SAP_VENDOR_CODE = sapVendorCode;
+					reqHeader[i].SAP_VENDOR_CODE = sapVendorCode;
 					
-					var supplierReq = [reqHeader[0]];
+					var supplierReq = [reqHeader[i]];
 					
 					if (reqHeader.length > 0) {
 						if (reqHeader[i].TRADE_LIC_NO === "NA" && reqHeader[i].BP_TYPE_CODE === "B") {
@@ -318,12 +335,12 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 					reqHeader[i].SAP_VENDOR_CODE = sapVendorCode; // Added on 02jul2023 by InderSingh to remove Extra zeros
 					
 					// var onbForm = [reqHeader[i]];
-					var supplierEvents =await getCreateEvents(reqHeader[0].REQUESTER_ID);
-					sUserID = reqHeader[0].REQUESTER_ID || null;
+					var supplierEvents =await getCreateEvents(reqHeader[i].REQUESTER_ID);
+					sUserID = reqHeader[i].REQUESTER_ID || null;
 					// Result = execProcedure(reqHeader[0].REQUESTER_ID, supplierReq[0].VEMAIL, supplierReq[0].SUPPLIERTYPE_CODE, sapVendorCode, reqType,
 					// 	supplierReq, onbForm, onbAddress, onbContact, onbBank, supplierEvents);
 					sResponse = await dbConn.callProcedurePromisified(loadProc,
-           [reqHeader[0].REQUESTER_ID, supplierReq[0].REGISTERED_ID, supplierReq[0].SUPPL_TYPE_CODE, sapVendorCode, reqType,
+           [reqHeader[i].REQUESTER_ID, supplierReq[i].REGISTERED_ID, supplierReq[i].SUPPL_TYPE_CODE, sapVendorCode, reqType,
            	supplierReq, onbAddress, onbContact, onbBank, supplierEvents]);
             // iVen_Content.postErrorLog(conn, Result, null, sUserID, "Supplier Data Migration", "PROCEDURE");
 					
@@ -333,9 +350,9 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 						//Function to trigger mails
 						if(isEmailNotificationEnabled) {
               oEmailData = {
-                "SupplierName": reqHeader[0].VENDOR_NAME1,
+                "SupplierName": reqHeader[i].VENDOR_NAME1,
                 "EntityDesc": sEntityDesc,
-                "MailTo":reqHeader[0].REGISTERED_ID
+                "MailTo":reqHeader[i].REGISTERED_ID
             }
 						    // setEmailData(supplierReq);
                 oEmaiContent = await lib_email_content.getEmailContent(connection, "DATA_MIGRATION", "DATA_MIGRATION", oEmailData, null)
@@ -380,12 +397,29 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 	}
   }
   catch(error){
+
+
+    let Result2 = {
+      OUT_SUCCESS: error.message || ""
+    };
+    let Result = {
+        OUT_ERROR_CODE: 500,
+        OUT_ERROR_MESSAGE:  error.message ? error.message : error
+    }
+    lib_common.postErrorLog(Result,null,sUserID,"Data Migration","Node Js",dbConn,hdbext);
+
+
     req.error({ code: "500", message:  error.message ? error.message : error });
   }
 
 })
 
 this.on('getDataMigrationConfiguration',async(req) =>{
+   //Changes by Chandan M 20/11 Start
+   var client = await dbClass.createConnectionFromEnv();
+   var dbConn = new dbClass(client);
+   //Changes by Chandan M 20/11 End
+ 
   try{
    
  //intialize connection to database
@@ -397,10 +431,26 @@ this.on('getDataMigrationConfiguration',async(req) =>{
     return JSON.stringify(response);
   }
   catch(error){
+
+    let Result2 = {
+      OUT_SUCCESS: error.message || ""
+    };
+    let Result = {
+        OUT_ERROR_CODE: 500,
+        OUT_ERROR_MESSAGE:  error.message ? error.message : error
+    }
+    lib_common.postErrorLog(Result,null,null,"Data Migration","Node Js",dbConn,hdbext);
+
+
     req.error({ code: "500", message:  error.message ? error.message : error });
   }
 })
 this.on('DataMigrationConfiguration',async(req) =>{
+   //Changes by Chandan M 20/11 Start
+   var client = await dbClass.createConnectionFromEnv();
+   var dbConn = new dbClass(client);
+   //Changes by Chandan M 20/11 End
+ 
   try{
    var {action,DMFieldConfiguration,DMLimit} = req.data;
  //intialize connection to database
@@ -435,10 +485,23 @@ this.on('DataMigrationConfiguration',async(req) =>{
     
   }
   catch(error){
+
+    let Result2 = {
+      OUT_SUCCESS: error.message || ""
+    };
+    let Result = {
+        OUT_ERROR_CODE: 500,
+        OUT_ERROR_MESSAGE:  error.message ? error.message : error
+    }
+    lib_common.postErrorLog(Result,null,null,"Data Migration","Node Js",dbConn,hdbext);
+
+
     req.error({ code: "500", message:  error.message ? error.message : error });
   }
 })
 this.on('getBackendAvailability',async(req)=>{
+  var client = await dbClass.createConnectionFromEnv();
+  var dbConn = new dbClass(client);
   try{
     
     // var {sapClient,destFileName} = req.data;
@@ -468,8 +531,18 @@ this.on('getBackendAvailability',async(req)=>{
 }
 catch(error)
 {
-  throw error;
-}
+  let Result2 = {
+    OUT_SUCCESS: error.message || ""
+  };
+  let Result = {
+      OUT_ERROR_CODE: 500,
+      OUT_ERROR_MESSAGE:  error.message ? error.message : error
+  }
+  lib_common.postErrorLog(Result,null,null,"Data Migration","Node Js",dbConn,hdbext);
+
+  req.error({ code: "500", message:  error.message ? error.message : error });  
+  // throw error;
+}    
 })
 
 async function AllMandatoryFieldID(connection){

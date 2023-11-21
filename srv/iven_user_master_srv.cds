@@ -12,8 +12,9 @@ service userMasterService {
   type UserMasterPayload {
     ACTION         : String;
     // SR_NO          : Integer;
+    USER_DETAILS : User_Details;
     VALUE          : array of {
-      USERMASTER     : array of {
+      USERMASTER     : array of {   
       SR_NO        : Integer;
       USER_ID      : String(50);
       USER_ROLE    : String(50);
@@ -33,9 +34,12 @@ service userMasterService {
       ENTITY_DESC  : String(100);
     }
     };
-    
+  }
+  type User_Details:{
+    USER_ROLE: String(50);
+    USER_ID: String(50);
   }
 
 //CRUD operation action
 action PostUserMaster(input : UserMasterPayload) returns String;
-}
+}  

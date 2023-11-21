@@ -319,7 +319,7 @@ module.exports = {
 			throw error;
 		}
 	},
-	errorLogPayload: async function (REQUEST_NO, SR_NO, ERROR_CODE, ERROR_DESCRPTION, CREATED_ON, USER_ID, APP_NAME, TYPE) {
+	errorLogPayload: async function (REQUEST_NO, SR_NO, ERROR_CODE, ERROR_DESCRPTION, CREATED_ON, USER_ID,USER_ROLE, APP_NAME, TYPE) {
 		var aArray = [];
 		var oObject = {
 			"LOG_ID": await this.createLogID() || null,
@@ -329,19 +329,20 @@ module.exports = {
 			"ERROR_DESCRPTION": ERROR_DESCRPTION || null,
 			"CREATED_ON": CREATED_ON || null,
 			"USER_ID": USER_ID || null,
+			"USER_ROLE": USER_ROLE || null,  
 			"APP_NAME": APP_NAME || null,
-			"TYPE": TYPE || null
+			"TYPE": TYPE || null   
 		}
 		aArray.push(oObject)
 		return aArray;
 	},
 
-	postErrorLog: async function (Result, REQUEST_NO, USER_ID, APP_NAME, TYPE, dbConn, hdbext) {
+	postErrorLog: async function (Result, REQUEST_NO, USER_ID,USER_ROLE,APP_NAME, TYPE, dbConn, hdbext) {
 		if (Result.OUT_ERROR_CODE !== null || Result.OUT_ERROR_MESSAGE !== null) {
 			const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ERROR_LOG')
-
+           
 			// var execProcedure = conn.loadProcedure("VENDOR_PORTAL", "VENDOR_PORTAL.Procedure::ERROR_LOG");
-			var errorLogStructure = await this.errorLogPayload(REQUEST_NO, null, Result.OUT_ERROR_CODE, Result.OUT_ERROR_MESSAGE, null, USER_ID, APP_NAME, TYPE);
+			var errorLogStructure = await this.errorLogPayload(REQUEST_NO, null, Result.OUT_ERROR_CODE, Result.OUT_ERROR_MESSAGE, null, USER_ID,USER_ROLE,APP_NAME, TYPE);
 			// execProcedure(errorLogStructure);
 			sResponse = await dbConn.callProcedurePromisified(loadProc, errorLogStructure);
 

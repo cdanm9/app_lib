@@ -3,6 +3,7 @@ const cds = require('@sap/cds')
 const dbClass = require("sap-hdbext-promisfied")
 const hdbext = require("@sap/hdbext")
 // const lib = require('./LIB/EMPLOYEE_LIB')
+const lib_common = require('./LIB/iven_library')
 
 
 
@@ -24,9 +25,17 @@ module.exports = cds.service.impl(function () {
 
 
   this.on('PostUserMaster', async (req) => {
+    //Changes By Chandan M 21/11/23 Start
+    // get connection
+    var client = await dbClass.createConnectionFromEnv()
+    let dbConn = new dbClass(client)
+      //Changes By Chandan M 21/11/23 End
     try {
       // local variables
       var oReqData = req.data.input
+      var oUserDetails=oReqData.USER_DETAILS;
+      var sUserId=oUserDetails.USER_ID || null;
+      var sUserRole=oUserDetails.USER_ROLE || null;
       var sAction = oReqData.ACTION
       var aUserData = oReqData.VALUE[0].USERMASTER
       var aEntityData = oReqData.VALUE[0].ENTITYDATA
@@ -38,9 +47,7 @@ module.exports = cds.service.impl(function () {
       }
 
       if (!bIsDuplicateUser || (sAction === "UPDATE" || sAction === "DELETE")) {
-        // get connection
-        var client = await dbClass.createConnectionFromEnv()
-        let dbConn = new dbClass(client)
+        
 
         // load procedure
         const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MASTER_IVEN_USERS')
@@ -53,13 +60,21 @@ module.exports = cds.service.impl(function () {
         return result;
       }
       else {
-        return "This user already exist.";
+        return "This user already exist.";   
       }
 
     } catch (error) {
+      let Result2 = {
+        OUT_SUCCESS: error.message || ""
+      };
+      let Result = {
+          OUT_ERROR_CODE: 500,
+          OUT_ERROR_MESSAGE:  error.message ? error.message : error
+      }
+      lib_common.postErrorLog(Result,null,sUserId,sUserRole,"User Master","Node Js",dbConn,hdbext);
       console.error(error)
-      // return error.messsage
-      req.error({ code: "500", message: error.message });
+      // return error.messsage  
+      req.error({ code: "500", message:  error.message ? error.message : error });  
     }
   })
 

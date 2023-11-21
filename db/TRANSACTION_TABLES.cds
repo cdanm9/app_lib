@@ -35,9 +35,10 @@ entity IVEN_ERROR_LOG {
         ERROR_DESCRPTION : String(1000);
         CREATED_ON       : Timestamp;
         USER_ID          : String(50);
+        USER_ROLE        : String(50); 
         APP_NAME         : String(50);
         TYPE             : String(50);
-
+                
 }
 
 entity IVEN_EMAIL_LOG {
