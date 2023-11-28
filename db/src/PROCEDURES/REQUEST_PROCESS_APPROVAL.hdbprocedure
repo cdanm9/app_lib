@@ -125,7 +125,7 @@ BEGIN
 			FROM :ST_REQUEST_EVENTS_LOG;
 
 	        COMMIT;
-            OUT_SUCCESS := 'Supplier Request ' || :IN_REQUEST_NO || ' ' || :LV_SUCCESS_ACTION;
+		OUT_SUCCESS := 'Vendor Request ' || :IN_REQUEST_NO || ' ' || :LV_SUCCESS_ACTION;
         ELSE
 	        OUT_SUCCESS := null;
         END IF;

@@ -44,7 +44,7 @@ BEGIN
 	    INTO LV_INV_REQUEST_NO, LV_INV_STATUS , LV_REQUEST_TYPE
 	    FROM :ST_REQUEST_INFO ORDER BY "REQUEST_NO" ASC LIMIT 1 OFFSET :LV_INDEX;
 	    
-	    IF :LV_INV_STATUS = 1
+	    IF :LV_INV_STATUS = 1 
     	    THEN
     	        UPDATE "VENDOR_PORTAL_REQUEST_INFO"
                 SET 
@@ -55,7 +55,8 @@ BEGIN
     	    THEN
     	        UPDATE "VENDOR_PORTAL_REQUEST_INFO"
                 SET 
-                "REQUESTER_ID" = :REASSIGN_TO_ID
+                "REQUESTER_ID" = :REASSIGN_TO_ID,
+                "NEXT_APPROVER" = :REASSIGN_TO_ID
                 WHERE "REQUEST_NO" = :LV_INV_REQUEST_NO;  
     	    
     	        -- UPDATE "VENDOR_PORTAL_ONBOARDING_FORM"
@@ -66,7 +67,7 @@ BEGIN
             THEN
                 UPDATE "VENDOR_PORTAL_REQUEST_INFO"
                 SET 
-                 "NEXT_APPROVER" = null
+                 "NEXT_APPROVER" = REASSIGN_TO_ID
                 WHERE "REQUEST_NO" = :LV_INV_REQUEST_NO;
             
                 -- UPDATE "VENDOR_PORTAL_ONBOARDING_FORM"

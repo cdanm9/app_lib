@@ -11,6 +11,8 @@ const connect = require('passport/lib/framework/connect')
 // const { results } = require('@sap/cds/lib_admin_panel/utils/cds-utils')
 
 module.exports = cds.service.impl(function () {
+
+  
   this.on('GetAdminPanelData', async (req) => {
     try {
   
@@ -100,9 +102,12 @@ module.exports = cds.service.impl(function () {
       var oReqData = JSON.parse(req.data.input);
       var sAction = oReqData.ACTION ;
       var sTableName = oReqData.TABLE_NAME;
-      var sTableDesc = oReqData.TABLE_DESCRIPTION;
+      var sTableDesc = oReqData.TABLE_DESCRIPTION;    
       var aInputData = oReqData.INPUT_DATA || null;
       var sResponse = null;
+      var oUserDetails=oReqData.USER_DETAILS||{};                 
+      var sUserID=oUserDetails.USER_ID || null;
+      var sUserRole=oUserDetails.USER_ROLE || null;  
 
       // get connection
       var client = await dbClass.createConnectionFromEnv();
@@ -218,9 +223,9 @@ module.exports = cds.service.impl(function () {
               OUT_ERROR_CODE: 500,
               OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
           }
-          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
           // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
-          req.error({ code: "500", message: oError.message });
+          req.error({ code: "500", message: oError.message });   
         }
 
       }
@@ -238,7 +243,7 @@ module.exports = cds.service.impl(function () {
               OUT_ERROR_CODE: 500,   
               OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
           }
-          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
           // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
           req.error({ code: "500", message: oError.message });
         }
@@ -265,7 +270,7 @@ module.exports = cds.service.impl(function () {
               OUT_ERROR_CODE: 500,
               OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
           }
-          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
           // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
           req.error({ code: "500", message: oError.message });
         }
@@ -290,6 +295,10 @@ module.exports = cds.service.impl(function () {
       var sTableDesc = oReqData.VALUE[0].TABLE_DESCRIPTION || null;
       var aMasterData = oReqData.VALUE[0].TABLE_DATA || [];
       var sResponse = null;
+
+      var oUserDetails=oReqData.USER_DETAILS;   
+      var sUserID=oUserDetails.USER_ID || null;
+      var sUserRole=oUserDetails.USER_ROLE || null;  
 
       // Edit Forms Fields
       var sEntityCode = oReqData.CCODE || null;
@@ -357,7 +366,7 @@ module.exports = cds.service.impl(function () {
               OUT_ERROR_CODE: 500,
               OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
           }
-          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
           // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
           req.error({ code: "500", message: oError.message });
         }
@@ -429,7 +438,7 @@ module.exports = cds.service.impl(function () {
               OUT_ERROR_CODE: 500,
               OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
           }
-          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
           // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
           req.error({ code: "500", message: oError.message });
         }
@@ -487,7 +496,7 @@ module.exports = cds.service.impl(function () {
               OUT_ERROR_CODE: 500,
               OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
           }
-          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
           // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
           req.error({ code: "500", message: oError.message });
         }
@@ -509,13 +518,13 @@ module.exports = cds.service.impl(function () {
               OUT_ERROR_CODE: 500,   
               OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
           }
-          lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
           // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
           req.error({ code: "500", message: oError.message });
         }
     }
 
-    } catch (error) {
+    } catch (error) {       
       let Result2 = {
         OUT_SUCCESS: error.message || ""
       };
@@ -523,7 +532,7 @@ module.exports = cds.service.impl(function () {
           OUT_ERROR_CODE: 500,
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
       }
-      lib_common.postErrorLog(Result,null,null,"System Configuration","Node Js",dbConn,hdbext);
+      lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
       req.error({ code: "500", message: error.message });
     }
   })
@@ -599,6 +608,210 @@ module.exports = cds.service.impl(function () {
     }
 
   })
+
+  //Dynamic Master table
+  this.on('DynamicPostAdminPanelData', async (req) => {
+    try {
+
+      //local Variables
+      var oReqData = JSON.parse(req.data.input);
+      var sAction = oReqData.ACTION ;
+      var sTableName = oReqData.TABLE_NAME;
+      var sTableDesc = oReqData.TABLE_DESCRIPTION;    
+      var aInputData = oReqData.INPUT_DATA || null;
+      var sResponse = null;
+      var oUserDetails=oReqData.USER_DETAILS||{};                 
+      var sUserID=oUserDetails.USER_ID || null;
+      var sUserRole=oUserDetails.USER_ROLE || null;  
+
+      // get connection
+      var client = await dbClass.createConnectionFromEnv();
+      let dbConn = new dbClass(client);
+      // load procedure
+      const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_POSTDATA')
+
+      //connect to db
+      let conn = await cds.connect.to('db');
+
+      if (sAction === "CREATE" || sAction === "IMPORT_CSV") {
+
+        try{
+        //Refactor payload for Import CSV
+          if(sAction === "IMPORT_CSV")
+            aInputData =await lib_admin_panel.removeMetadata(aInputData);
+
+          
+
+          // excute procedure for requested master table
+          if (sTableName === 'Country') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", aInputData, [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          }
+          else if (sTableName === 'UserRole') {
+            // sResponse = await dbConn.callProcedurePromisified(loadProc,
+            //   [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], aInputData, [], [], [], [], [], [], [],[],[],[],[]]);
+         sResponse = await funcPostAdminPanelData(conn,sTableName, sTableDesc,aInputData)
+          } 
+          else if (sTableName === 'Currency') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], aInputData, [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'EntityCode') {
+          //Refactor payload for Import CSV
+          if(sAction === "IMPORT_CSV")
+            aInputData = await lib_admin_panel.convertIntegerToString(aInputData);
+
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], aInputData, [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'IBANCountry') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], aInputData, [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'MasterTableNames') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], aInputData, [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'RegexPostalCode') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], aInputData, [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'Region') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], aInputData, [], [], [], [], [], [], [], [],[],[],[],[]]);
+          } 
+          // else if (sTableName === 'UserRole') {
+          //   sResponse = await dbConn.callProcedurePromisified(loadProc,
+          //     [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], aInputData, [], [], [], [], [], [], [],[],[],[],[]]);
+          // } 
+          else if (sTableName === 'Status') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], aInputData, [], [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'Telecode') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], aInputData, [], [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'RequestType') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], aInputData, [], [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'AttachmentTypes') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], aInputData, [], [], [],[],[],[],[]]);
+          } else if (sTableName === 'IvenAttachments') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], aInputData, [], [],[],[],[],[]]);
+          } else if (sTableName === 'FormFields') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], aInputData, [],[],[],[],[]]);
+          } else if (sTableName === 'iVenSettings') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [], aInputData,[],[],[],[]]);
+          }
+          else if(sTableName === 'Mandatory') {
+              //Refactor payload for Import CSV
+          if(sAction === "IMPORT_CSV")
+            aInputData = await lib_admin_panel.getUpdatedFieldsData(aInputData,conn);
+
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],aInputData,[],[],[]]);
+          }
+          else if(sTableName === 'Visible') {
+              //Refactor payload for Import CSV
+          if(sAction === "IMPORT_CSV")
+            aInputData = await lib_admin_panel.getUpdatedFieldsData(aInputData,conn);
+            
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],aInputData,[],[]]);
+          }
+          else if(sTableName === 'Events') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],[],aInputData,[]]);
+          }
+          else if(sTableName === 'IVENUsers') {
+            sResponse = await dbConn.callProcedurePromisified(loadProc,
+              [sAction, sTableName, sTableDesc, "", "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [] ,[],[],[],[],aInputData]);
+          }
+          return sResponse
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          let Result = {
+              OUT_ERROR_CODE: 500,
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });   
+        }
+
+      }
+      else if (sAction === "DELETE") {
+        try{
+          var ID = oReqData.ID;
+          sResponse = await dbConn.callProcedurePromisified(loadProc,
+            [sAction, sTableName, sTableDesc, ID, "", "", [], [], [], [], [], [], [], [], [], [], [], [], [], [], [],[],[],[],[]]);
+          return sResponse;
+        }catch(oError){
+          let Result2 = {
+            OUT_SUCCESS: oError.message || ""
+          };
+          Result = {
+              OUT_ERROR_CODE: 500,   
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
+        }
+      }
+      else if (sAction === "TEST_EMAIl") {
+        //Changes By Chandan M Start 15/11/23
+        try{
+          let connection = await cds.connect.to('db');
+          var sEmailBody = aInputData[0].EMAIL_BODY;
+          var sEmailSubject = aInputData[0].EMAIL_SUBJECT;
+          var aEmailTo = aInputData[0].EMAIL_TO;
+          var aEmailCC = aInputData[0].EMAIL_CC;
+          var sEmailSender = aInputData[0].EMAIL_SENDER;
+          // sResponse = await lib_email.sendEmail(connection, sEmailBody, sEmailSubject, aEmailTo, aEmailCC, sEmailSender)
+          var sCCEmail = await lib_email.setSampleCC( [aEmailCC]);
+          await  lib_email.sendivenEmail(aEmailTo,sCCEmail,'html', sEmailSubject,sEmailBody)
+      
+          return sResponse
+        }catch(oError){     
+          Result2 = {
+              OUT_SUCCESS: oError.message || ""
+          };
+          Result = {
+              OUT_ERROR_CODE: 500,
+              OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+          }
+          lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration","Node Js",dbConn,hdbext);
+          // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
+          req.error({ code: "500", message: oError.message });
+        }
+
+        //Changes By Chandan M End 15/11/23   
+      }
+
+
+    } catch (error) {
+      req.error({ code: "500", message: error.message });
+      // lib_common.responseInfo(req,'error','500',error,null)
+    }
+  })
+
+  async function funcPostAdminPanelData(connection,sTableName,tableDesc,tableData){
+    try {
+			let sTableFullName = 'VENDOR_PORTAL.' + sTableName;
+			let aResult = await connection.run(
+				INSERT 
+        
+					.into`${connection.entities[sTableFullName]}`
+          .entries(tableData)
+					);
+			if (aResult.length > 0) return aResult;
+			else return null;
+		           
+
+		}
+		catch (error) { throw error; }
+  }
 
 
 })

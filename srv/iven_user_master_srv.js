@@ -32,7 +32,7 @@ module.exports = cds.service.impl(function () {
       //Changes By Chandan M 21/11/23 End
     try {
       // local variables
-      var oReqData = req.data.input
+      var oReqData = req.data.input;
       var oUserDetails=oReqData.USER_DETAILS;
       var sUserId=oUserDetails.USER_ID || null;
       var sUserRole=oUserDetails.USER_ROLE || null;

@@ -58,7 +58,14 @@ service requestProcessService {
   // Actions:
   // action RequestProcess(input : String)                    returns many String;
 
-  action RequestProcess(action : String, inputData : many RequestInfo, eventsData : many RegEventsLog) returns many String;
+   //Type
+  type User_Details:{
+    USER_ROLE: String(50);
+    USER_ID: String(50);
+  }
+
+
+  action RequestProcess(action : String, inputData : many RequestInfo, eventsData : many RegEventsLog,userDetails:User_Details) returns many String;
   action RequestEditProcess(input : String)                                                            returns many String;
 
 }

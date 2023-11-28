@@ -305,7 +305,7 @@ console.log(response);
 // Get MDG Payload structure for General Data
  getGeneralDataSet:async function(iVenVendorCode, sSAPVendorCode, aGeneralDataArr, aAddressDataArr, sBP_Type, sExemptionReason) {
 try{
-	var sName1 = aGeneralDataArr.COMPANY_NAME1 || "";
+	var sName1 = aGeneralDataArr.VENDOR_NAME1 || "";
 	var oPayload = {
 		"Lifnr": sSAPVendorCode,
 		"Land1": aAddressDataArr.COUNTRY || "",
@@ -318,7 +318,7 @@ try{
 		"Pfach": "", // PO Box
 		"Pstlz": aAddressDataArr.POSTAL_CODE || "", // Pin Code
 		"Regio": aAddressDataArr.STATE || "",
-		"Sortl": await this.getSearchTerm(aGeneralDataArr.COMPANY_NAME1 || "") || "",
+		"Sortl": await this.getSearchTerm(aGeneralDataArr.VENDOR_NAME1 || "") || "",
 		"Stras": aAddressDataArr.STREET1 || "",
 		"STR_SUPPL1": aAddressDataArr.STREET2 || "",
 		"STR_SUPPL2": aAddressDataArr.STREET3 || "",

@@ -6,16 +6,24 @@ const lib_common = require('./LIB/iven_library')
 
 module.exports = cds.service.impl(function () {
   this.on('PostApprovalMatrix', async (req) => {
-    try {
+    //Changes By Chandan M 21/11/23 Start
+    // get connection
+    var client = await dbClass.createConnectionFromEnv();
+    let dbConn = new dbClass(client);
+    //Changes By Chandan M 21/11/23 End
+    try {     
       // local variables
       var oReqData = req.data.input;
+      var oUserDetails=oReqData.USER_DETAILS;
+      var sUserId=oUserDetails.USER_ID || null;
+      var sUserRole=oUserDetails.USER_ROLE || null;
       var sAction = oReqData.ACTION;
       var aMatrixData = req.data.input.VALUE;
       var sTableName,bCheckDuplicateMatrix,sEntityDescription;
 
-       // get connection
-       var client = await dbClass.createConnectionFromEnv();
-       let dbConn = new dbClass(client);
+      //  // get connection
+      //  var client = await dbClass.createConnectionFromEnv();
+      //  let dbConn = new dbClass(client);
        let connection = await cds.connect.to('db');
 
        // getEntity Description against Entity Code from library
@@ -55,9 +63,19 @@ module.exports = cds.service.impl(function () {
       // return "success";
       
     } catch (error) {
-      console.error(error)
+   
+      let Result2 = {
+        OUT_SUCCESS: error.message || ""
+      };
+      let Result = {
+          OUT_ERROR_CODE: 500,
+          OUT_ERROR_MESSAGE:  error.message ? error.message : error
+      }
+      lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Approval Matrix","Node Js",dbConn,hdbext);
       // return error
-      req.error({code:"500", message: error.message});
+      console.error(error)
+      // return error.messsage  
+      req.error({ code: "500", message:  error.message ? error.message : error });  
     }
   })
 

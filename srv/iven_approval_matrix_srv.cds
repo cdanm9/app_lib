@@ -39,14 +39,20 @@ service approvalMatrixService {
        type approvalMatrixPayload {
               ACTION                : String;
               APP_TYPE              : String(30);
+              USER_DETAILS          : User_Details;
               VALUE                 : array of {
                      APPROVER_LEVEL : Integer;
                      USER_ROLE      : String(10);
                      USER_ID        : String(100);
                      ENTITY_CODE    : String(50);
               }
+       }   
+
+       type User_Details:{
+              USER_ROLE: String(50);
+              USER_ID: String(50);
        }
 
-       //CRUD operation action
+       //CRUD operation action   
        action PostApprovalMatrix(input : approvalMatrixPayload) returns String;
 }

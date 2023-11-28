@@ -12,7 +12,9 @@ module.exports = cds.service.impl(function () {
     this.on('RequestProcess', async (req) => {
         try {
             //local Variables
-            var { action, inputData, eventsData } = req.data;
+            var { action, inputData, eventsData,userDetails } = req.data;
+            var sUserIdentity=userDetails.USER_ID;
+            var sUserRole=userDetails.USER_ROLE;
             var sAction = action || null;
             var aInputData = inputData || [];
             var aEvents = eventsData || [];
@@ -171,7 +173,7 @@ module.exports = cds.service.impl(function () {
                         throw {"message":"Vendor Request Creation failed. Please contact admin."}
                         // let Result2 = {
                         //     OUT_SUCCESS: "Supplier Request Creation failed. Please contact admin."
-
+   
                         // };
                         // return Result2;
                         // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", parseInt(Result.OUT_ERROR_CODE, 10));
@@ -203,7 +205,9 @@ module.exports = cds.service.impl(function () {
                         OUT_ERROR_CODE: 500,
                         OUT_ERROR_MESSAGE:  e.message ? e.message : e
                     }
-                    lib_common.postErrorLog( Result, iREQUEST_NO, sUserID, "Vendor Request Form", "Node Js",dbConn,hdbext);
+                    // lib_common.postErrorLog( Result, iREQUEST_NO, sUserID, "Vendor Request Form", "Node Js",dbConn,hdbext);
+
+                    lib_common.postErrorLog( Result, iREQUEST_NO, sUserIdentity,sUserRole,"Vendor Request Form", "Node Js",dbConn,hdbext);
                     // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                     req.error({ code: "500", message: e.message });
                 } 
@@ -296,10 +300,11 @@ module.exports = cds.service.impl(function () {
                     };
 
                     Result = {
-                        OUT_ERROR_CODE: null,
+                        OUT_ERROR_CODE: 500,
                         OUT_ERROR_MESSAGE:  e.message ? e.message : e
                     }
-                    lib_common.postErrorLog( Result, reqNo, sUserID, "Supplier Request Approval", "Node Js",dbConn,hdbext);
+                    lib_common.postErrorLog( Result, reqNo, sUserIdentity,sUserRole,"Supplier Request Approval", "Node Js",dbConn,hdbext);
+
                     // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                     // throw {"message":"Supplier Request Approval failed. Please contact admin."}
                     req.error({ code: "500", message: "Vendor Request Approval failed. Please contact admin." });
@@ -384,10 +389,12 @@ module.exports = cds.service.impl(function () {
                 };
 
                 Result = {
-                    OUT_ERROR_CODE: null,
+                    OUT_ERROR_CODE: 500,
                     OUT_ERROR_MESSAGE:  e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result, reqNo, sUserID, "Vendor Request Approval", "Node Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result, reqNo, sUserIdentity,sUserRole,"Vendor Request Approval", "Node Js",dbConn,hdbext);
+
+                // lib_common.postErrorLog( Result, reqNo, sUserID, "Vendor Request Approval", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 
@@ -486,6 +493,10 @@ module.exports = cds.service.impl(function () {
             var aEvents = oReqData.EVENTS || [];
             var iRequestNo = aInputData[0].REQUEST_NO || null;
 
+            var oUserDetails=oReqData.USER_DETAILS;   
+            var sUserIdentity=oUserDetails.USER_ID || null;
+            var sUserRole=oUserDetails.USER_ROLE || null; 
+
             var isEmailNotificationEnabled = false;
             var Result = null;
 
@@ -539,7 +550,14 @@ module.exports = cds.service.impl(function () {
                 };
 
                 if (Result.outputScalar.OUT_SUCCESS !== null) {
-
+                    // let oChangeDetail = []
+                    // if(sChangedTo != sChangedFrom)
+                    //     oChangeDetail.push(" " + sChangedFrom + " to " + sChangedTo + " ")
+                    // else if(sSubTypeToDesc != sSubTypeFromDesc)
+                    //     oChangeDetail.push(" " + sSubTypeFromDesc + " to " + sSubTypeToDesc + " ")
+                    // else if(sSubTypeToDesc != sSubTypeFromDesc)
+                    //     oChangeDetail.push(" " + sSubTypeFromDesc + " to " + sSubTypeToDesc + " ")
+                    
                     var oEmailData = {
                         "ReqNo": iRequestNo,
                         "SupplierName": sSupplierName,
@@ -548,6 +566,7 @@ module.exports = cds.service.impl(function () {
                         "Assigned_From": sChangeType === "RT" ? sChangedFrom : sSubTypeFromDesc,
                         "Assigned_To": sChangeType === "RT" ? sChangedTo : sSubTypeToDesc,
                         "sChangeType": sChangeType
+                        // "changeDetails":[]
                     };
 
                     if (isEmailNotificationEnabled) {
@@ -571,10 +590,11 @@ module.exports = cds.service.impl(function () {
             catch (e) {
                 // conn.rollback();
                 Result = {
-                    OUT_ERROR_CODE: null,
+                    OUT_ERROR_CODE: 500,
                     OUT_ERROR_MESSAGE:   e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Request Edit", "Node Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result, iRequestNo, sUserIdentity,sUserRole,"Vendor Request Edit", "Node Js",dbConn,hdbext);
+                // lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Request Edit", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 
@@ -723,10 +743,10 @@ module.exports = cds.service.impl(function () {
           catch (e) {
                 // conn.rollback();
                 Result = {
-                    OUT_ERROR_CODE: null,
+                    OUT_ERROR_CODE: 500,
                     OUT_ERROR_MESSAGE:   e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Registered ID Edit", "Node Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result, iRequestNo, sUserIdentity,sUserRole, "Vendor Registered ID Edit", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 
@@ -807,10 +827,10 @@ module.exports = cds.service.impl(function () {
             catch (e) {
                 // conn.rollback();
                 Result = {
-                    OUT_ERROR_CODE: null,
+                    OUT_ERROR_CODE: 500,
                     OUT_ERROR_MESSAGE:  e.message ? e.message : e
                 }
-                lib_common.postErrorLog( Result,  aRequests[0].REQUEST_NO, sUserID, "Vendor Request Forwarding", "Node Js",dbConn,hdbext);
+                lib_common.postErrorLog( Result,  aRequests[0].REQUEST_NO, sUserIdentity,sUserRole,"Vendor Request Forwarding", "Node Js",dbConn,hdbext);
                 // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
                 req.error({ code: "500", message: e.message });
             } 

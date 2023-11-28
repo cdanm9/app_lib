@@ -3,7 +3,7 @@ const lib_email = require("./iven_library_email.js");
 const { Connection } = require("@sap/hana-client");
 
 // App paths from portal
-const sLink_Registration_Report = "#Supplier_Registration_Report-Display&/vendorReportDetail/";
+const sLink_Request_Report = "aabd5b0b-54d4-4217-b137-b0b0179f2a79.comibsplivenivenrequestreport.comibsplivenivenrequestreport-0.0.1/index.html#/RouteDetailPage/";
 const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/vendorDetails/";
 const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster/";
 
@@ -399,12 +399,12 @@ module.exports = {
 				oEmailContent.subject = "Vendor " + sRequestTypeText + " " + sActionTypeText;
 
 				oEmailContent.emailBody = "Dear User," + "<br><br>" +
-					"Your " + req + "Request No. " + oEmailData.ReqNo + " for " + sRequestTypeText +
-					"Vendor Registration of <span style=\"text-transform:uppercase\">" +
+					"Your " + req + "Request No. " + oEmailData.ReqNo + " for" + sRequestTypeText +
+					" Vendor Registration of <span style=\"text-transform:uppercase\">" +
 					oEmailData.SupplierName + "</span> has been " + sActionTypeText + " by " + oEmailData.Approver_Email + ".<br><br>" +
 
 					"You can check the details for the request on the " + sClientShortName + " portal using this " +
-					"<a href=" +  sLink_Registation_Form  + ">link</a>" + "<br>" +
+					"<a href=" + sLink_Portal_LoginAccess + sLink_Request_Report  + parseInt(oEmailData.ReqNo, 10)+ ">link</a>" + "<br>" +
 
 					"<br>" +
 					"Should you have any questions, please do not hesitate to reach out to us via email at " +
@@ -432,7 +432,7 @@ module.exports = {
 					oEmailData.Reason + "<br><br>" +
 
 					"You can check the details for the request on the " + sClientShortName + " portal report using the link " +
-					"<a href=" +  sLink_Registation_Form + ">here</a>" + "<br>" +
+					"<a href=" +  sLink_Portal_LoginAccess + sLink_Request_Report  + parseInt(oEmailData.ReqNo, 10) + ">here</a>" + "<br>" +
 
 					"<br>" +
 					"Should you have any questions, please do not hesitate to reach out to us via email at " +
@@ -462,7 +462,7 @@ module.exports = {
 					oEmailData.Reason + "<br><br>" +
 
 					"You can check the details for the request on the " + sClientShortName + " portal report using the link " +
-					"<a href=" + sLink_Registation_Form + ">here</a>" + "<br>" +
+					"<a href=" + sLink_Portal_LoginAccess + sLink_Request_Report  + parseInt(oEmailData.ReqNo, 10) + ">here</a>" + "<br>" +
 
 					"<br>" +
 					"Should you have any questions, please do not hesitate to reach out to us via email at " +
@@ -501,7 +501,7 @@ module.exports = {
 					sRequestTypeText = "updated ";
 					req = 'update '
 				}
-
+				var portallink = sLink_Portal_LoginAccess+"site/iven#Shell-home";
 				oEmailContent.subject = "Final approval of " + sRequestTypeText + "vendor registration form is complete.";
 
 				oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
@@ -511,7 +511,7 @@ module.exports = {
 					"You will receive an email with " + sClientShortName + " portal credentials soon.<br><br>" +
 
 					"Once you receive the credentials, you can login to the " + sClientShortName + " portal using this  " +
-					"<a href=" + sLink_Registation_Form + ">link</a>" + "<br>" +
+					"<a href=" + portallink + ">link</a>" + "<br>" +
 
 					"<br>" +
 					"Should you have any questions, please do not hesitate to reach out to us via email at " +

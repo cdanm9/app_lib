@@ -11,6 +11,10 @@ const lib_mdg = require('./LIB/iven_library_mdg')
 module.exports = cds.service.impl(function () {   
 
     this.on('PostRegFormData', async (req) => {
+        //Changes By Chandan M 23/11/23 Start
+        var client = await dbClass.createConnectionFromEnv();
+        var dbConn = new dbClass(client);
+        //Changes By Chandan M 23/11/23 End
         try {
             var {
                 action,
@@ -31,17 +35,21 @@ module.exports = cds.service.impl(function () {
                 attachmentFieldsData,
                 attachmentData,
                 updatedFields,
-                eventsData
+                eventsData,
+                userDetails
             } = req.data;
 
             var sAction = action;
             var Result = null;
 
+
  //intialize connection to database
  var connection = await cds.connect.to('db');
- var client = await dbClass.createConnectionFromEnv();
- let dbConn = new dbClass(client);
+//  var client = await dbClass.createConnectionFromEnv();
+//  var dbConn = new dbClass(client);
  var isEmailNotificationEnabled = false;
+ var sUserIdentity=userDetails.USER_ID || null;
+  var sUserRole=userDetails.USER_ROLE || null;
    //Check if email notification is enabled
    isEmailNotificationEnabled = await lib_common.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
 
@@ -206,10 +214,11 @@ module.exports = cds.service.impl(function () {
 
         } catch (error) {
             Result = {
-                OUT_ERROR_CODE: null,
+                OUT_ERROR_CODE: 500,
                 OUT_ERROR_MESSAGE: error.message ? error.message : error
             }
-            lib_common.postErrorLog( Result, iReqNo, sUserID, "Vendor Registration Form", "Node Js",dbConn,hdbext);
+
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);   
             
             req.error({ code: "500", message: error.message ? error.message : error });
         }
@@ -220,7 +229,7 @@ module.exports = cds.service.impl(function () {
         let dbConn = new dbClass(client);
         try {
            
-            var { vendorEmail } = req.data;
+            var { vendorEmail,userId,userRole} = req.data;
             //intialize connection to database
             // var connection = await cds.connect.to('db');
              // get connection
@@ -232,10 +241,10 @@ module.exports = cds.service.impl(function () {
                     .from(`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`)
                     .where({ REGISTERED_ID: vendorEmail }));
                 if(sEmailCheck.length > 0)
-                {
+                {   
                     let sResult = await connection.run(SELECT
                         .from(`${connection.entities['VENDOR_PORTAL.REQUEST_SECURITY_CODE']}`)
-                        .where({ REGISTERED_ID: vendorEmail }));
+                        .where({ REGISTERED_ID: vendorEmail }));     
     
                     if (sResult.length > 0) {
                         sResult[0].CREATED_ON = new Date(sResult[0].CREATED_ON);
@@ -257,11 +266,12 @@ module.exports = cds.service.impl(function () {
            
           
             Result = {
-                OUT_ERROR_CODE: null,
+                OUT_ERROR_CODE: 500,
                 OUT_ERROR_MESSAGE: error.message ? error.message : error
             }
-            if(error.errorType !== "Warning")
-                 lib_common.postErrorLog( Result, 1, vendorEmail, "Vendor Registration Form", "Node Js",dbConn,hdbext);
+            if(error.errorType !== "Warning")   
+                 lib_common.postErrorLog( Result,null, userId,userRole,"Vendor Registration Form", "Node Js",dbConn,hdbext);
+                //  lib_common.postErrorLog( Result, 1, vendorEmail, "Vendor Registration Form", "Node Js",dbConn,hdbext);
             
             req.error({ code: "500", message: error.message ? error.message : error });
         }
@@ -271,12 +281,12 @@ module.exports = cds.service.impl(function () {
     this.on('GetSecurityPin', async (req) => {
         var client = await dbClass.createConnectionFromEnv();
         var dbConn = new dbClass(client);
-        try {
-            var { vendorName, vendorEmail, requesterId } = req.data;
+        try {       
+            var { vendorName, vendorEmail, requesterId,userId,userRole } = req.data;
             var isEmailNotificationEnabled = false;
 
             if (vendorName === null || vendorEmail === null) {
-                throw "Invalid Payload";
+                throw "Invalid Payload";  
             }
 
             var sSupplierName = vendorName.toUpperCase().trim() || "";
@@ -330,7 +340,8 @@ module.exports = cds.service.impl(function () {
                 OUT_ERROR_CODE: 500,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result,null,vendorEmail,"Vendor Registration Form","Node Js",dbConn,hdbext);
+
+            lib_common.postErrorLog( Result,null, userId,userRole,"Vendor Registration Form", "Node Js",dbConn,hdbext);
             req.error({ code: "500", message: error.message ? error.message : error });
         }
 
@@ -340,7 +351,7 @@ module.exports = cds.service.impl(function () {
     this.on('GetDraftData', async (req) => {
         try {
             //local Variables
-            var { requestNo, entityCode, creationType } = req.data;
+            var { requestNo, entityCode, creationType,userRole,userId } = req.data;
             var oCcodeRType = null,
                 Result2 = {},
                 Result = {},
@@ -349,9 +360,7 @@ module.exports = cds.service.impl(function () {
               //intialize connection to database
                let connection = await cds.connect.to('db');
             var client = await dbClass.createConnectionFromEnv();
-            var dbConn = new dbClass(client);  
-
-          
+            var dbConn = new dbClass(client);
 
             //fetch registered id against request no
             var registeredUser =await  lib_common.getRegisteredId(requestNo,connection);
@@ -431,90 +440,12 @@ module.exports = cds.service.impl(function () {
 
         } catch (error) {
             Result = {
-                OUT_ERROR_CODE: null,
+                OUT_ERROR_CODE: 500,
                 OUT_ERROR_MESSAGE: error.message ? error.message : error
             }
             if(error.errorType !== "Warning")
-                 lib_common.postErrorLog( Result, requestNo, registeredUser, "Vendor Registration Form", "Node Js",dbConn,hdbext);
+                 lib_common.postErrorLog( Result, requestNo, userId,userRole,"Vendor Registration Form", "Node Js",dbConn,hdbext);
             
-            req.error({ code: "500", message: error.message ? error.message : error });
-        }
-    })
-    this.on('MDGPosting', async (req) => {
-        try {
-
-
-            var { action, inputData,addressData,contactsData,bankData, eventsData } = req.data;
-            var isEmailNotificationEnabled = false;
-            // get connection
-            var client = await dbClass.createConnectionFromEnv();
-            let dbConn = new dbClass(client);
-            // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::ONBOARDING_REJECT');
-
-            //intialize connection to database
-            var connection = await cds.connect.to('db');
-
-            //Check if email notification is enabled
-            isEmailNotificationEnabled = await lib_email.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
-
-            var iReqNo = inputData[0].REQUEST_NO || null;
-            var sEntityCode = inputData[0].ENTITY_CODE || null;
-            var iRequestType = inputData[0].REQUEST_TYPE || null;
-            var sSupplierEmail = inputData[0].REGISTERED_ID || null;
-            var sUserId = eventsData[0].USER_ID || null;
-            var iLevel = inputData[0].APPROVER_LEVEL || null;
-            var sBuyerEmail = inputData[0].REQUESTER_ID || null;
-            var sIvenNo = inputData[0].IVEN_VENDOR_CODE || null;
-            var sSupplerName = inputData[0].VENDOR_NAME1 || null;
-            var sChangeRequestNo = null;
-            var iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
-            var sCompareValue = "A";
-
-            
-             if (action === "APPROVE") { //-----------------------------------------------------------------------------
-                //////////////////FOrtesting 
-                isEmailNotificationEnabled = 0;
-                ///////////////
-                
-                var sSapVendorCode = null;
-                // ------------- MDG Posting Start------------------
-                var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
-
-                var iVenVendorCode = null;
-                var oMDGResponse = null;
-                var iMDGStatus = null;
-                var oMDGPayload = null;
-                var bMDGComparison = null;
-                var bAttachmentComparison = null;
-                var oActiveData = null;
-                var CurrAttachment = null;
-                var bNoChange = false;
-                var oDataStatus = null;
-                var ODataResponse = null;
-                var sCompareValue = null;
-
-                if (iLevel === iMaxLevelCount) {
-                    oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
-                    iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
-                    sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
-
-                    // ------------------------START: Direct MDG Call for testing-------------------------
-                     var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
-                     req.reply(MDGResult)
-                    //  console.log(MDGResult);
-                    // iMDGStatus = MDGResult.iStatusCode;
-                    // oMDGResponse = MDGResult.oResponse;
-                    // sChangeRequestNo = MDGResult.oResponse.length === 12 ? MDGResult.oResponse : null;
-                    // sCompareValue = "M";
-
-                }
-
-                // ------------- MDG Posting End------------------
-
-            }
-           
-
-        } catch (error) {
             req.error({ code: "500", message: error.message ? error.message : error });
         }
     })
@@ -523,13 +454,15 @@ module.exports = cds.service.impl(function () {
         try {
 
 
-            var { action, inputData,addressData,contactsData,bankData, eventsData } = req.data;
+            var { action, inputData,addressData,contactsData,bankData, eventsData,userDetails } = req.data;
+
             var isEmailNotificationEnabled = false;
             // get connection
             var client = await dbClass.createConnectionFromEnv();
             let dbConn = new dbClass(client);
             // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::ONBOARDING_REJECT');
-
+            var sUserIdentity=userDetails.USER_ID || null;
+            var sUserRole=userDetails.USER_ROLE || null;
             //intialize connection to database
             var connection = await cds.connect.to('db');
 
@@ -619,170 +552,16 @@ module.exports = cds.service.impl(function () {
                         OUT_ERROR_CODE: 500,
                         OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
                     }
-                    lib_common.postErrorLog(Result,iReqNo,sUserId,"Vendor Registration Form","Node Js",dbConn,hdbext);
+                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
                     req.error({ code: "500", message: oError.message ? oError.message : oError });
                 }
             }
-            // else if (action === "APPROVE") { //-----------------------------------------------------------------------------
-            //     //////////////////FOrtesting 
-            //     isEmailNotificationEnabled = 0;
-            //     ///////////////
-                
-            //     var sSapVendorCode = null;
-            //     // ------------- MDG Posting Start------------------
-            //     var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
-
-            //     var iVenVendorCode = null;
-            //     var oMDGResponse = null;
-            //     var iMDGStatus = null;
-            //     var oMDGPayload = null;
-            //     var bMDGComparison = null;
-            //     var bAttachmentComparison = null;
-            //     var oActiveData = null;
-            //     var CurrAttachment = null;
-            //     var bNoChange = false;
-            //     var oDataStatus = null;
-            //     var ODataResponse = null;
-            //     var sCompareValue = 'A';
-
-            //     if (iLevel === iMaxLevelCount) {
-            //         oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
-            //         iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
-            //         sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
-
-            //         // ------------------------START: Direct MDG Call for testing-------------------------
-            //          var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
-            //         //  console.log(MDGResult);
-            //         iMDGStatus = MDGResult.iStatusCode;
-            //         oMDGResponse = MDGResult.oResponse;
-            //         sChangeRequestNo = MDGResult.oResponse.length === 12 ? MDGResult.oResponse : null;
-            //         // sCompareValue = "M";
-
-            //     }
-
-            //     // ------------- MDG Posting End------------------
-
-            //     // if (iLevel < iMaxLevelCount || sChangeRequestNo !== null) {
-            //     if (iLevel <= iMaxLevelCount) {
-            //         // 			if (iLevel <= iMaxLevelCount && bNoChange === false && oDataStatus !== 400 && iMDGStatus !== 500) {
-
-            //         // eventsData = getEventObjRegApproval(eventsData, iLevel, iMaxLevelCount, sChangeRequestNo);
-
-            //         // Result = execProcedure(iReqNo, sEntityCode, iRequestType,
-            //         //     sSupplierEmail, sBuyerEmail, sUserId, iLevel, aEventObj, sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
-            //         //     sCompareValue);
-            //         const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_APPROVAL')
-
-            //         Result = await dbConn.callProcedurePromisified(loadProc,
-            //             [iReqNo, sEntityCode, iRequestType,
-            //                 sSupplierEmail, sBuyerEmail, sUserId, iLevel, eventsData, sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
-            //                 sCompareValue]);
-            //         var responseObj = {
-            //             "Message": Result.outputScalar.OUT_SUCCESS !== null ? Result.outputScalar.OUT_SUCCESS : "Approval failed!",
-            //             "MDG_status": iMDGStatus,
-            //             "MDG_Payload": oMDGPayload,
-            //             "ODataResponse": ODataResponse,
-            //             "bMDGComparison": bMDGComparison,
-            //             "bAttachmentComparison": bAttachmentComparison,
-            //             "CurrAttachment": CurrAttachment,
-            //             "sChangeRequestNo": sChangeRequestNo
-
-            //         };
-
-            //         if (Result.outputScalar.OUT_SUCCESS !== null) {
-
-            //             var oEmailData = {
-            //                 "ReqNo": iReqNo,
-            //                 "ReqType": iRequestType,
-            //                 "SupplierName": sSupplerName,
-            //                 "SupplerEmail": sSupplierEmail,
-            //                 "Approver_Email": sUserId,
-            //                 "Approver_Level": iLevel,
-            //                 "Next_Approver": Result.outputScalar.OUT_EMAIL_TO, // Proc Manager
-            //                 "Buyer": sBuyerEmail
-            //             };
-
-            //             action = Result.outputScalar.OUT_MAX_LEVEL === iLevel ? "FINAL_APPROVAL" : "APPROVE";
-
-            //             if (action === "APPROVE") {
-            //                 // pending for approval - notification to Proc Manager
-            //                 if (isEmailNotificationEnabled) {
-            //                     // var oEmaiContent = EMAIL_LIBRARY.getEmailData(action, "REGISTER", oEmailData, null);
-            //                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
-            //                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "REGISTER", oEmailData, null)
-            //                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null, null)
-            //                     var sCCEmail = await lib_email.setSampleCC( null);
-            //                     await  lib_email.sendivenEmail(oEmailData.Next_Approver,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
-            //                     // Approval done - notification to Buyer
-            //                     // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
-            //                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer], null);
-            //                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
-            //                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer], null, null)
-            //                     var sCCEmail = await lib_email.setSampleCC( null);
-            //                     await  lib_email.sendivenEmail(oEmailData.Buyer,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
-            //                 }
-
-            //             } else if (action === "FINAL_APPROVAL") {
-
-            //                 // Approval done - notification to Buyer & Proc Manager
-            //                 if (isEmailNotificationEnabled) {
-            //                     // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
-            //                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null);
-            //                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
-            //                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null, null)
-            //                     var sCCEmail = await lib_email.setSampleCC( null);
-            //                     var sToEmail = [oEmailData.Buyer, oEmailData.Approver_Email].toString();
-            //                     await  lib_email.sendivenEmail(sToEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
-            //                 }
-            //             }
-
-            //             statusCode = 200;
-            //         } else {
-            //             // iVen_Content.postErrorLog(conn, Result, iReqNo, sUserId, APP_NAME, "PROCEDURE");
-            //             statusCode = parseInt(Result.outputScalar.OUT_ERROR_CODE);
-            //             responseObj.ERROR_CODE = parseInt(Result.outputScalar.OUT_ERROR_CODE);
-            //             responseObj.ERROR_DESC = Result.outputScalar.OUT_ERROR_MESSAGE;
-            //             throw JSON.stringify(responseObj);
-            //         }
-
-            //         // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
-            //         return responseObj;
-            //     } else {
-            //         return "Max level reached";
-            //             // responseObj = {
-            //             //     "Message": "MDG posting failed!",
-            //             //     "MDG_status": iMDGStatus,
-            //             //     "MDG_Payload": oMDGPayload,
-            //             //     "SAP_Code": sSapVendorCode,
-            //             //     "MDG_Response": oMDGResponse
-
-            //             // }
-            //             // Result = {
-            //             //     "OUT_ERROR_CODE": iMDGStatus,
-            //             //     "OUT_ERROR_MESSAGE": JSON.stringify(oMDGResponse)
-            //             // }
-            //         //     iVen_Content.postErrorLog(conn, Result, iReqNo, sUserId, "Supplier Registration Approval", "API");
-
-            //         //     if (bNoChange === true) {
-            //         //         responseObj.Message = "No Change Found in Data for Approval!"
-            //         //     } else if (oDataStatus && oDataStatus === 400) {
-            //         //         responseObj.Message = ODataResponse.oResponse;
-            //         //     } else if (iMDGStatus && iMDGStatus === 500) {
-            //         //         responseObj.Message = JSON.stringify(oMDGResponse);
-            //         //     }
-
-            //         //     iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", 400);
-            //         //     if (iRequestType !== 5) {
-            //         //         // 	MDG_LIBRARY.rollbackSAPVendorCodeInSeq(conn);
-            //         //     }
-            //     }
-
-            // }
+           
             else if (action === "APPROVE") { //-----------------------------------------------------------------------------
                 //////////////////FOrtesting 
 
                 try{
-                    isEmailNotificationEnabled = 0;
+                    // isEmailNotificationEnabled = 0;
                     ///////////////
                     
                     var sSapVendorCode = null;
@@ -805,7 +584,7 @@ module.exports = cds.service.impl(function () {
                     if (iLevel === iMaxLevelCount) {
                         oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
                         iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
-                        sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
+                        // sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
 
                         // ------------------------START: Direct MDG Call for testing-------------------------
                         var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
@@ -814,6 +593,7 @@ module.exports = cds.service.impl(function () {
                         oMDGResponse = MDGResult.oResponse;
                         // sChangeRequestNo = oMDGResponse.changerequestNo.length === 12 ?  oMDGResponse.changerequestNo : null;
                 sChangeRequestNo =oMDGResponse.changerequestNo;
+                sSapVendorCode = parseInt(oMDGResponse.d.Lifnr, 10) || "";
                         //   sChangeRequestNo = oMDGResponse;
                         // sCompareValue = "M";
 
@@ -863,7 +643,7 @@ module.exports = cds.service.impl(function () {
                                 "Buyer": sBuyerEmail
                             };
 
-                            action = Result.outputScalar.OUT_MAX_LEVEL === iLevel ? "FINAL_APPROVAL" : "APPROVE";
+                            action = Result.outputScalar.OUT_MAX_LEVEL == iLevel ? "FINAL_APPROVAL" : "APPROVE";
 
                             if (action === "APPROVE") {
                                 // pending for approval - notification to Proc Manager
@@ -909,7 +689,7 @@ module.exports = cds.service.impl(function () {
                         // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
                         return responseObj;
                     } else {
-                        return "Max level reached";
+                        throw "Max level reached";
                             // responseObj = {
                             //     "Message": "MDG posting failed!",
                             //     "MDG_status": iMDGStatus,
@@ -945,7 +725,7 @@ module.exports = cds.service.impl(function () {
                         OUT_ERROR_CODE: 500,
                         OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
                     }
-                    lib_common.postErrorLog(Result,iReqNo,sUserId,"Vendor Registration Form","Node Js",dbConn,hdbext);
+                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval","Node Js",dbConn,hdbext);
                     req.error({ code: "500", message: oError.message ? oError.message : oError });
                 }
 
@@ -972,7 +752,7 @@ module.exports = cds.service.impl(function () {
                         OUT_ERROR_CODE: 500,
                         OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
                     }
-                    lib_common.postErrorLog(Result,iReqNo,sUserId,"Vendor Registration Form","Node Js",dbConn,hdbext);
+                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
                     req.error({ code: "500", message: oError.message ? oError.message : oError });
                 }
             }
@@ -985,11 +765,13 @@ module.exports = cds.service.impl(function () {
         var client = await dbClass.createConnectionFromEnv();
         let dbConn = new dbClass(client);
         try {
-            var { action, messengerData, inputData, eventsData } = req.data;
+            var { action, messengerData, inputData, eventsData,userDetails } = req.data;
             var isEmailNotificationEnabled = false;
+            var sUserIdentity=userDetails.USER_ID || null;
+            var sUserRole=userDetails.USER_ROLE || null;
             // get connection
-            var client = await dbClass.createConnectionFromEnv();
-            let dbConn = new dbClass(client);
+            // var client = await dbClass.createConnectionFromEnv();
+            // let dbConn = new dbClass(client);
             // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::ONBOARDING_REJECT');
 
             //intialize connection to database
@@ -1064,9 +846,7 @@ module.exports = cds.service.impl(function () {
                 OUT_ERROR_CODE: 500,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result,iReqNo,sLoginId,"Vendor Registration Form","Node Js",dbConn,hdbext);
-
-
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
             req.error({ code: "500", message: error.message ? error.message : error });
         }
     })
@@ -1075,7 +855,7 @@ module.exports = cds.service.impl(function () {
         var client = await dbClass.createConnectionFromEnv();
         var dbConn = new dbClass(client);
         try {
-            var { action, stepNo, reqHeader, addressData, contactsData, updatedFields, editLog } = req.data;
+            var { action, stepNo, reqHeader, addressData, contactsData, updatedFields, editLog,userDetails} = req.data;   
             var isEmailNotificationEnabled = false;
             // get connection
             // var client = await dbClass.createConnectionFromEnv();
@@ -1090,6 +870,9 @@ module.exports = cds.service.impl(function () {
 
             //Check if email notification is enabled
             // isEmailNotificationEnabled = await lib_email.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
+
+            var sUserIdentity=userDetails.USER_ID || null;
+            var sUserRole=userDetails.USER_ROLE || null;
 
             var iReqNo = reqHeader[0].REQUEST_NO || null;
             var sUserId = reqHeader[0].REGISTERED_ID || null;
@@ -1176,7 +959,9 @@ module.exports = cds.service.impl(function () {
                 OUT_ERROR_CODE: 500,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result,iReqNo,sUserId,"Vendor Registration Form","Node Js",dbConn,hdbext);
+            // lib_common.postErrorLog(Result,iReqNo,sUserId,"Vendor Registration Form","Node Js",dbConn,hdbext);
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval","Node Js",dbConn,hdbext);
+
 
             req.error({ code: "500", message: error.message ? error.message : error });
         }
@@ -1186,7 +971,9 @@ module.exports = cds.service.impl(function () {
         var client = await dbClass.createConnectionFromEnv();
         var dbConn = new dbClass(client); 
         try {
-            var { action,attachmentId, inputData } = req.data;
+            var { action,attachmentId, inputData,userDetails } = req.data;
+            var sUserIdentity=userDetails.USER_ID || null;
+            var sUserRole=userDetails.USER_ROLE || null;
             var aCMSData = inputData || [];
             var Result, responseObj;
 
@@ -1208,7 +995,7 @@ module.exports = cds.service.impl(function () {
 
                     req.reply(JSON.stringify(responseObj));
                 }
-                else {
+                else {   
                     responseObj = {
                         "Message": "CMS operation for " + action + " failed!",
                         "DocId": Result.outputScalar.OUT_DOC_ID,
@@ -1228,36 +1015,11 @@ module.exports = cds.service.impl(function () {
                 OUT_ERROR_CODE: 500,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result,iReqNo,null,"Vendor Registration Form","Node Js",dbConn,hdbext);
-
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
+            
             req.error({ code: "500", message: error.message ? error.message : error });
         }
     })
-
-    this.on('EditSupplierProfile', async (req) => {
-        try {
-            var x = await lib_common.getCSRFTokenS4(req,res);
-            console.log(x);
-        } catch (error) {
-            // lib_common.catchToken(error.reason.response.headers["x-csrf-token"]);
-            req.error({ code: "500", message: error.message ? error.message : error });
-        }
-    })
-
-    //test s4 hana service
-    this.on('testOdata', async (req) => {
-        try {
-            var {payload} = req.data;
-            var x = await lib_common.getCSRFTokenS4(payload);
-            console.log(x);
-            return x.toString();
-        } catch (error) {
-            // lib_common.catchToken(error.reason.response.headers["x-csrf-token"]);
-            req.error({ code: "500", message: error.message ? error.message : error });
-        }
-    })
-
-
 
     async function getLogsCount(conn, oPayloadValue) {
         try {

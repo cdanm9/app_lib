@@ -38,9 +38,13 @@ module.exports = cds.service.impl(function () {
         attachmentData,
         updatedFields,
         eventsData,
-        supplierLogData
+        supplierLogData,
+        userDetails
     } = req.data;
       //intialize connection to database
+      var sUserId=userDetails.USER_ID || null;
+      var sUserRole=userDetails.USER_ROLE || null;   
+
       let connection = await cds.connect.to('db');
       var isEmailNotificationEnabled = false;
        //Check if email notification is enabled
@@ -125,7 +129,7 @@ module.exports = cds.service.impl(function () {
 				throw "Invalid Payload";
 			}
 
-			var sUserId = reqHeader[0].REGISTERED_ID || null; //Minor Changes By Chandan M 21/11
+			// var sUserId = reqHeader[0].REGISTERED_ID || null; 
 			var sSupplerName = reqHeader[0].VENDOR_NAME1;
 			var sEntityCode = reqHeader[0].ENTITY_CODE;
 			var sIsResend = reqHeader[0].REQUEST_RESENT;
@@ -267,8 +271,8 @@ module.exports = cds.service.impl(function () {
           OUT_ERROR_CODE: 500,
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
       }
-      lib_common.postErrorLog(Result,iReqNo,sUserId,"Data Migration","Node Js",dbConn,hdbext);  
-      
+      lib_common.postErrorLog(Result,iReqNo,sUserId,sUserRole,"Vendor Profile","Node Js",dbConn,hdbext);  
+         
       // return error.messsage
       req.error({ code: "500", message: error.message });
     }
@@ -287,13 +291,16 @@ this.on('VendorDataMigration',async (req) =>{
         reqHeader,
         addressData,
         contactsData,
-        bankData
+        bankData,
+        userDetails
     } = req.data;
       //intialize connection to database
       let connection = await cds.connect.to('db');
       var isEmailNotificationEnabled = false;
        //Check if email notification is enabled
        isEmailNotificationEnabled = await lib_email.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
+       var sUserID=userDetails.USER_ID || null;
+      var sUserRole=userDetails.USER_ROLE || null; 
 
        // get connection
       //  var client = await dbClass.createConnectionFromEnv();
@@ -336,7 +343,7 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 					
 					// var onbForm = [reqHeader[i]];
 					var supplierEvents =await getCreateEvents(reqHeader[i].REQUESTER_ID);
-					sUserID = reqHeader[i].REQUESTER_ID || null;
+					// sUserID = reqHeader[i].REQUESTER_ID || null; //Commented By Chandan M 22/11/23
 					// Result = execProcedure(reqHeader[0].REQUESTER_ID, supplierReq[0].VEMAIL, supplierReq[0].SUPPLIERTYPE_CODE, sapVendorCode, reqType,
 					// 	supplierReq, onbForm, onbAddress, onbContact, onbBank, supplierEvents);
 					sResponse = await dbConn.callProcedurePromisified(loadProc,
@@ -406,7 +413,7 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
         OUT_ERROR_CODE: 500,
         OUT_ERROR_MESSAGE:  error.message ? error.message : error
     }
-    lib_common.postErrorLog(Result,null,sUserID,"Data Migration","Node Js",dbConn,hdbext);
+    lib_common.postErrorLog(Result,null,sUserID,sUserRole,"Data Migration","Node Js",dbConn,hdbext);
 
 
     req.error({ code: "500", message:  error.message ? error.message : error });
@@ -431,17 +438,6 @@ this.on('getDataMigrationConfiguration',async(req) =>{
     return JSON.stringify(response);
   }
   catch(error){
-
-    let Result2 = {
-      OUT_SUCCESS: error.message || ""
-    };
-    let Result = {
-        OUT_ERROR_CODE: 500,
-        OUT_ERROR_MESSAGE:  error.message ? error.message : error
-    }
-    lib_common.postErrorLog(Result,null,null,"Data Migration","Node Js",dbConn,hdbext);
-
-
     req.error({ code: "500", message:  error.message ? error.message : error });
   }
 })
@@ -452,7 +448,10 @@ this.on('DataMigrationConfiguration',async(req) =>{
    //Changes by Chandan M 20/11 End
  
   try{
-   var {action,DMFieldConfiguration,DMLimit} = req.data;
+    var {action,DMFieldConfiguration,DMLimit,userDetails} = req.data;
+   var sUserID=userDetails.USER_ID || null;
+   var sUserRole=userDetails.USER_ROLE || null;
+   
  //intialize connection to database
  let connection = await cds.connect.to('db');
  if(action === "GET"){
@@ -492,9 +491,9 @@ this.on('DataMigrationConfiguration',async(req) =>{
     let Result = {
         OUT_ERROR_CODE: 500,
         OUT_ERROR_MESSAGE:  error.message ? error.message : error
-    }
-    lib_common.postErrorLog(Result,null,null,"Data Migration","Node Js",dbConn,hdbext);
+    }   
 
+    lib_common.postErrorLog(Result,null,sUserID,sUserRole,"Data Migration","Node Js",dbConn,hdbext);
 
     req.error({ code: "500", message:  error.message ? error.message : error });
   }
@@ -503,7 +502,6 @@ this.on('getBackendAvailability',async(req)=>{
   var client = await dbClass.createConnectionFromEnv();
   var dbConn = new dbClass(client);
   try{
-    
     // var {sapClient,destFileName} = req.data;
     var response = {"onPremise":null,"Cloud":null};
     var sapClient ='';
@@ -531,15 +529,6 @@ this.on('getBackendAvailability',async(req)=>{
 }
 catch(error)
 {
-  let Result2 = {
-    OUT_SUCCESS: error.message || ""
-  };
-  let Result = {
-      OUT_ERROR_CODE: 500,
-      OUT_ERROR_MESSAGE:  error.message ? error.message : error
-  }
-  lib_common.postErrorLog(Result,null,null,"Data Migration","Node Js",dbConn,hdbext);
-
   req.error({ code: "500", message:  error.message ? error.message : error });  
   // throw error;
 }    
