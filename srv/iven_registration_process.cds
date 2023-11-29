@@ -46,6 +46,7 @@ service registrationProcessService {
   entity RegFormDiscInfo           as projection on VENDOR_PORTAL.REGFORM_DISCLOSURE_FIELDS;
   entity MasterRequestType         as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
   entity MasterIvenUsers           as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;
+  entity MasterIvenUserEntity      as projection on VENDOR_PORTAL.MASTER_USER_ENTITY_CODES;
   entity RegFormDiscRelatives      as projection on VENDOR_PORTAL.REGFORM_DISCLOSURE_RELATIVES;
   entity RegFormDiscQaCertif       as projection on VENDOR_PORTAL.REGFORM_DISCLOSURE_QACERT;
   entity RegFormAttachFields       as projection on VENDOR_PORTAL.REGFORM_ATTACH_FIELDS;
@@ -72,36 +73,35 @@ service registrationProcessService {
     CREATED_ON    : Timestamp;
   }
 
-   type User_Details:{
-    USER_ROLE: String(50);
-    USER_ID: String(50);
+  type User_Details : {
+    USER_ROLE : String(50);
+    USER_ID   : String(50);
   }
 
   // Functions
-  function GetDraftData(requestNo : Integer, entityCode : String, creationType : Integer, userId: String,userRole:String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns many String;
-  function GetSecurityPin(vendorName : String, vendorEmail : String, requesterId : String,userId: String,userRole:String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   returns many String;
-  function CheckSecurityPin(vendorEmail : String,userId: String,userRole:String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            returns securityPinResponse;
+  function GetDraftData(requestNo : Integer, entityCode : String, creationType : Integer, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            returns many String;
+  function GetSecurityPin(vendorName : String, vendorEmail : String, requesterId : String, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           returns many String;
+  function CheckSecurityPin(vendorEmail : String, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns securityPinResponse;
   // Actions for Posting
-  action   PostRegFormData(action : String, stepNo : Integer, reqHeader : many RequestInfo, addressData : many RegFormAddress, contactsData : many RegFormContacts, bankData : many RegFormBanks, financeData : many RegFormFinancial, ownersData : many RegFormOwners, prodServData : many RegFormProdServ, capacityData : many RegFormCapacity, customerData : many RegFormCustomers, oemData : many RegFormOEM, discFieldsData : many RegFormDiscInfo, discRelativesData : many RegFormDiscRelatives, discQaCertiData : many RegFormDiscQaCertif, attachmentFieldsData : many RegFormAttachFields, attachmentData : many RegFormAttachments, updatedFields : many String, eventsData : many RegEventsLog,userDetails : User_Details) returns many String;
+  action   PostRegFormData(action : String, stepNo : Integer, reqHeader : many RequestInfo, addressData : many RegFormAddress, contactsData : many RegFormContacts, bankData : many RegFormBanks, financeData : many RegFormFinancial, ownersData : many RegFormOwners, prodServData : many RegFormProdServ, capacityData : many RegFormCapacity, customerData : many RegFormCustomers, oemData : many RegFormOEM, discFieldsData : many RegFormDiscInfo, discRelativesData : many RegFormDiscRelatives, discQaCertiData : many RegFormDiscQaCertif, attachmentFieldsData : many RegFormAttachFields, attachmentData : many RegFormAttachments, updatedFields : many String, eventsData : many RegEventsLog, userDetails : User_Details) returns many String;
 
   action   EditRegFormData(action : String, // APPROVER | VENDOR
-                          stepNo : Integer,
-                          reqHeader : many RequestInfo,
-                          addressData : many RegFormAddress,
-                          contactsData : many RegFormContacts,
-                          updatedFields : many String,
-                          editLog : many RegSupplierLog,
-                          userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns many String;
+                           stepNo : Integer,
+                           reqHeader : many RequestInfo,
+                           addressData : many RegFormAddress,
+                           contactsData : many RegFormContacts,
+                           updatedFields : many String,
+                           editLog : many RegSupplierLog,
+                           userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   returns many String;
 
   //Action for Approval
   action   RegFormDataApproval(action : String,
-                              inputData : many RequestInfo,
-                              addressData : many RegFormAddress,
-                              contactsData : many RegFormContacts,
-                              bankData : many RegFormBanks,
-                              eventsData : many RegEventsLog,
-                              userDetails : User_Details
-                            )                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                returns many String;
+                               inputData : many RequestInfo,
+                               addressData : many RegFormAddress,
+                               contactsData : many RegFormContacts,
+                               bankData : many RegFormBanks,
+                               eventsData : many RegEventsLog,
+                               userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               returns many String;
 
   type MessengerData {
     loginId : String;
@@ -109,7 +109,7 @@ service registrationProcessService {
   }
 
   //Action for  Messenger
-  action   MessengerService(action : String, messengerData : MessengerData, inputData : many RequestInfo, eventsData : many RegEventsLog,userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns many String;
+  action   MessengerService(action : String, messengerData : MessengerData, inputData : many RequestInfo, eventsData : many RegEventsLog, userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns many String;
 
   type AttachmentID {
     REQUEST_NO : Integer64;
@@ -117,8 +117,8 @@ service registrationProcessService {
     DOC_ID     : Integer64;
   }
 
-  action   ManageCMS(action : String, attachmentId : AttachmentID, inputData : many RegFormCMS,userDetails:User_Details)  returns many String;   
- 
- // test s4 hana service
-  
+  action   ManageCMS(action : String, attachmentId : AttachmentID, inputData : many RegFormCMS, userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              returns many String;
+
+// test s4 hana service
+
 }

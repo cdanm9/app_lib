@@ -172,7 +172,7 @@ context VENDOR_PORTAL {
         key SR_NO       : Integer;
             SUBACCOUNT  : String(50) not null;
             PORTAL_LINK : String(100);
-            DM_LIMIT : Integer;
+            // DM_LIMIT : Integer;
     }
 
     entity MASTER_TABLENAMES {
@@ -182,6 +182,7 @@ context VENDOR_PORTAL {
             TABLE_TYPE        : String(25) not null;
             COLUMN_COUNT      : Integer not null;
             TABLE_DESCRIPTION : String(100);
+            PRIMARY_KEY :String(300);
     }
 
     entity MASTER_TELECODE {

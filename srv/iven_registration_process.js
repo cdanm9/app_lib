@@ -169,7 +169,7 @@ module.exports = cds.service.impl(function () {
                             var status = 9;
                         }
     
-                        if (isEmailNotificationEnabled && sAction !== 'DRAFT') {
+                        if (isEmailNotificationEnabled && sAction !== 'DRAFT' && sPMId !== null ) {
                             // var oEmaiContent = EMAIL_LIBRARY.getEmailData("SELFREG", "REGISTER", oEmailData, status);
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sPMId], null);
                             var oEmaiContent = await lib_email_content.getEmailContent(connection, "SELFREG", "REGISTER", oEmailData, status);
@@ -178,7 +178,7 @@ module.exports = cds.service.impl(function () {
                       
                         }
                     } else {
-                        if (isEmailNotificationEnabled && sAction !== 'DRAFT') {
+                        if (isEmailNotificationEnabled && sAction !== 'DRAFT' && oEmailData.To_Email !== null) {
                             // var oEmaiContent = EMAIL_LIBRARY.getEmailData(sAction, "REGISTER", oEmailData, null);
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.To_Email], null);
                             var oEmaiContent = await lib_email_content.getEmailContent(connection,sAction, "REGISTER", oEmailData, null);
@@ -1109,15 +1109,15 @@ module.exports = cds.service.impl(function () {
         switch (action) {
             case "VENDOR":
                 iEventCode = 10;
-                sRemark = "Vendor sent email to Buyer";
+                sRemark = "Vendor sent message to Buyer";
                 break;
             case "BUYER":
                 iEventCode = 11;
-                sRemark = "Buyer sent email to Vendor";
+                sRemark = "Buyer sent message to Vendor";
                 break;
             case "APPROVER":
                 iEventCode = 13;
-                sRemark = "Approver sent email to Vendor";
+                sRemark = "Approver sent message to Vendor";
                 break;
         }
 

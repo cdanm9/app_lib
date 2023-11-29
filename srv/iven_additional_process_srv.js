@@ -347,7 +347,7 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 					// Result = execProcedure(reqHeader[0].REQUESTER_ID, supplierReq[0].VEMAIL, supplierReq[0].SUPPLIERTYPE_CODE, sapVendorCode, reqType,
 					// 	supplierReq, onbForm, onbAddress, onbContact, onbBank, supplierEvents);
 					sResponse = await dbConn.callProcedurePromisified(loadProc,
-           [reqHeader[i].REQUESTER_ID, supplierReq[i].REGISTERED_ID, supplierReq[i].SUPPL_TYPE_CODE, sapVendorCode, reqType,
+           [reqHeader[i].REQUESTER_ID, supplierReq[0].REGISTERED_ID, supplierReq[0].SUPPL_TYPE_CODE, sapVendorCode, reqType,
            	supplierReq, onbAddress, onbContact, onbBank, supplierEvents]);
             // iVen_Content.postErrorLog(conn, Result, null, sUserID, "Supplier Data Migration", "PROCEDURE");
 					
@@ -566,9 +566,9 @@ return aResult;
 async function updateDMLimit(DMLimit,connection){
   try{
     let aResult = await connection.run(UPDATE
-      .entity(`${connection.entities['VENDOR_PORTAL.MASTER_SUBACCOUNT']}`)
-      .set({DM_LIMIT : DMLimit})
-      .where({ SR_NO: 1 }))
+      .entity(`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`)
+      .set({SETTING : DMLimit})
+      .where({ CODE: 'DM_UPLOAD_LIMIT' }))
 return aResult;
   }catch(error){throw error;}
 }
@@ -591,11 +591,12 @@ async function getDMLimit(connection){
   try{
     var aResult = null;
    aResult = await connection.run(
-    SELECT `DM_LIMIT`
-        .from`${connection.entities['VENDOR_PORTAL.MASTER_SUBACCOUNT']}`
+    SELECT `SETTING`
+        .from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`
+        .where(`CODE='DM_UPLOAD_LIMIT'`)
        );
        if(aResult.length > 0)
-          return aResult[0].DM_LIMIT;
+          return aResult[0].SETTING;
 
   }catch(error){throw error;}
 }

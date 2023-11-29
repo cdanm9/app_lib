@@ -418,6 +418,8 @@ module.exports = cds.service.impl(function () {
                     var sCCEmail = await lib_email.setSampleCC( null);
                      await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject,oEmaiContent.emailBody)
                 
+                     //Capture events 
+                     await createEvents(connection,aInputData[0].REQUEST_NO,aEvents);
                     // if( sResponse === "Email sent") {
                     //    return  "Invite Notification Resent";
                     // } else{
@@ -534,12 +536,34 @@ module.exports = cds.service.impl(function () {
 
                 var sSupplType = aInputData[0].SUPPL_TYPE_TO_CODE;
                 var sSupplTypeToDesc = aInputData[0].SUPPL_TYPE_TO_DESC.toUpperCase() || "";
-                // var sSupplTypeFromDesc = aInputData[0].SUPPL_TYPE_FROM_DESC.toUpperCase() || "";
+                var sSupplTypeFromDesc = aInputData[0].SUPPL_TYPE_FROM_DESC.toUpperCase() || "";
 
                 var aEventObj = await getEventObj(aInputData[0]);
                 var sUserID = aEventObj[0].USER_ID || null;
 
                 var sSupplierName = await getSupplierFromRequestNo(connection, iRequestNo) || "NA";
+
+                var changedFields = aInputData[0].CHANGED_FIELDS;
+                var aEmailContentChange =[];
+                // var sEmailContentChange ='';
+                if(changedFields.length > 0)
+                {
+                    changedFields.map(function(field){
+                      field =  field.trim();
+                        if(field === "Creation Type" || field === "Request Type")
+                            // aEmailContentChange.push(field +" changed from " + sChangedFrom + " to <b>" + sChangedTo +" </b>")
+                            aEmailContentChange.push({"CHANGE_TYPE":field,"OLD_VALUE":sChangedFrom,"NEW_VALUE":sChangedTo})
+                            else if(field === "Vendor Type")
+                            aEmailContentChange.push({"CHANGE_TYPE":field,"OLD_VALUE":sSupplTypeFromDesc,"NEW_VALUE":sSupplTypeToDesc})
+                        // aEmailContentChange.push(field +" changed from " + sSupplTypeFromDesc + " to <b>" + sSupplTypeToDesc +" </b>")
+                        else if(field === "Vendor Sub Type")
+                        aEmailContentChange.push({"CHANGE_TYPE":field,"OLD_VALUE":sSubTypeFromDesc,"NEW_VALUE":sSubTypeToDesc})
+                        
+                        // aEmailContentChange.push(field +" changed from " + sSubTypeFromDesc + " to <b>" + sSubTypeToDesc +" </b>")
+                    
+                    })
+                    // sEmailContentChange=  aEmailContentChange.toString()
+                }
 
                 // Result = execProcedure(iRequestNo, iReqTypeChangeTo, sReqType, sChangeType, sSubType, sSubTypeToDesc, sSupplType, sSupplTypeToDesc, aEventObj);
                 Result = await dbConn.callProcedurePromisified(loadProc,
@@ -565,8 +589,8 @@ module.exports = cds.service.impl(function () {
                         "Reason": sComment,
                         "Assigned_From": sChangeType === "RT" ? sChangedFrom : sSubTypeFromDesc,
                         "Assigned_To": sChangeType === "RT" ? sChangedTo : sSubTypeToDesc,
-                        "sChangeType": sChangeType
-                        // "changeDetails":[]
+                        "sChangeType": sChangeType,
+                        "changeDetails":aEmailContentChange
                     };
 
                     if (isEmailNotificationEnabled) {
@@ -1552,6 +1576,24 @@ module.exports = cds.service.impl(function () {
         }
         catch (error) { throw error; }
     }
+    async function createEvents(connection,iReq_No, aEvents) {
+        try {
+            //Calculate event no
+            let aResultCount = await connection.run(
+                SELECT`COUNT(*) AS COUNT`
+                    .from`${connection.entities['VENDOR_PORTAL.REQUEST_EVENTS_LOG']}`
+                    .where`REQUEST_NO=${iReq_No}`);
+            var iCount = aResultCount.length > 0 ? parseInt(aResultCount[0].COUNT, 10) : 0;
 
+           iCount += 1;
+           aEvents[0].EVENT_NO = iCount;
+            let aResult = await connection.run(
+                INSERT (aEvents) .into (connection.entities['VENDOR_PORTAL.REQUEST_EVENTS_LOG']));
+          
+
+          
+        }
+        catch (error) { throw error; }
+    }
 }
 )

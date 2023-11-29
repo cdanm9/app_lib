@@ -19,7 +19,7 @@ module.exports = cds.service.impl(function () {
       var sUserRole=oUserDetails.USER_ROLE || null;
       var sAction = oReqData.ACTION;
       var aMatrixData = req.data.input.VALUE;
-      var sTableName,bCheckDuplicateMatrix,sEntityDescription;
+      var sTableName,bCheckDuplicateMatrix,sEntityDescription;   
 
       //  // get connection
       //  var client = await dbClass.createConnectionFromEnv();
@@ -63,19 +63,22 @@ module.exports = cds.service.impl(function () {
       // return "success";
       
     } catch (error) {
-   
-      let Result2 = {
-        OUT_SUCCESS: error.message || ""
-      };
+      var sType=error.code?"Procedure":"Node Js";    
+      var iErrorCode=error.code??500;
+
+      // let Result2 = {
+      //   OUT_SUCCESS: error.message || ""
+      // };
       let Result = {
-          OUT_ERROR_CODE: 500,
+          OUT_ERROR_CODE: iErrorCode,
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
       }
-      lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Approval Matrix","Node Js",dbConn,hdbext);
-      // return error
-      console.error(error)
-      // return error.messsage  
-      req.error({ code: "500", message:  error.message ? error.message : error });  
+      lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Approval Matrix",sType,dbConn,hdbext);
+      console.error(error)     
+      // return error.messsage     
+      req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+
+
     }
   })
 

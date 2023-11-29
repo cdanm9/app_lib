@@ -58,24 +58,26 @@ module.exports = cds.service.impl(function () {
           [sAction, aUserData, aEntityData]);
 
         return result;
-      }
+      }   
       else {
-        return "This user already exist.";   
+        return "This user already exist.";        
       }
-
+        
     } catch (error) {
-      let Result2 = {
-        OUT_SUCCESS: error.message || ""
-      };
+      var sType=error.code?"Procedure":"Node Js";    
+      var iErrorCode=error.code??500;     
+      // let Result2 = {
+      //   OUT_SUCCESS: error.message || ""
+      // };
       let Result = {
-          OUT_ERROR_CODE: 500,
+          OUT_ERROR_CODE: iErrorCode,
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
       }
-      lib_common.postErrorLog(Result,null,sUserId,sUserRole,"User Master","Node Js",dbConn,hdbext);
-      console.error(error)
-      // return error.messsage  
-      req.error({ code: "500", message:  error.message ? error.message : error });  
-    }
+      lib_common.postErrorLog(Result,null,sUserId,sUserRole,"User Master",sType,dbConn,hdbext);
+      console.error(error)     
+      // return error.messsage     
+      req.error({ code:iErrorCode, message:  error.message ? error.message : error });      
+    }   
   })
 
   async function _checkDuplicateUser(data) {

@@ -38,4 +38,8 @@ service adminPanelService {
   action   EditAdminPanelData(input : String)                                          returns array of String;
   function TestOnPremiseConnection(sapClient : String, destFileName : String)          returns array of String;
 
+//Dynamic Logic
+//  action   DynamicPostAdminPanelData(input : String)                                          returns array of String;
+//   action   DynamicEditAdminPanelData(input : String)                                          returns array of String;
+ 
 }

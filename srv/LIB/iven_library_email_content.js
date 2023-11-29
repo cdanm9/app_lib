@@ -843,16 +843,37 @@ module.exports = {
 				sType = "Sub -Type";
 			}
 
-			oEmailContent.subject = "Request No: " + parseInt(oEmailData.ReqNo, 10) + " - Vendor " + sType + " changed";
+			oEmailContent.subject = "Request No: " + parseInt(oEmailData.ReqNo, 10) + " - Vendor Request Type/Sub Type changed";
 
 			oEmailContent.emailBody = "Dear Approver," + "<br><br>" +
-				"Vendor " + sType + " of request no. " + oEmailData.ReqNo + " for vendor as <span style=\"text-transform:uppercase\">" +
-				oEmailData.SupplierName + "</span>";
+			"Request No. " + oEmailData.ReqNo + " for vendor as   <span style=\"text-transform:uppercase\">" +
+			oEmailData.SupplierName + "</span> has below changes done by " + oEmailData.Changed_by +".<br>";
+				
+oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style='text-align: center;border:2px solid black;'>";
+			sRows += "<thead>" +
+				"<TR border:1px solid black;>" +
+				"<TH  class='column1' border:1px solid black;>Sr No.</TH>" +
+				"<TH class='column2' border:1px solid black;>Change Type</TH>" +
+				"<TH class='column3' border:1px solid black;>Old Value</TH>" +
+				"<TH class='column4' border:1px solid black;>New Value</TH>" +
+				"</TR>";
 
-			oEmailContent.emailBody += " has been changed by " + oEmailData.Changed_by + " from " + oEmailData.Assigned_From + " to <strong>" +
-				oEmailData.Assigned_To + "</strong>.<br>" +
+			sRows += "</thead><tbody>";
 
-				"<br>" +
+			for (var i = 0; i < oEmailData.changeDetails.length; i++) {
+				var srno=i+1;
+				sRows += "<TR border:1px solid black;>";
+				sRows += "<TD border:1px solid black;>" + srno + "</TD>";
+				sRows += "<TD border:1px solid black;>" + oEmailData.changeDetails[i].CHANGE_TYPE + "</TD>";
+				sRows += "<TD border:1px solid black;>" + oEmailData.changeDetails[i].OLD_VALUE + "</TD>";
+				sRows += "<TD border:1px solid black;>" + oEmailData.changeDetails[i].NEW_VALUE + "</TD>";
+				sRows += "</TR>";
+			}
+			sRows += "</tbody>";
+
+			oEmailContent.emailBody += sRows;
+
+			oEmailContent.emailBody += "</TABLE class='table100-head'><br><br> " +
 				"Should you have any questions, please do not hesitate to reach out to us via email at " +
 				"<strong><a href=" + sClientContactEmail + ">" + sClientContactEmail + "</a></strong> " + "<br>" +
 				"<br>" +
