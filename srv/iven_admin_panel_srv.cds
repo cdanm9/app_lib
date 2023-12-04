@@ -20,7 +20,7 @@ service adminPanelService {
   entity MasterEntityCode      as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
   entity EmailConfig           as projection on VENDOR_PORTAL.EMAIL_CONFIG;
   entity RequestInfo               as projection on VENDOR_PORTAL.REQUEST_INFO;
-   entity MasterStatus              as projection on VENDOR_PORTAL.MASTER_STATUS;
+  entity MasterStatus              as projection on VENDOR_PORTAL.MASTER_STATUS;
  
 
   //TEST

@@ -142,7 +142,6 @@ context VENDOR_PORTAL {
         key LAND1 : String(3);
         key BLAND : String(3);
         key BEZEI : String(20);
-
     }
 
     entity MASTER_REQUEST_EVENTS {

@@ -195,21 +195,22 @@ module.exports = cds.service.impl(function () {
                     // return Result2;
                     // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 301);
                 }
-                } catch (e) {
+                } catch (error) {
                     // conn.rollback();
-                    Result2 = {
-                        OUT_SUCCESS: e.message || ""
-                    };
-                    iREQUEST_NO = 0;
-                    Result = {
-                        OUT_ERROR_CODE: 500,
-                        OUT_ERROR_MESSAGE:  e.message ? e.message : e
-                    }
-                    // lib_common.postErrorLog( Result, iREQUEST_NO, sUserID, "Vendor Request Form", "Node Js",dbConn,hdbext);
-
-                    lib_common.postErrorLog( Result, iREQUEST_NO, sUserIdentity,sUserRole,"Vendor Request Form", "Node Js",dbConn,hdbext);
-                    // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
-                    req.error({ code: "500", message: e.message });
+                    var sType=error.code?"Procedure":"Node Js";    
+                    var iErrorCode=error.code??500;     
+                    // let Result2 = {
+                    //   OUT_SUCCESS: error.message || ""
+                    // };
+                    iREQUEST_NO = 0;   
+                    let Result = {
+                        OUT_ERROR_CODE: iErrorCode,
+                        OUT_ERROR_MESSAGE:  error.message ? error.message : error
+                    }   
+                    lib_common.postErrorLog(Result,iREQUEST_NO,sUserIdentity,sUserRole,"Vendor Request Managment",sType,dbConn,hdbext);
+                    console.error(error)     
+                    // return error.messsage     
+                    req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
                 } 
             }
             else if (sAction === "APPROVE") {  //--------------------------------------------------------------------------
@@ -293,21 +294,25 @@ module.exports = cds.service.impl(function () {
                     // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", parseInt(Result.OUT_ERROR_CODE, 10));
                     throw {"message":sResponse.outputScalar.OUT_ERROR_MESSAGE}
                 }
-                } catch (e) {
+                } catch (error) {
                     // conn.rollback();
-                    Result2 = {
-                        OUT_SUCCESS: e.message || ""
-                    };
 
-                    Result = {
-                        OUT_ERROR_CODE: 500,
-                        OUT_ERROR_MESSAGE:  e.message ? e.message : e
+                    var sType=error.code?"Procedure":"Node Js";    
+                    var iErrorCode=error.code??500;     
+                    // let Result2 = {
+                    //   OUT_SUCCESS: error.message || ""
+                    // };
+                    iREQUEST_NO = 0;   
+                    let Result = {
+                        OUT_ERROR_CODE: iErrorCode,
+                        OUT_ERROR_MESSAGE:  error.message ? error.message : error
                     }
-                    lib_common.postErrorLog( Result, reqNo, sUserIdentity,sUserRole,"Supplier Request Approval", "Node Js",dbConn,hdbext);
+                    lib_common.postErrorLog(Result,reqNo,sUserIdentity,sUserRole,"Vendor Request Approval",sType,dbConn,hdbext);
+                    console.error(error)     
+                    // return error.messsage     
+                    req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
+                    // req.error({ code: "500", message: "Vendor Request Approval failed. Please contact admin." });
 
-                    // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
-                    // throw {"message":"Supplier Request Approval failed. Please contact admin."}
-                    req.error({ code: "500", message: "Vendor Request Approval failed. Please contact admin." });
                 }
 
             }
@@ -382,21 +387,21 @@ module.exports = cds.service.impl(function () {
                 // }
 
             }
-            catch (e) {
+            catch (error) {
                 // conn.rollback();
-                Result2 = {
-                    OUT_SUCCESS: e.message || ""
-                };
-
-                Result = {
-                    OUT_ERROR_CODE: 500,
-                    OUT_ERROR_MESSAGE:  e.message ? e.message : e
+                var sType=error.code?"Procedure":"Node Js";    
+                var iErrorCode=error.code??500;     
+                // let Result2 = {
+                //   OUT_SUCCESS: error.message || ""
+                // };
+                let Result = {
+                    OUT_ERROR_CODE: iErrorCode,
+                    OUT_ERROR_MESSAGE:  error.message ? error.message : error
                 }
-                lib_common.postErrorLog( Result, reqNo, sUserIdentity,sUserRole,"Vendor Request Approval", "Node Js",dbConn,hdbext);
-
-                // lib_common.postErrorLog( Result, reqNo, sUserID, "Vendor Request Approval", "Node Js",dbConn,hdbext);
-                // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
-                req.error({ code: "500", message: e.message });
+                lib_common.postErrorLog(Result,reqNo,sUserIdentity,sUserRole,"Vendor Request Approval",sType,dbConn,hdbext);
+                console.error(error)     
+                // return error.messsage     
+                req.error({ code:iErrorCode, message:  error.message ? error.message : error });
             } 
         }
         
@@ -611,16 +616,21 @@ module.exports = cds.service.impl(function () {
                 return responseObj
                 // responseInfo(JSON.stringify(responseObj), "text/plain", 200);
             }
-            catch (e) {
+            catch (error) {
                 // conn.rollback();
-                Result = {
-                    OUT_ERROR_CODE: 500,
-                    OUT_ERROR_MESSAGE:   e.message ? e.message : e
+                var sType=error.code?"Procedure":"Node Js";    
+                var iErrorCode=error.code??500;     
+                // let Result2 = {
+                //   OUT_SUCCESS: error.message || ""
+                // };
+                let Result = {
+                    OUT_ERROR_CODE: iErrorCode,
+                    OUT_ERROR_MESSAGE:  error.message ? error.message : error
                 }
-                lib_common.postErrorLog( Result, iRequestNo, sUserIdentity,sUserRole,"Vendor Request Edit", "Node Js",dbConn,hdbext);
-                // lib_common.postErrorLog( Result, iRequestNo, sUserID, "Vendor Request Edit", "Node Js",dbConn,hdbext);
-                // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
-                req.error({ code: "500", message: e.message });
+                lib_common.postErrorLog(Result,iRequestNo,sUserIdentity,sUserRole,"Vendor Request Edit",sType,dbConn,hdbext);
+                console.error(error)     
+                // return error.messsage     
+                req.error({ code:iErrorCode, message:  error.message ? error.message : error });
             } 
             }
             else if (sAction === "REG_ID_EDIT") {
@@ -764,15 +774,21 @@ module.exports = cds.service.impl(function () {
                 // responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
                 return responseObj
             }
-          catch (e) {
+          catch (error) {
                 // conn.rollback();
-                Result = {
-                    OUT_ERROR_CODE: 500,
-                    OUT_ERROR_MESSAGE:   e.message ? e.message : e
+                var sType=error.code?"Procedure":"Node Js";    
+                var iErrorCode=error.code??500;     
+                // let Result2 = {
+                //   OUT_SUCCESS: error.message || ""
+                // };
+                let Result = {
+                    OUT_ERROR_CODE: iErrorCode,
+                    OUT_ERROR_MESSAGE:  error.message ? error.message : error
                 }
-                lib_common.postErrorLog( Result, iRequestNo, sUserIdentity,sUserRole, "Vendor Registered ID Edit", "Node Js",dbConn,hdbext);
-                // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
-                req.error({ code: "500", message: e.message });
+                lib_common.postErrorLog(Result,iRequestNo,sUserIdentity,sUserRole,"Vendor Registered ID Edit",sType,dbConn,hdbext);
+                console.error(error)     
+                // return error.messsage     
+                req.error({ code:iErrorCode, message:  error.message ? error.message : error });
             } 
         }
             //user delegation & request forwarding
@@ -848,15 +864,20 @@ module.exports = cds.service.impl(function () {
                 // responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
                 // return responseObj;
             }
-            catch (e) {
-                // conn.rollback();
-                Result = {
-                    OUT_ERROR_CODE: 500,
-                    OUT_ERROR_MESSAGE:  e.message ? e.message : e
+            catch (error) {
+                var sType=error.code?"Procedure":"Node Js";    
+                var iErrorCode=error.code??500;     
+
+                let Result = {
+                    OUT_ERROR_CODE: iErrorCode,
+                    OUT_ERROR_MESSAGE:  error.message ? error.message : error
                 }
-                lib_common.postErrorLog( Result,  aRequests[0].REQUEST_NO, sUserIdentity,sUserRole,"Vendor Request Forwarding", "Node Js",dbConn,hdbext);
-                // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", 400);
-                req.error({ code: "500", message: e.message });
+                lib_common.postErrorLog(Result,aRequests[0].REQUEST_NO,sUserIdentity,sUserRole,"Vendor Request Forwarding",sType,dbConn,hdbext);
+                console.error(error)     
+                // return error.messsage     
+                req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+
+
             } 
             } else {
                 // responseObj = {

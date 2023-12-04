@@ -6,7 +6,7 @@ const lib_common = require('./LIB/iven_library')
 const lib_email = require('./LIB/iven_library_email')
 const lib_email_content = require('./LIB/iven_library_email_content')
 const connect = require('passport/lib/framework/connect')
-const lib_mdg = require('./LIB/iven_library_mdg')
+const lib_mdg = require('./LIB/iven_library_mdg')    
    
 module.exports = cds.service.impl(function () {   
 
@@ -132,7 +132,7 @@ module.exports = cds.service.impl(function () {
 
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_DRAFT_SUBMIT');
                 sResponse = await dbConn.callProcedurePromisified(loadProc,
-                    [iReqNo, iReqType, iStep, sEntityCode, sUserId, sIsResend, iStatus,
+                    [iReqNo, iReqType, iStep, sEntityCode, sUserId, sIsResend, iStatus,null,
                         aMainObj, aAddressObj, aContactObj,
                         aPaymentObj, aFinanceObj, aOwnerObj,
                         aProdServbj, aCapacityObj, aCustomerObj, aOEMObj,
@@ -213,14 +213,15 @@ module.exports = cds.service.impl(function () {
            
 
         } catch (error) {
-            Result = {
-                OUT_ERROR_CODE: 500,
-                OUT_ERROR_MESSAGE: error.message ? error.message : error
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;   
+            let Result = {
+                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-
-            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);   
-            
-            req.error({ code: "500", message: error.message ? error.message : error });
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form",sType,dbConn,hdbext);   
+            // return error.messsage     
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
     })
 
@@ -264,16 +265,17 @@ module.exports = cds.service.impl(function () {
 
         } catch (error) {
            
-          
-            Result = {
-                OUT_ERROR_CODE: 500,
-                OUT_ERROR_MESSAGE: error.message ? error.message : error
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;   
+            let Result = {
+                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            if(error.errorType !== "Warning")   
-                 lib_common.postErrorLog( Result,null, userId,userRole,"Vendor Registration Form", "Node Js",dbConn,hdbext);
-                //  lib_common.postErrorLog( Result, 1, vendorEmail, "Vendor Registration Form", "Node Js",dbConn,hdbext);
-            
-            req.error({ code: "500", message: error.message ? error.message : error });
+
+            if(error.errorType !== "Warning")  
+            lib_common.postErrorLog(Result,null,userId,userRole,"Vendor Registration Form",sType,dbConn,hdbext);   
+              
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
 
     })
@@ -333,16 +335,16 @@ module.exports = cds.service.impl(function () {
             }
 
         } catch (error) {
-            let Result2 = {
-                OUT_SUCCESS: error.message || ""
-            };
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;   
             let Result = {
-                OUT_ERROR_CODE: 500,
+                OUT_ERROR_CODE: iErrorCode,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-
-            lib_common.postErrorLog( Result,null, userId,userRole,"Vendor Registration Form", "Node Js",dbConn,hdbext);
-            req.error({ code: "500", message: error.message ? error.message : error });
+ 
+            lib_common.postErrorLog(Result,null,userId,userRole,"Vendor Registration Form",sType,dbConn,hdbext);   
+              
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
 
 
@@ -439,14 +441,17 @@ module.exports = cds.service.impl(function () {
 
 
         } catch (error) {
-            Result = {
-                OUT_ERROR_CODE: 500,
-                OUT_ERROR_MESSAGE: error.message ? error.message : error
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;   
+            let Result = {
+                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
+ 
             if(error.errorType !== "Warning")
-                 lib_common.postErrorLog( Result, requestNo, userId,userRole,"Vendor Registration Form", "Node Js",dbConn,hdbext);
-            
-            req.error({ code: "500", message: error.message ? error.message : error });
+            lib_common.postErrorLog(Result,null,userId,userRole,"Vendor Registration Form",sType,dbConn,hdbext);   
+              
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
     })
     //Registration Approval Process
@@ -544,16 +549,18 @@ module.exports = cds.service.impl(function () {
 
                 req.reply(responseObj);
                 // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
-                }catch(oError){
-                    let Result2 = {
-                        OUT_SUCCESS: oError.message || ""
-                    };
+                }catch(error){
+
+                    var sType=error.code?"Procedure":"Node Js";    
+                    var iErrorCode=error.code??500;   
                     let Result = {
-                        OUT_ERROR_CODE: 500,
-                        OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+                        OUT_ERROR_CODE: iErrorCode,
+                        OUT_ERROR_MESSAGE:  error.message ? error.message : error
                     }
-                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
-                    req.error({ code: "500", message: oError.message ? oError.message : oError });
+        
+                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval",sType,dbConn,hdbext);   
+                    
+                    req.error({ code:iErrorCode, message:  error.message ? error.message : error });
                 }
             }
            
@@ -589,11 +596,15 @@ module.exports = cds.service.impl(function () {
                         // ------------------------START: Direct MDG Call for testing-------------------------
                         var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
                         //  console.log(MDGResult);
+
                         iMDGStatus = MDGResult.iStatusCode;
                         oMDGResponse = MDGResult.oResponse;
+
                         // sChangeRequestNo = oMDGResponse.changerequestNo.length === 12 ?  oMDGResponse.changerequestNo : null;
-                sChangeRequestNo =oMDGResponse.changerequestNo;
-                sSapVendorCode = parseInt(oMDGResponse.d.Lifnr, 10) || "";
+
+                        sChangeRequestNo =oMDGResponse.changerequestNo;
+                        sSapVendorCode = parseInt(oMDGResponse.d.Lifnr, 10) || "";
+
                         //   sChangeRequestNo = oMDGResponse;
                         // sCompareValue = "M";
 
@@ -717,16 +728,18 @@ module.exports = cds.service.impl(function () {
                         //         // 	MDG_LIBRARY.rollbackSAPVendorCodeInSeq(conn);
                         //     }
                     }
-                }catch(oError){
-                    let Result2 = {
-                        OUT_SUCCESS: oError.message || ""
-                    };
+                }catch(error){
+
+                    var sType=error.code?"Procedure":"Node Js";    
+                    var iErrorCode=error.code??500;   
                     let Result = {
-                        OUT_ERROR_CODE: 500,
-                        OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+                        OUT_ERROR_CODE: iErrorCode,
+                        OUT_ERROR_MESSAGE:  error.message ? error.message : error
                     }
-                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval","Node Js",dbConn,hdbext);
-                    req.error({ code: "500", message: oError.message ? oError.message : oError });
+                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval",sType,dbConn,hdbext);   
+                    
+                    req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
+
                 }
 
             }
@@ -744,16 +757,16 @@ module.exports = cds.service.impl(function () {
                     };
                     req.reply(responseObj);
                     // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", 200);
-                }catch(oError){
-                    let Result2 = {
-                        OUT_SUCCESS: oError.message || ""
-                    };
+                }catch(error){
+                    var sType=error.code?"Procedure":"Node Js";    
+                    var iErrorCode=error.code??500;   
                     let Result = {
-                        OUT_ERROR_CODE: 500,
-                        OUT_ERROR_MESSAGE:  oError.message ? oError.message : oError
+                        OUT_ERROR_CODE: iErrorCode,
+                        OUT_ERROR_MESSAGE:  error.message ? error.message : error
                     }
-                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
-                    req.error({ code: "500", message: oError.message ? oError.message : oError });
+                    lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval",sType,dbConn,hdbext);   
+                    
+                    req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
                 }
             }
 
@@ -838,16 +851,15 @@ module.exports = cds.service.impl(function () {
             // responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
             req.reply(responseObj);
         } catch (error) {
-
-            let Result2 = {
-                OUT_SUCCESS: error.message || ""
-            };
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;   
             let Result = {
-                OUT_ERROR_CODE: 500,
+                OUT_ERROR_CODE: iErrorCode,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
-            req.error({ code: "500", message: error.message ? error.message : error });
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration",sType,dbConn,hdbext);   
+            
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
     })
 
@@ -928,7 +940,7 @@ module.exports = cds.service.impl(function () {
             if (action === 'APPROVE') {
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_EDIT_APPROVER')
                 Result = await dbConn.callProcedurePromisified(loadProc,
-                    [iReqNo,stepNo, sUserId, reqHeader, aAddressObj, aContactObj, [], [], [], [],
+                    [iReqNo,stepNo, sUserId,null, reqHeader, aAddressObj, aContactObj, [], [], [], [],
                         [], [], [], [], [], [], [], [], [], aUpdatedFieldsObj, aLogsTable]);
 
                 if (Result.outputScalar.OUT_SUCCESS === null) {
@@ -951,19 +963,15 @@ module.exports = cds.service.impl(function () {
                 req.reply(responseObj);
             }
         } catch (error) {
-
-            let Result2 = {
-                OUT_SUCCESS: error.message || ""
-            };
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;   
             let Result = {
-                OUT_ERROR_CODE: 500,
+                OUT_ERROR_CODE: iErrorCode,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            // lib_common.postErrorLog(Result,iReqNo,sUserId,"Vendor Registration Form","Node Js",dbConn,hdbext);
-            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval","Node Js",dbConn,hdbext);
-
-
-            req.error({ code: "500", message: error.message ? error.message : error });
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Approval",sType,dbConn,hdbext);   
+            
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
     })
 
@@ -1007,17 +1015,15 @@ module.exports = cds.service.impl(function () {
             }
             else throw "Input data missing for action."
         } catch (error) {
-
-            let Result2 = {
-                OUT_SUCCESS: error.message || ""
-            };
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;   
             let Result = {
-                OUT_ERROR_CODE: 500,
+                OUT_ERROR_CODE: iErrorCode,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form","Node Js",dbConn,hdbext);
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration Form",sType,dbConn,hdbext);   
             
-            req.error({ code: "500", message: error.message ? error.message : error });
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
     })
 

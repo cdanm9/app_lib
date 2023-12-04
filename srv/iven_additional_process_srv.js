@@ -215,7 +215,7 @@ module.exports = cds.service.impl(function () {
       const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_INTERNAL_REQUEST')
       sResponse = await dbConn.callProcedurePromisified(loadProc,
        [iReqNo, stepNo, ndaStatus, sEntityCode, sVendorNo, sSAPVendorCode, sUserId, sIsResend, iStatus, oActiveData.REQ_NO_ACTIVE,
-        	oActiveData.REQUEST_TYPE, oActiveData.CREATION_TYPE,
+        	oActiveData.REQUEST_TYPE, oActiveData.CREATION_TYPE,'IR',
         	inviteData, aEventObj0, aEventObj1,
         	reqHeader, aAddressObj, aContactObj,
         	aPaymentObj, aFinanceObj, aOwnerObj,
@@ -264,17 +264,19 @@ module.exports = cds.service.impl(function () {
 
     } catch (error) {
 
-      let Result2 = {
-        OUT_SUCCESS: error.message || ""
-      };
+      var sType=error.code?"Procedure":"Node Js";    
+      var iErrorCode=error.code??500;     
+      // let Result2 = {
+      //   OUT_SUCCESS: error.message || ""
+      // };
       let Result = {
-          OUT_ERROR_CODE: 500,
+          OUT_ERROR_CODE: iErrorCode,
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
       }
-      lib_common.postErrorLog(Result,iReqNo,sUserId,sUserRole,"Vendor Profile","Node Js",dbConn,hdbext);  
-         
-      // return error.messsage
-      req.error({ code: "500", message: error.message });
+      lib_common.postErrorLog(Result,iReqNo,sUserId,sUserRole,"Vendor Profile",sType,dbConn,hdbext);
+      console.error(error)     
+      // return error.messsage     
+      req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
     }
   })
 
@@ -292,6 +294,7 @@ this.on('VendorDataMigration',async (req) =>{
         addressData,
         contactsData,
         bankData,
+        sapCodeData,
         userDetails
     } = req.data;
       //intialize connection to database
@@ -325,6 +328,9 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 					// execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::SUPPLIER_DATA_MIGRATION');
 					var sapVendorCode = reqHeader[i].SAP_VENDOR_CODE;
 					var reqType = reqHeader[i].REQUEST_TYPE;
+          contactsData[i].SAP_VENDOR_CODE = sapCodeData[i].CONTACTS_CODE;
+          addressData[i].SAP_VENDOR_CODE = sapCodeData[i].ADDRESS_CODE;
+          bankData[i].SAP_VENDOR_CODE = sapCodeData[i].BANK_CODE;
 					var onbContact =await getONBContacts(contactsData, sapVendorCode);
 					var onbAddress =await getONBAddress(addressData, sapVendorCode);
 					var onbBank =await getONBBank(bankData, sapVendorCode);
@@ -404,19 +410,19 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
 	}
   }
   catch(error){
-
-
-    let Result2 = {
-      OUT_SUCCESS: error.message || ""
-    };
-    let Result = {
-        OUT_ERROR_CODE: 500,
-        OUT_ERROR_MESSAGE:  error.message ? error.message : error
-    }
-    lib_common.postErrorLog(Result,null,sUserID,sUserRole,"Data Migration","Node Js",dbConn,hdbext);
-
-
-    req.error({ code: "500", message:  error.message ? error.message : error });
+    var sType=error.code?"Procedure":"Node Js";    
+      var iErrorCode=error.code??500;     
+      // let Result2 = {
+      //   OUT_SUCCESS: error.message || ""
+      // };
+      let Result = {
+          OUT_ERROR_CODE: iErrorCode,
+          OUT_ERROR_MESSAGE:  error.message ? error.message : error
+      }
+      lib_common.postErrorLog(Result,null,sUserID,sUserRole,"Data Migration",sType,dbConn,hdbext);
+      console.error(error)     
+      // return error.messsage     
+      req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
   }
 
 })
@@ -484,18 +490,19 @@ this.on('DataMigrationConfiguration',async(req) =>{
     
   }
   catch(error){
-
-    let Result2 = {
-      OUT_SUCCESS: error.message || ""
-    };
+    var sType=error.code?"Procedure":"Node Js";    
+    var iErrorCode=error.code??500;     
+    // let Result2 = {
+    //   OUT_SUCCESS: error.message || ""
+    // };
     let Result = {
-        OUT_ERROR_CODE: 500,
+        OUT_ERROR_CODE: iErrorCode,
         OUT_ERROR_MESSAGE:  error.message ? error.message : error
-    }   
-
-    lib_common.postErrorLog(Result,null,sUserID,sUserRole,"Data Migration","Node Js",dbConn,hdbext);
-
-    req.error({ code: "500", message:  error.message ? error.message : error });
+    }
+    lib_common.postErrorLog(Result,null,sUserID,sUserRole,"Data Migration",sType,dbConn,hdbext);
+    console.error(error)     
+    // return error.messsage     
+    req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
   }
 })
 this.on('getBackendAvailability',async(req)=>{

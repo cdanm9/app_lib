@@ -582,7 +582,7 @@ module.exports = {
         let oSetValues1 = {};
         oSetValues1[Object.keys(oMandatoryObjLV)[0]] = oMandatoryObjLV[Object.keys(oMandatoryObjLV)[0]];
         let sResults1 = await connection.run(UPDATE
-          .entity(`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`)
+          .entity(`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`)
           .set(oSetValues1)
           .where({ CCODE: oMandatoryObj.CCODE, TYPE: oMandatoryObj.TYPE }))
 
@@ -640,6 +640,175 @@ module.exports = {
     }
 
 
+  },
+  //Dynamic Admin Panel Logic
+  funcPostAdminPanelData: async function (connection, action, sTableName, tableDesc, tableData) {
+    try {
+      var sTableFullName = 'VENDOR_PORTAL.' + sTableName;
+      var aResult, iSR_NO;
+      if (sTableName === 'IvenAttachments') {
+        var maxSrNoResult = await connection.run(SELECT`MAX(SR_NO) AS MAX_VAL,COUNT(SR_NO) AS COUNT_VAL`
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS']}`
+        );
+        iSR_NO = maxSrNoResult[0].COUNT_VAL != 0 ? maxSrNoResult[0].MAX_VAL + 1 : maxSrNoResult[0].COUNT_VAL + 1;
+        tableData[0].SR_NO = iSR_NO;
+
+      }
+
+      //  aResult = await connection.run(
+      // 	INSERT 
+      // 		(tableData)
+      //     .into(connection.entities[sTableFullName])
+      // 		);
+      aResult = await this.insertQueryExecution(connection, sTableFullName, tableData);
+
+      // if (aResult.length > 0) return aResult;
+      if (aResult.results[0].affectedRows == tableData.length) {
+        if (action === "CREATE")
+          return 'New Master Data Created for: ' + tableDesc
+        else if (action === "IMPORT_CSV")
+          return 'CSV data inserted into table for: ' + tableDesc
+      }
+
+
+
+    }
+    catch (error) { throw error; }
+  },
+  funcDeleteAdminPanelData: async function(connection, deletiondata, sTableName, tableDesc) {
+    try {
+      let sTableFullName = 'VENDOR_PORTAL.' + sTableName;
+      // let aResult = await connection.run(
+      // 	DELETE 
+      //     .from(connection.entities[sTableFullName])
+      //     .where(deletiondata)
+      // 		);
+      let aResult = await this.deleteQueryExecution(connection, sTableFullName, deletiondata);
+      // if (aResult.length > 0) return aResult;
+      if (aResult > 0) {
+        return 'Record deleted for: ' + tableDesc
+
+      }
+
+
+
+    }
+    catch (error) { throw error; }
+  },
+  dynamicWhereClause: async function (connection, sTableName, tableData) {
+    try {
+      var aKeys = [], awhereClause = [];
+
+      //Fetch Primary Key
+      var aPrimaryKeyResult = await connection.run(
+        SELECT`PRIMARY_KEY`
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES']}`
+          .where`TABLE_NAME=${sTableName}`
+      );
+      if (aPrimaryKeyResult.length > 0) {
+        let sKeys = aPrimaryKeyResult[0].PRIMARY_KEY;
+        aKeys = sKeys.split(',');
+        aKeys.map(function (skey) {
+          tableData.map(function (record) {
+            let obj = {};
+            // obj += skey +":'"+ record[skey] + "'"
+            obj[skey] = record[skey]
+            awhereClause.push(obj)
+          })
+        })
+      }
+      //reduce the object to generate dynamic Where clause for delete query
+      var reducedWhereClause = awhereClause.reduce(function (acc, x) {
+        for (var key in x) acc[key] = x[key];
+        return acc;
+      }, {});
+      return reducedWhereClause;
+    }
+    catch (error) { throw error; }
+  },
+  deleteQueryExecution: async function (connection, sTableFullName, oWhereClause) {
+    try {
+      let aDeleteResult = await connection.run(
+        DELETE
+          .from(connection.entities[sTableFullName])
+          .where(oWhereClause)
+      );
+      return aDeleteResult;
+    }
+    catch (error) { throw error; }
+  },
+  insertQueryExecution: async function (connection, sTableFullName, tableData) {
+    try {
+      let aInsertResult = await connection.run(
+        INSERT
+          (tableData)
+          .into(connection.entities[sTableFullName])
+      );
+      return aInsertResult;
+    }
+    catch (error) { throw error; }
+  },
+  funcEditAdminPanelData: async function (connection, tableData, sTableName, tableDesc, oPrimaryKeydetails) {
+    try {
+      // sTableName = 'MASTER_COUNTRY'
+      let sTableFullName = 'VENDOR_PORTAL.' + sTableName;
+
+      // var reducedWhereClause =await dynamicWhereClause(connection,sTableName,tableData);
+      //Delete the record
+      let aDeleteResult = await this.deleteQueryExecution(connection, sTableFullName, oPrimaryKeydetails);
+
+      //Insert New record
+      aInsertResult = await this.insertQueryExecution(connection, sTableFullName, tableData);
+      if (aInsertResult.results[0].affectedRows == tableData.length) {
+        return tableDesc + ' updated successfully'
+
+      }
+    }
+    catch (error) { throw error; }
+  },
+
+  funcEditFormsAdminPanelData: async function (connection, sTableName, tableData, oPrimaryKeydetails) {
+    try {
+      var sTableFullName = 'VENDOR_PORTAL.' + sTableName;
+      var aResult, iSR_NO, success_flag = 'N';
+
+      var maxSrNoResult = await connection.run(
+        SELECT`MAX(SR_NO) AS MAX_VAL`
+          .from`${connection.entities[sTableFullName]}`
+      );
+      if (maxSrNoResult.length > 0) {
+        if (maxSrNoResult[0].MAX_VAL > 0) {
+          // var reducedWhereClause =await dynamicWhereClause(connection,sTableName,tableData);
+          //Delete the record
+          let aDeleteResult = await this.deleteQueryExecution(connection, sTableFullName, oPrimaryKeydetails);
+          //Insert New record
+          aInsertResult = await this.insertQueryExecution(connection, sTableFullName, tableData);
+          var maxSrNoResult = await connection.run(SELECT`MAX(SR_NO) AS MAX_VAL`
+            .from`${connection.entities[sTableFullName]}`
+          );
+          if (maxSrNoResult[0].MAX_VAL > 0)
+            success_flag = 'Y';
+        }
+      }
+      return success_flag;
+    }
+    catch (error) { throw error; }
+  },
+  funcFormSettingAdminPanelData: async function (connection, oData) {
+    try {
+      var Response = {};
+      // oData.map(async function(record){
+      for (var i = 0; i < oData.length; i++) {
+        let sResults1 = await connection.run(UPDATE
+          .entity(`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`)
+          .set(`SETTING = '${oData[i].SETTING}'`)
+          .where(`CODE = '${oData[i].CODE}'`))
+      }
+      Response.OUT_SUCCESS_FLAG = 'Y';
+      Response.OUT_SUCCESS = 'Form Settings Updated Successfully';
+      return Response;
+    }
+    catch (error) { throw error; }
   }
 
 
