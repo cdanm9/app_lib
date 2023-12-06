@@ -12,6 +12,7 @@ module.exports = cds.service.impl(function () {
               var client = await dbClass.createConnectionFromEnv();
               var dbConn = new dbClass(client);
               await lib_ias.getIASUser();
+            //   console.log('done');
        
         } catch (error) {
             

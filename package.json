@@ -14,11 +14,12 @@
     "@sap/cds-hana": "^2",
     "@sap/hana-client": "^2.18.22",
     "@sap/hdbext": "^7.7.6",
+    "crypto": "^1.0.1",
     "express": "^4",
+    "nodemailer": "^6.9.7",
     "passport": "^0.6.0",
     "sap-cf-axios": "^0.4.10",
-    "sap-hdbext-promisfied": "2.202307.1",
-    "nodemailer": "^6.9.7"
+    "sap-hdbext-promisfied": "2.202307.1"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",

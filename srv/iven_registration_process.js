@@ -6,7 +6,8 @@ const lib_common = require('./LIB/iven_library')
 const lib_email = require('./LIB/iven_library_email')
 const lib_email_content = require('./LIB/iven_library_email_content')
 const connect = require('passport/lib/framework/connect')
-const lib_mdg = require('./LIB/iven_library_mdg')    
+const lib_mdg = require('./LIB/iven_library_mdg')   
+const lib_ias = require('./LIB/iven_library_ias') 
    
 module.exports = cds.service.impl(function () {   
 
@@ -297,6 +298,9 @@ module.exports = cds.service.impl(function () {
 
             var sSecurityPin = await getRandomNumber();
 
+            //Encrypt Security Pin
+            // var encryptedPin = await lib_common.getEncryptedSecurityPin(sSecurityPin);
+
             var client = await dbClass.createConnectionFromEnv();
             let dbConn = new dbClass(client);
 
@@ -349,7 +353,14 @@ module.exports = cds.service.impl(function () {
 
 
     })
+//test sec pin
+this.on('getEncryptedSecurityPin',async(req) =>{
+      //Encrypt Security Pin
+      var {pin} = req.data;
+            var encryptedPin = await lib_common.getEncryptedSecurityPin(pin);
+            console.log(encryptedPin);
 
+})
     this.on('GetDraftData', async (req) => {
         try {
             //local Variables
@@ -595,7 +606,7 @@ module.exports = cds.service.impl(function () {
 
                         // ------------------------START: Direct MDG Call for testing-------------------------
                         var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
-                        //  console.log(MDGResult);
+                    
 
                         iMDGStatus = MDGResult.iStatusCode;
                         oMDGResponse = MDGResult.oResponse;
@@ -625,7 +636,8 @@ module.exports = cds.service.impl(function () {
 
                         Result = await dbConn.callProcedurePromisified(loadProc,
                             [iReqNo, sEntityCode, iRequestType,
-                                sSupplierEmail, sBuyerEmail, sUserId, iLevel, eventsData, sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
+                                sSupplierEmail, sBuyerEmail, sUserId, iLevel, eventsData, 
+                                sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
                                 sCompareValue]);
                         var responseObj = {
                             "Message": Result.outputScalar.OUT_SUCCESS !== null ? Result.outputScalar.OUT_SUCCESS : "Approval failed!",
@@ -686,6 +698,9 @@ module.exports = cds.service.impl(function () {
                                     var sToEmail = [oEmailData.Buyer, oEmailData.Approver_Email].toString();
                                     await  lib_email.sendivenEmail(sToEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                                 }
+                                //Post to IAS for Create Normal Request
+                                if(iRequestType == 1)
+                                      await lib_ias.CreateVendorIdIAS(sSapVendorCode,sSupplerName,null,sSupplierEmail);
                             }
 
                             statusCode = 200;
@@ -827,12 +842,15 @@ module.exports = cds.service.impl(function () {
                     "To_Email": Result.outputScalar.OUT_EMAIL_TO,
                     "sMessage": aEventObj[0].COMMENT
                 };
-
+                var sAppName; 
                 var sPmId = "";
                 if (action === "VENDOR") {
                     sPmId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
                     if (sPmId !== "") sPmId = sPmId[0].USER_ID;
-                }
+                    sAppName="Vendor Registration Form"
+                }else{
+                    sAppName=await getAppName(iReqNo);
+                } 
 
                 if (isEmailNotificationEnabled) {
                     // var oEmaiContent = EMAIL_LIBRARY.getEmailData(sAction, "COMMUNCATION", oEmailData, null);
@@ -857,7 +875,8 @@ module.exports = cds.service.impl(function () {
                 OUT_ERROR_CODE: iErrorCode,
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration",sType,dbConn,hdbext);   
+            // lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,"Vendor Registration",sType,dbConn,hdbext);   
+            lib_common.postErrorLog(Result,iReqNo,sUserIdentity,sUserRole,sAppName,sType,dbConn,hdbext);  
             
             req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
@@ -1802,6 +1821,9 @@ module.exports = cds.service.impl(function () {
         return randomNo;
     }
 
-
+    async function getAppName(iReqNo){
+        var aReqInfo=await SELECT .from('VENDOR_PORTAL_REQUEST_INFO') .where({REQUEST_NO:iReqNo});   
+        return aReqInfo[0].STATUS==1?"Vendor Request Approval":"Vendor Registration Approval";
+    }    
 
 })

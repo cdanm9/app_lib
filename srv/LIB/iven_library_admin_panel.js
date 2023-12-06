@@ -409,6 +409,12 @@ module.exports = {
   },
   getAttachmentsTableData: async function (connection, sTable) {
     try {
+      var responseAttachment = {
+        "AttachmentTable":"",
+        "EnableUserManualViaURL" :"",
+        "UserManualURL":"",
+        "PrmiaryKey":""
+      }
       // var aDataObjects = [];
       // let connection = await cds.connect.to('db');
       let aResult = await connection.run(
@@ -425,7 +431,26 @@ module.exports = {
       //     return aResult[key];
       //   });
       // }
-      return aResult;
+      responseAttachment.AttachmentTable = aResult;
+      let aEnableURLResult = await connection.run(
+        SELECT`SETTING,DESCRIPTION`
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS' ]}`
+          .where`CODE = 'PORTAL_HELP_CONFIG'`
+      );
+      responseAttachment.EnableUserManualViaURL = aEnableURLResult;
+      let aURLResult = await connection.run(
+        SELECT`SETTING`
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS' ]}`
+          .where`CODE = 'PORTAL_HELP_URL'`
+      );
+      responseAttachment.UserManualURL = aURLResult;
+      let aPrimaryKeyResult = await connection.run(
+        SELECT`PRIMARY_KEY`
+          .from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES' ]}`
+          .where`TABLE_NAME = 'MASTER_IVEN_ATTACHMENTS'`
+      );
+      responseAttachment.PrmiaryKey = aPrimaryKeyResult;
+      return responseAttachment;
     }
     catch (error) { throw error; }
   },
@@ -559,7 +584,7 @@ module.exports = {
       // var sQuery3 = '';
       var oFieldDescObjLV = {};
       var arrQuery3 = [];
-      // var sResults3 = '';
+      // var sResults3 = '';     
 
       for (var i = 0; i < oVisibilityObj.FIELDS.length; i++) {
         oVisibilityObjLV = oVisibilityObj.FIELDS[i];
@@ -646,7 +671,7 @@ module.exports = {
     try {
       var sTableFullName = 'VENDOR_PORTAL.' + sTableName;
       var aResult, iSR_NO;
-      if (sTableName === 'IvenAttachments') {
+      if (sTableName === 'MASTER_IVEN_ATTACHMENTS') {
         var maxSrNoResult = await connection.run(SELECT`MAX(SR_NO) AS MAX_VAL,COUNT(SR_NO) AS COUNT_VAL`
           .from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS']}`
         );
@@ -776,6 +801,11 @@ module.exports = {
         SELECT`MAX(SR_NO) AS MAX_VAL`
           .from`${connection.entities[sTableFullName]}`
       );
+      
+      // var maxSrNoResult = await connection.run(
+      //    SELECT 
+      //    .from`${connection.entities[sTableFullName]}`
+      // );
       if (maxSrNoResult.length > 0) {
         if (maxSrNoResult[0].MAX_VAL > 0) {
           // var reducedWhereClause =await dynamicWhereClause(connection,sTableName,tableData);
@@ -797,12 +827,18 @@ module.exports = {
   funcFormSettingAdminPanelData: async function (connection, oData) {
     try {
       var Response = {};
-      // oData.map(async function(record){
+   
       for (var i = 0; i < oData.length; i++) {
-        let sResults1 = await connection.run(UPDATE
-          .entity(`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`)
-          .set(`SETTING = '${oData[i].SETTING}'`)
-          .where(`CODE = '${oData[i].CODE}'`))
+       
+
+          let sResults1 = await connection.run(UPDATE
+            .entity(`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`)
+           
+            .set({SETTING:oData[i].SETTING})
+            .where(`CODE = '${oData[i].CODE}'`))
+    
+     
+     
       }
       Response.OUT_SUCCESS_FLAG = 'Y';
       Response.OUT_SUCCESS = 'Form Settings Updated Successfully';

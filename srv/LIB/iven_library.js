@@ -1,4 +1,5 @@
 const cds = require("@sap/cds");
+const crypto = require('crypto');
 
 module.exports = {
 	//s4 HANA odata service connection
@@ -367,6 +368,18 @@ module.exports = {
 
 		}
 		catch (error) { throw error; }
+	},
+	getEncryptedSecurityPin:async function(sSecurityPin){
+		try{
+		const algorithm = 'aes-256-cbc'; //Using AES encryption
+		const key = crypto.randomBytes(32);
+		const iv = crypto.randomBytes(16);
+   let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+   let encrypted = cipher.update(sSecurityPin);
+   encrypted = Buffer.concat([encrypted, cipher.final()]);
+   return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
+		}
+		catch(error){throw error;}
 	}
 
 

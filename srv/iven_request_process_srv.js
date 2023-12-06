@@ -5,6 +5,7 @@ const hdbext = require("@sap/hdbext")
 const lib_common = require('./LIB/iven_library')
 const lib_email = require('./LIB/iven_library_email')
 const lib_email_content = require('./LIB/iven_library_email_content')
+const lib_ias = require('./LIB/iven_library_ias') 
 const { response } = require('express')
 
 
@@ -707,7 +708,13 @@ module.exports = cds.service.impl(function () {
                       
                         }
                         //CPI Update change
-                        // var S_iSapCode =  "\"" + iSAPCode + "\"" ;
+                        var S_iSapCode =  "\"" + iSAPCode + "\"" ;
+                        if(iRequestType == 5){
+                         var sResponseIAS = await lib_ias.UpdateVendorEmailIdIAS(S_iSapCode,sNewRegId);
+                            console.log(sResponseIAS)
+                        //   var  statusCode =  sResponseIAS.STATUS_CODE
+                        }
+                           
                         // var urlIAS = "iasupdate";
 
                         // var destIAS = $.net.http.readDestination("VENDOR_PORTAL.XSJS", "iVen_CPI");

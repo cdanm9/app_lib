@@ -120,6 +120,7 @@ service registrationProcessService {
 
   action   ManageCMS(action : String, attachmentId : AttachmentID, inputData : many RegFormCMS, userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              returns many String;
 
-// test s4 hana service
+// test security pin
+function getEncryptedSecurityPin(pin:String) returns many String;
 
 }

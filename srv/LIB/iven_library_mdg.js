@@ -12,6 +12,7 @@ module.exports = {
         var iSupplierType = oHanaPayload[0].SUPPL_TYPE;
         var sBP_Type = oHanaPayload[0].BP_TYPE_CODE || "";
         var aHQAddress =await this.getHQAddressArray(addressData);
+		aHQAddress = aHQAddress.length > 0 ? aHQAddress :[{}];
         var aGeneralDataSet = null;
         var Scenario = "";
         var sTradingPartner = "";
@@ -303,12 +304,15 @@ console.log(response);
 }
 },
 // Get MDG Payload structure for General Data
- getGeneralDataSet:async function(iVenVendorCode, sSAPVendorCode, aGeneralDataArr, aAddressDataArr, sBP_Type, sExemptionReason) {
+ 
+getGeneralDataSet:async function(iVenVendorCode, sSAPVendorCode, aGeneralDataArr, aAddressDataArr, sBP_Type, sExemptionReason) {
 try{
 	var sName1 = aGeneralDataArr.VENDOR_NAME1 || "";
+	
 	var oPayload = {
 		"Lifnr": sSAPVendorCode,
 		"Land1": aAddressDataArr.COUNTRY || "",
+		// "Land1":aAddressDataArr.COUNTRY?aAddressDataArr.COUNTRY:"",
 		// "Name1": sName1 !== "" ?( sName1.substring(0, 40) ): "",
 		"Name1":  sName1.substring(0, 40)  ||  "",
 		"Name2": sName1.substring(40, sName1.length <= 80 ? sName1.length : 80) || "",

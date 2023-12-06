@@ -13,6 +13,9 @@ const connect = require('passport/lib/framework/connect')
 module.exports = cds.service.impl(function () {
    //////////////////////////Dynamic Logic /////////////////////////
    this.on('PostAdminPanelData', async (req) => {
+    // get connection
+    var client = await dbClass.createConnectionFromEnv();
+      var dbConn = new dbClass(client);
     try {
 
       //local Variables
@@ -28,7 +31,7 @@ module.exports = cds.service.impl(function () {
 
       // get connection
       // var client = await dbClass.createConnectionFromEnv();
-      // let dbConn = new dbClass(client);
+      // var dbConn = new dbClass(client);   
       // // load procedure
       // const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'ADMINPANEL_POSTDATA')
 
@@ -125,6 +128,8 @@ module.exports = cds.service.impl(function () {
  
 
   this.on('EditAdminPanelData', async (req) => {
+    var client = await dbClass.createConnectionFromEnv();
+    var dbConn = new dbClass(client);  
     try {
       
       //local Variables
@@ -184,7 +189,9 @@ module.exports = cds.service.impl(function () {
               masterName = oReqData.VALUE[i].TABLE_NAME;
               editType = oReqData.EDIT_TYPE;
               masterData = oReqData.VALUE[i].TABLE_DATA;
+              oPrimaryKeydetails =oReqData.VALUE[i].PRIMARY_KEY_DETAILS;
               tableDescription = oReqData.VALUE[i].TABLE_DESCRIPTION;
+             
               aTableDesc.push(tableDescription)
                 sResponse = await lib_admin_panel.funcEditFormsAdminPanelData(connection,masterName,masterData,oPrimaryKeydetails);
             if (sResponse !== null) {
@@ -424,6 +431,7 @@ module.exports = cds.service.impl(function () {
         var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, entityCode, requestType);
         var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, entityCode, requestType);
 
+        if(aVisibleFieldsData.length !== 0 && aMandatoryFieldsData.length !== 0){
         for (var i = 0; i < aTemplateKeys.length; i++) {
           if (aTemplateKeys[i] === "CCODE") {
             sTempCcode = aVisibleFieldsData[0][aTemplateKeys[i].toString()];
@@ -442,6 +450,7 @@ module.exports = cds.service.impl(function () {
           }
         }
       }
+      }
 
       responseObj = {
         "CCODE": sTempCcode,
@@ -456,6 +465,50 @@ module.exports = cds.service.impl(function () {
     }
 
   })
+
+
+
+  this.on('PostVisibleMandatoryFields',async req=>{    
+    //get Connection
+    var client = await dbClass.createConnectionFromEnv();
+    var dbConn = new dbClass(client);
+    try{
+      var conn = await cds.connect.to('db');
+      var {requestType,entityCode,copyEntityCode,userDetails}=req.data;
+      var sUserID=userDetails.USER_ID || null;
+      var sUserRole=userDetails.USER_ROLE || null;
+      var aVisibleFieldsData=[],aMandatoryFieldsData=[];
+      var aCheckMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, entityCode, requestType);
+      var aCheckVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, entityCode, requestType);
+      if(aCheckMandatoryFieldsData.length!=0 && aCheckVisibleFieldsData.length!=0){   
+        throw "Visible And Mandatory Fields Already Exists";
+      }
+      
+      var columnTemplate = await lib_common.getTemplateColumns(conn);
+      columnTemplate[0].TYPE=requestType;
+      aVisibleFieldsData=columnTemplate;
+      aMandatoryFieldsData=columnTemplate;
+      if(copyEntityCode){
+        aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, copyEntityCode, requestType);
+        aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, copyEntityCode, requestType);
+      }
+      aMandatoryFieldsData[0].CCODE=entityCode
+      aVisibleFieldsData[0].CCODE=entityCode
+      var loadProc=await dbConn.loadProcedurePromisified(hdbext,null,"REGISTRATION_FORM_FIELDS");
+      var sResponse=await dbConn.callProcedurePromisified(loadProc,[aMandatoryFieldsData,aVisibleFieldsData])   
+      req.reply(sResponse)         
+    }catch(error){
+      var sType=error.code?"Procedure":"Node Js";    
+      var iErrorCode=error.code??500;     
+      let Result = {
+          OUT_ERROR_CODE: iErrorCode,
+          OUT_ERROR_MESSAGE:  error.message ? error.message : error
+      }
+      lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration",sType,dbConn,hdbext);
+      req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+    }
+
+  })    
 
 
   

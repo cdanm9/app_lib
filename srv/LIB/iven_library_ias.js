@@ -154,13 +154,13 @@ module.exports = {
         } catch (error) {
             var oResponseObj = {
                 "USER_ID": "",
-                "DISPLAYNAME": oIASBodyPayload.displayName,
+                "DISPLAYNAME": await oIASBodyPayload.displayName,
                 "ID": "",
-                "VENDORCODE": oIASBodyPayload.userName,
-                "PAYLOAD": oIASBodyPayload,
-                "REMARK": "Failed-" + error.reason.response.body.detail,
+                "VENDORCODE": await oIASBodyPayload.userName,
+                "PAYLOAD": await oIASBodyPayload,
+                "REMARK": "Failed-" + await error.reason.response.body.detail,
                 "STATUS": "",
-                "STATUS_CODE": error.reason.response.body.status
+                "STATUS_CODE": await error.reason.response.body.status
             };
             return oResponseObj
         }
@@ -248,8 +248,8 @@ module.exports = {
 
         } catch (error) {
             var errores = {
-                "status": error.reason.response.body.status,
-                "message": error.reason.response.body.detail
+                "status":await error.reason.response.body.status,
+                "message":await error.reason.response.body.detail
             };
 
         }

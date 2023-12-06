@@ -106,7 +106,7 @@ context VENDOR_PORTAL {
     entity MASTER_IVEN_SETTINGS {
         key CODE        : String(25);
             DESCRIPTION : String(100);
-            SETTING     : String(10);
+            SETTING     : String(100);
             TYPE        : String(10)
     }
 

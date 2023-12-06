@@ -72,7 +72,7 @@ module.exports = cds.service.impl(function () {
       let Result = {
           OUT_ERROR_CODE: iErrorCode,
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
-      }
+      }       
       lib_common.postErrorLog(Result,null,sUserId,sUserRole,"User Master",sType,dbConn,hdbext);
       console.error(error)     
       // return error.messsage     
