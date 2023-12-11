@@ -607,7 +607,7 @@ module.exports = {
         let oSetValues1 = {};
         oSetValues1[Object.keys(oMandatoryObjLV)[0]] = oMandatoryObjLV[Object.keys(oMandatoryObjLV)[0]];
         let sResults1 = await connection.run(UPDATE
-          .entity(`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`)
+          .entity(`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`)
           .set(oSetValues1)
           .where({ CCODE: oMandatoryObj.CCODE, TYPE: oMandatoryObj.TYPE }))
 
@@ -839,7 +839,7 @@ module.exports = {
     
      
      
-      }
+      }   
       Response.OUT_SUCCESS_FLAG = 'Y';
       Response.OUT_SUCCESS = 'Form Settings Updated Successfully';
       return Response;

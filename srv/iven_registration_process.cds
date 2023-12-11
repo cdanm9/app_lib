@@ -36,6 +36,7 @@ service registrationProcessService {
   entity MasterRegion              as projection on VENDOR_PORTAL.MASTER_REGION;
   entity MasterIbanCountry         as projection on VENDOR_PORTAL.MASTER_IBAN_COUNTRY;
   entity MasteriVenAttachments     as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
+  entity MasterIvenSettings        as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS;          
   entity MasterRequestEvents       as projection on VENDOR_PORTAL.MASTER_REQUEST_EVENTS;
   entity MasterStatus              as projection on VENDOR_PORTAL.MASTER_STATUS;
   entity MasterClientInfo          as projection on VENDOR_PORTAL.MASTER_EMAIL_CONTACT_ID;
@@ -68,9 +69,9 @@ service registrationProcessService {
   entity ViewRequestActiveStatus   as projection on VIEW_REQUEST_ACTIVE_STATUS;
 
   type securityPinResponse {
-    REGISTERED_ID : String(100);
-    SEC_CODE      : String(100);
+    
     CREATED_ON    : Timestamp;
+    IS_MATCH:String(10);
   }
 
   type User_Details : {
@@ -81,7 +82,7 @@ service registrationProcessService {
   // Functions
   function GetDraftData(requestNo : Integer, entityCode : String, creationType : Integer, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            returns many String;
   function GetSecurityPin(vendorName : String, vendorEmail : String, requesterId : String, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           returns many String;
-  function CheckSecurityPin(vendorEmail : String, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns securityPinResponse;
+  function CheckSecurityPin(vendorEmail : String,securityPin:String, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns securityPinResponse;
   
   // Actions for Posting
   action   PostRegFormData(action : String, stepNo : Integer, reqHeader : many RequestInfo, addressData : many RegFormAddress, contactsData : many RegFormContacts, bankData : many RegFormBanks, financeData : many RegFormFinancial, ownersData : many RegFormOwners, prodServData : many RegFormProdServ, capacityData : many RegFormCapacity, customerData : many RegFormCustomers, oemData : many RegFormOEM, discFieldsData : many RegFormDiscInfo, discRelativesData : many RegFormDiscRelatives, discQaCertiData : many RegFormDiscQaCertif, attachmentFieldsData : many RegFormAttachFields, attachmentData : many RegFormAttachments, updatedFields : many String, eventsData : many RegEventsLog, userDetails : User_Details) returns many String;

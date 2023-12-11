@@ -319,6 +319,7 @@ type "ST_MASTER_REGFORM_FIELDS_UPDATED"  AS TABLE(
              S5A20F1 NVARCHAR(1),
               /* Attachment 5.24: all Agency /distributorship Agreement endorse by OEM */
              S5A21F1 NVARCHAR(1),
+             S5A22F1 NVARCHAR(1),
                
           /* Section 7: Acknowledgment -------------------------------------------------------   	
               /* Attachment 5.1: Acknowledgment fields*/

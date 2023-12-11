@@ -231,7 +231,8 @@ module.exports = cds.service.impl(function () {
         let dbConn = new dbClass(client);
         try {
            
-            var { vendorEmail,userId,userRole} = req.data;
+            var { vendorEmail,securityPin,userId,userRole} = req.data;
+            var response ={};
             //intialize connection to database
             // var connection = await cds.connect.to('db');
              // get connection
@@ -247,10 +248,25 @@ module.exports = cds.service.impl(function () {
                     let sResult = await connection.run(SELECT
                         .from(`${connection.entities['VENDOR_PORTAL.REQUEST_SECURITY_CODE']}`)
                         .where({ REGISTERED_ID: vendorEmail }));     
-    
+                   
+                    
                     if (sResult.length > 0) {
-                        sResult[0].CREATED_ON = new Date(sResult[0].CREATED_ON);
-                        req.reply(sResult[0]);
+						if(securityPin === null)
+							return;
+                         //Check if user entered pin matched with generated pin
+                         if(sResult[0].SEC_CODE === securityPin)
+                         {
+                            response["CREATED_ON"]= new Date(sResult[0].CREATED_ON);
+                            response["IS_MATCH"] = 'YES';
+                            req.reply(response);
+                        //     sResult[0].CREATED_ON = new Date(sResult[0].CREATED_ON);
+                        // req.reply(sResult[0]);
+                         }
+                         else{
+                             throw {"message": "Invalid Security Pin entered",
+                               "errorType":"Warning"};
+                         }
+                        
                     }
                     else{
                         throw {"message": "Generate Security Pin against email id",

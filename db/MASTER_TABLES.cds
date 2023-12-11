@@ -584,6 +584,8 @@ context VENDOR_PORTAL {
         S5A20F1   : String(1);
         // Attachment 5.24: all Agency /distributorship Agreement endorse by OEM
         S5A21F1   : String(1);
+        // Attachment for Other attachment
+        S5A22F1   : String(1);
         // Section 7: Acknowledgment -------------------------------------------------------
         // Attachment 5.1: Acknowledgment fields
         S7G1D1    : String(1); // Completed by
@@ -903,6 +905,8 @@ entity MASTER_REGFORM_FIELDS_UPDATED {
         S5A20F1   : String(1);
         // Attachment 5.24: all Agency /distributorship Agreement endorse by OEM
         S5A21F1   : String(1);
+            // Attachment for Other attachment
+        S5A22F1   : String(1);
         // Section 7: Acknowledgment -------------------------------------------------------
         // Attachment 5.1: Acknowledgment fields
         S7G1D1    : String(1); // Completed by
@@ -1224,6 +1228,8 @@ entity MASTER_REGFORM_FIELDS_VISIBLE {
         S5A20F1   : String(1);
         // Attachment 5.24: all Agency /distributorship Agreement endorse by OEM
         S5A21F1   : String(1);
+            // Attachment for Other attachment
+        S5A22F1   : String(1);
         // Section 7: Acknowledgment -------------------------------------------------------
         // Attachment 5.1: Acknowledgment fields
         S7G1D1    : String(1); // Completed by

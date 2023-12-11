@@ -29,6 +29,11 @@ service adminPanelService {
   // entity address as projection on VENDOR_PORTAL.REGFORM_ADDRESS;
 
   //Types
+
+   type userManual:{
+    CHECK:String(10);
+    URL:String;
+  }
   type User_Details:{
     USER_ROLE: String(50);
     USER_ID: String(50);        
@@ -47,6 +52,9 @@ service adminPanelService {
 
   action PostVisibleMandatoryFields(requestType : Integer, entityCode : String, copyEntityCode:String, userDetails:User_Details) returns array of String;
 
+  function GetAllVisbleMandatoryEntity(reqTypeCode:Integer, userId : String, userRole : String) returns many String; 
+
+  //  action EditUserManual(portalUserManual:userManual,userDetails:User_Details) returns many String; 
 //Dynamic Logic
 //  action   DynamicPostAdminPanelData(input : String)                                          returns array of String;
 //   action   DynamicEditAdminPanelData(input : String)                                          returns array of String;

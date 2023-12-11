@@ -138,7 +138,7 @@ module.exports = cds.service.impl(function () {
       var sTableName = oReqData.VALUE[0].TABLE_NAME || null;
       var sTableDesc = oReqData.VALUE[0].TABLE_DESCRIPTION || null;
       var aMasterData = oReqData.VALUE[0].TABLE_DATA || [];
-      var oPrimaryKeydetails = oReqData.VALUE[0].PRMIARY_KEY_DETAILS || [];
+      var oPrimaryKeydetails = oReqData.VALUE[0].PRIMARY_KEY_DETAILS || [];
       var sResponse = null;
 
       var oUserDetails=oReqData.USER_DETAILS;   
@@ -295,7 +295,27 @@ module.exports = cds.service.impl(function () {
           lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration",sType,dbConn,hdbext);
           req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
-    }
+    }else if(sEditType==="USER_MANUAL"){
+      try{
+        // sResponse = await dbConn.callProcedurePromisified(loadProc,
+        //   [sEditType, sTableName, sTableDesc, [], [], [], [], [], [], [], [], [], [], [], [], [], aData, [], [], [], [], [],[] ]);
+        sResponse = await lib_admin_panel.funcFormSettingAdminPanelData(connection,aData)
+        // aData = oPayload.VALUE.DATA || [];
+        // results = updateSettings(conn, aData);    
+        sResponse.OUT_SUCCESS='User Manual Updated Successfully';        
+        sResponse.OUT_SUCCESS_FLAG ='U';       
+        return sResponse
+      }catch(error){    
+        var sType=error.code?"Procedure":"Node Js";    
+        var iErrorCode=error.code??500;     
+        let Result = {
+            OUT_ERROR_CODE: iErrorCode,
+            OUT_ERROR_MESSAGE:  error.message ? error.message : error
+        }
+        lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration",sType,dbConn,hdbext);
+        req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
+      }
+    }       
 
     } catch (error) {       
       var sType=error.code?"Procedure":"Node Js";    
@@ -481,7 +501,7 @@ module.exports = cds.service.impl(function () {
       var aCheckMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, entityCode, requestType);
       var aCheckVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, entityCode, requestType);
       if(aCheckMandatoryFieldsData.length!=0 && aCheckVisibleFieldsData.length!=0){   
-        throw "Visible And Mandatory Fields Already Exists";
+        throw "Registration Form Fields Already Exists";     
       }
       
       var columnTemplate = await lib_common.getTemplateColumns(conn);
@@ -509,9 +529,74 @@ module.exports = cds.service.impl(function () {
     }
 
   })    
+ 
+  this.on('GetAllVisbleMandatoryEntity',async req=>{   
+    try{
+        var {reqTypeCode,userId,userRole}=req.data
+        var conn = await cds.connect.to('db');   
+        var aMandatoryReqExist=[],aVisibleReqExist=[],aMandatoryReqNotExist=[],aVisibleReqNotExist=[],
+        sResponse={
+          "AVAILABLE":{},
+          "NOT_AVAILABLE":{}
+        };
+        var aEntityData=await SELECT .columns(['BUTXT','BUKRS']) .from('VENDOR_PORTAL_MASTER_ENTITY_CODE'); 
+        for(var i in aEntityData){
+            var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
+            if(aMandatoryFieldsData.length!=0)
+              aMandatoryReqExist.push(aEntityData[i])
+            else
+              aMandatoryReqNotExist.push(aEntityData[i])
+            var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
+            if(aVisibleFieldsData.length!=0)
+              aVisibleReqExist.push(aEntityData[i])
+            else
+              aVisibleReqNotExist.push(aEntityData[i])   
+        }   
+          sResponse.AVAILABLE.VISIBLE=aVisibleReqExist
+          sResponse.AVAILABLE.MANDATORY=aMandatoryReqExist
+          sResponse.NOT_AVAILABLE.VISIBLE=aVisibleReqNotExist    
+          sResponse.NOT_AVAILABLE.MANDATORY=aMandatoryReqNotExist    
+        req.reply(sResponse)   
+        // var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, copyEntityCode, requestType);
+        // var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, copyEntityCode, requestType);
 
+    }catch(error){
+        var sType=error.code?"Procedure":"Node Js";    
+        var iErrorCode=error.code??500;     
+        let Result = {
+            OUT_ERROR_CODE: iErrorCode,
+            OUT_ERROR_MESSAGE:  error.message ? error.message : error   
+        }
+        lib_common.postErrorLog(Result,null,userId,userRole,"System Configuration",sType,dbConn,hdbext);
+        req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+    }
+  });
 
-  
-
+  // this.on('EditUserManual',async req=>{   
+  //   try{
+  //       var {portalUserManual,userDetails}=req.data
+  //       var conn = await cds.connect.to('db'); 
+  //       var sCheck=portalUserManual.CHECK||null,
+  //       sUrl=portalUserManual.URL||null,
+  //       sResponse;
+  //       var sCode=['PORTAL_HELP_CONFIG','PORTAL_HELP_URL'];
+  //       var sSetting=[sCheck,sUrl];
+  //       for(var i in sCode){
+  //         var sUpdateCheck = await UPDATE('VENDOR_PORTAL.MASTER_IVEN_SETTINGS') .set({SETTING:sSetting[i]}) 
+  //         .where({CODE:sCode[i]})
+  //       }
+  //       sResponse="User Manual Has Been Updated Successfully!"
+  //       req.reply(sResponse)                 
+  //   }catch(error){
+  //       var sType=error.code?"Procedure":"Node Js";    
+  //       var iErrorCode=error.code??500;     
+  //       let Result = {
+  //           OUT_ERROR_CODE: iErrorCode,
+  //           OUT_ERROR_MESSAGE:  error.message ? error.message : error   
+  //       }
+  //       lib_common.postErrorLog(Result,null,userId,userRole,"System Configuration",sType,dbConn,hdbext);
+  //       req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+  //   }
+  // });
 
 })

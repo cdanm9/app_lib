@@ -541,6 +541,103 @@ catch(error)
 }    
 })
 
+this.on('triggerEmailBulk',async(req)=>{
+  var client = await dbClass.createConnectionFromEnv();
+  var dbConn = new dbClass(client);
+  try{
+    var aLegacySupplierData, oEmailDataInv, oEmailContentInv, bInvitationFlag,
+    oEmailOutput, sQuery, emailCount = 0;
+    const conn = await cds.connect.to('db');    
+    aLegacySupplierData =await getLegacySupplierData(conn, 'LG', 2) || [];      
+
+    for (var i = 0; i < aLegacySupplierData.length; i++) {
+      bInvitationFlag = await checkInvitationStatus(conn, aLegacySupplierData[i]);
+      if (bInvitationFlag === true) {
+        oEmailDataInv = {
+          "ReqNo": aLegacySupplierData[i].REQUEST_NO,
+          "ReqType": 5,
+          "SupplierName": aLegacySupplierData[i].VENDOR_NAME1,
+          "EntityDesc": aLegacySupplierData[i].ENTITY_DESC,
+          "MailTo":aLegacySupplierData[i].REGISTERED_ID
+        };    
+
+        // oEmailData = {
+        //     "SupplierName": reqHeader[i].VENDOR_NAME1,
+        //     "EntityDesc": sEntityDesc,
+        //     "MailTo":reqHeader[i].REGISTERED_ID
+        // }
+            // setEmailData(supplierReq);
+        oEmailContentInv = await lib_email_content.getEmailContent(conn, "INVITE", "REQUEST", oEmailDataInv, null)
+        var sCCEmail = await lib_email.setSampleCC(null );
+        oEmailOutput=await lib_email.sendivenEmail(oEmailDataInv.MailTo,sCCEmail,'html',oEmailContentInv.subject,oEmailContentInv.emailBody)
+
+      // oEmaiContentInv = EMAIL_LIBRARY.getEmailData("INVITE", "REQUEST", oEmailDataInv, null);
+      // oEmailOutput = EMAIL_LIBRARY._sendEmailV2(oEmaiContentInv.emailBody, oEmaiContentInv.subject, [aLegacySupplierData[i].VEMAIL], null);
+        emailCount += 1;
+        var aInviteLogData={   
+          REQUEST_NO:parseInt(aLegacySupplierData[i].REQUEST_NO,10), 
+          LAST_REMINDER:new Date().toISOString(), 
+          UPDATED_ON:new Date().toISOString(),
+          REMINDER_COUNT:0
+        }
+        await INSERT([aInviteLogData]).into('VENDOR_PORTAL_VENDOR_INVITATION_LOG');     
+
+        if (emailCount % 50 === 0 && emailCount !== 0) {
+          await sleep(30000);
+        }
+      }
+    }
+    // req.reply(response);   
+  }catch(error){
+      // var sType=error.code?"Procedure":"Node Js";    
+        
+      // let Result = {
+      //     OUT_ERROR_CODE: iErrorCode,
+      //     OUT_ERROR_MESSAGE:  error.message ? error.message : error
+      // }
+      // lib_common.postErrorLog(Result,null,sUserID,sUserRole,"Data Migration",sType,dbConn,hdbext);
+      // console.error(error)     
+      var iErrorCode=error.code??500;   
+      req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
+  }    
+})
+
+
+async function checkInvitationStatus(conn, Data) {
+	var flag = true;     
+	var aResult =await SELECT .from('VENDOR_PORTAL_VENDOR_INVITATION_LOG') .where({REQUEST_NO:Data.REQUEST_NO,REMINDER_COUNT:0});
+	if (aResult !== undefined && aResult !== null && aResult !== "" && aResult.length > 0) {
+		flag = false;
+	}
+	return flag;
+}
+
+async function sleep(num) {
+	let now = new Date();
+	const stop = now.getTime() + num;
+	while (true) {
+		now = new Date();
+		if (now.getTime() > stop) return;
+	}
+}
+
+async  function getLegacySupplierData(conn, sVcode, sStatus) {
+	var aResult = null,
+		aDataObjects;
+// 	var sQuery =
+// 		'SELECT * FROM \"VENDOR_PORTAL\".\"VENDOR_PORTAL.Table::VENDOR_INVITATION\" WHERE VCODE = ? and STATUS = ? ORDER BY REG_NO asc';
+// // 	sQuery += 'and VEMAIL LIKE \'%datamigration%\' ORDER BY REG_NO asc';
+// 	aResult = conn.executeQuery(sQuery, sVcode, sStatus);
+	aResult = await SELECT .from('VENDOR_PORTAL_REQUEST_INFO') .where({VENDOR_CODE:sVcode,STATUS:sStatus}) .orderBy('REQUEST_NO');  
+	if (aResult !== undefined && aResult !== null && aResult !== "" && aResult.length > 0) {
+		aDataObjects = Object.keys(aResult).map(function(key) {
+			return aResult[key];
+		});
+	}
+	return aDataObjects;
+}
+
+
 async function AllMandatoryFieldID(connection){
   try{
     var aResult = null,oObj = {},aResponse =[];
