@@ -407,6 +407,27 @@ module.exports = {
     }
     catch (error) { throw error; }
   },
+  getTableDataWithPrimaryKey: async function (connection, sTable) {
+    try {
+      var response ={"TableData":"","PrimaryKey":""}
+      // var aDataObjects = [];
+      // let connection = await cds.connect.to('db');
+      let aResult = await connection.run(
+        SELECT
+          .from`${connection.entities['VENDOR_PORTAL.' + sTable]}`
+      );
+        response.TableData = aResult;
+      
+        let aPrimaryKeyResult = await connection.run(
+          SELECT`PRIMARY_KEY`
+            .from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES' ]}`
+            .where`TABLE_NAME = ${sTable}`
+        );
+        response.PrimaryKey = aPrimaryKeyResult;
+      return response;
+    }
+    catch (error) { throw error; }
+  },
   getAttachmentsTableData: async function (connection, sTable) {
     try {
       var responseAttachment = {
@@ -456,12 +477,12 @@ module.exports = {
   },
 
   getMasterFormsData: async function (connection) {
-    var aTableResponse = await this.getTableData(connection, "MASTER_EMAIL_CONTACT_ID")
+    var aTableResponse = await this.getTableDataWithPrimaryKey(connection, "MASTER_EMAIL_CONTACT_ID")
     var oMasterobj = {
-      "Client_Info": await this.getClientInfoWithDesc(connection, aTableResponse),
-      "Sap_Info": await this.getTableData(connection, "MASTER_SAP_CLIENT"),
-      "SubAccount_Info": await this.getTableData(connection, "MASTER_SUBACCOUNT"),
-      "MasterCredential_Info": await this.getTableData(connection, "MASTER_CREDENTIAL"),
+      "Client_Info":{"TableData": await this.getClientInfoWithDesc(connection, aTableResponse.TableData),"PrimayKey":aTableResponse.PrimaryKey},
+      "Sap_Info": await this.getTableDataWithPrimaryKey(connection, "MASTER_SAP_CLIENT"),
+      "SubAccount_Info": await this.getTableDataWithPrimaryKey(connection, "MASTER_SUBACCOUNT"),
+      "MasterCredential_Info": await this.getTableDataWithPrimaryKey(connection, "MASTER_CREDENTIAL"),
       "IvenAttachments": await this.getAttachmentsTableData(connection, "MASTER_IVEN_ATTACHMENTS")
     };
     return oMasterobj;

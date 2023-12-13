@@ -534,11 +534,11 @@ module.exports = cds.service.impl(function () {
     try{
         var {reqTypeCode,userId,userRole}=req.data
         var conn = await cds.connect.to('db');   
-        var aMandatoryReqExist=[],aVisibleReqExist=[],aMandatoryReqNotExist=[],aVisibleReqNotExist=[],
+        var aMandatoryCode,aVisibleCode,aMandatoryReqExist=[],aVisibleReqExist=[],aMandatoryReqNotExist=[],aVisibleReqNotExist=[],
         sResponse={
           "AVAILABLE":{},
           "NOT_AVAILABLE":{}
-        };
+        };   
         var aEntityData=await SELECT .columns(['BUTXT','BUKRS']) .from('VENDOR_PORTAL_MASTER_ENTITY_CODE'); 
         for(var i in aEntityData){
             var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
@@ -551,11 +551,19 @@ module.exports = cds.service.impl(function () {
               aVisibleReqExist.push(aEntityData[i])
             else
               aVisibleReqNotExist.push(aEntityData[i])   
-        }   
+        }     
+          // aMandatoryReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_MANDATORY') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
+          // aMandatoryCode = aMandatoryReqExist.map(obj => obj.CCODE);
+          // sResponse.AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aMandatoryCode}); 
+          // sResponse.NOT_AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':{'<>':aMandatoryCode}});     
+
+          // aVisibleReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_VISIBLE') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
+          // aVisibleCode = aVisibleReqExist.map(obj => obj.CCODE);
+          // sResponse.AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aVisibleCode});  
           sResponse.AVAILABLE.VISIBLE=aVisibleReqExist
           sResponse.AVAILABLE.MANDATORY=aMandatoryReqExist
           sResponse.NOT_AVAILABLE.VISIBLE=aVisibleReqNotExist    
-          sResponse.NOT_AVAILABLE.MANDATORY=aMandatoryReqNotExist    
+          sResponse.NOT_AVAILABLE.MANDATORY=aMandatoryReqNotExist           
         req.reply(sResponse)   
         // var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, copyEntityCode, requestType);
         // var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, copyEntityCode, requestType);
