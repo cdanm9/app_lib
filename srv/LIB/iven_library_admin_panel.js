@@ -14,9 +14,13 @@ module.exports = {
     try {
       //local Variables
       var responseObject = {}, TableInfo = null;
+      var sfullTableName ='VENDOR_PORTAL.' + sTableName
+      if(!(sfullTableName in connection.entities)){
+        throw "Table not configured in backend. Please Contact Admin"
+      }
 
       // let connection = await cds.connect.to('db');
-      let queryResult = await connection.run(SELECT.from`${connection.entities['VENDOR_PORTAL.' + sTableName]}`);
+      let queryResult = await connection.run(SELECT.from`${connection.entities[sfullTableName]}`);
 
       TableInfo = await this.getMasterTableSchema(connection, sTableName) || [];
       responseObject['sTableName'] = queryResult || [];
@@ -29,6 +33,7 @@ module.exports = {
 
   getTableNameFromTableCode: async function (connection, sTableCode) {
     try {
+
       // let connection = await cds.connect.to('db');
       let queryResult = await connection.run(SELECT`TABLE_NAME`.from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES']}`
         .where`TABLE_CODE = ${sTableCode}`);
@@ -76,13 +81,17 @@ module.exports = {
 
   getRowCountOfTables: async function (connection, sTableName) {
     try {
+     var sfullTableName = 'VENDOR_PORTAL.' + sTableName;
+     var aDataObjects =[];
+      if(sfullTableName in connection.entities){
       // let connection = await cds.connect.to('db');
       let queryResult = await connection.run(SELECT`COUNT(*) as COUNT`
         .from`${connection.entities['VENDOR_PORTAL.' + sTableName]}`);
 
-      var aDataObjects = Object.keys(queryResult).map(function (key) {
+       aDataObjects = Object.keys(queryResult).map(function (key) {
         return queryResult[key].COUNT;
       });
+    }
 
       return parseInt(aDataObjects[0], 10) || 0;
     }
@@ -171,7 +180,27 @@ module.exports = {
     }
     catch (error) { throw error; }
   },
+  getMasterSMTPInfo: async function (connection) {
+    try {
+      // let connection = await cds.connect.to('db');
+      let aResult = await connection.run(SELECT`HOST,PORT,SECURE,USERNAME,PASSWORD,SENDER_EMAIL`
+        .from`${connection.entities['VENDOR_PORTAL.EMAIL_CONFIG']}`);
 
+      if (aResult[0] === undefined || aResult[0] === null) {
+        aResult[0] = {
+          "HOST": null,
+          "PORT": null,
+          "SECURE": null,
+          "USERNAME": null,
+          "PASSWORD": null,
+          "SENDER_EMAIL": null
+        };
+      }
+
+      return aResult[0] || null;
+    }
+    catch (error) { throw error; }
+  },
   getMasterSapClient: async function (connection) {
     try {
       // let connection = await cds.connect.to('db');
@@ -214,8 +243,9 @@ module.exports = {
     var aMasterClientContactInfo = await this.getMasterClientContactInfo(connection);
     var aMasterSubaccounttInfo = await this.getMasterSubaccounttInfo(connection);
     var aMasterSapClientials = await this.getMasterSapClient(connection);
+    var aMasterSMTPInfo = await this.getMasterSMTPInfo(connection)
 
-    var aConfigArr = [aMasterClientContactInfo, aMasterSubaccounttInfo, aMasterSapClientials];
+    var aConfigArr = [aMasterClientContactInfo, aMasterSubaccounttInfo, aMasterSapClientials,aMasterSMTPInfo];
     var dataArr = [];
     var aReturnArr = [];
     var oIterationObj = {};
@@ -855,8 +885,8 @@ module.exports = {
           let sResults1 = await connection.run(UPDATE
             .entity(`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`)
            
-            .set({SETTING:oData[i].SETTING})
-            .where(`CODE = '${oData[i].CODE}'`))
+            .set({SETTING:oData[i].SETTING,DESCRIPTION:oData[i].DESCRIPTION})
+            .where(`CODE = '${oData[i].CODE}'`))         
     
      
      

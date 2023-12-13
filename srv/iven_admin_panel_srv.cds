@@ -52,7 +52,7 @@ service adminPanelService {
 
   action PostVisibleMandatoryFields(requestType : Integer, entityCode : String, copyEntityCode:String, userDetails:User_Details) returns array of String;
 
-  function GetAllVisbleMandatoryEntity(reqTypeCode:Integer, userId : String, userRole : String) returns many String; 
+  function GetAllVisibleMandatoryEntity(reqTypeCode:Integer, userId : String, userRole : String) returns many String; 
 
   //  action EditUserManual(portalUserManual:userManual,userDetails:User_Details) returns many String; 
 //Dynamic Logic

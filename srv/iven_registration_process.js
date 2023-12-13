@@ -257,14 +257,21 @@ module.exports = cds.service.impl(function () {
                          if(sResult[0].SEC_CODE === securityPin)
                          {
                             response["CREATED_ON"]= new Date(sResult[0].CREATED_ON);
-                            response["IS_MATCH"] = 'YES';
+                            response["IS_MATCH"] = true;
+                            response["RESPONSE_MESSAGE"]= "Valid Security Pin";
                             req.reply(response);
                         //     sResult[0].CREATED_ON = new Date(sResult[0].CREATED_ON);
                         // req.reply(sResult[0]);
                          }
                          else{
-                             throw {"message": "Invalid Security Pin entered",
-                               "errorType":"Warning"};
+                            //  throw {"message": "Invalid Security Pin entered",
+                            //    "errorType":"Warning"};
+                          
+                            
+                            response["CREATED_ON"]= new Date(sResult[0].CREATED_ON);
+                            response["IS_MATCH"] = false;
+                            response["RESPONSE_MESSAGE"]= "Invalid Security Pin entered";
+                            req.reply(response);
                          }
                         
                     }
@@ -370,13 +377,13 @@ module.exports = cds.service.impl(function () {
 
     })
 //test sec pin
-this.on('getEncryptedSecurityPin',async(req) =>{
-      //Encrypt Security Pin
-      var {pin} = req.data;
-            var encryptedPin = await lib_common.getEncryptedSecurityPin(pin);
-            console.log(encryptedPin);
+// this.on('getEncryptedSecurityPin',async(req) =>{
+//       //Encrypt Security Pin
+//       var {pin} = req.data;
+//             var encryptedPin = await lib_common.getEncryptedSecurityPin(pin);
+//             console.log(encryptedPin);
 
-})
+// })
     this.on('GetDraftData', async (req) => {
         try {
             //local Variables
@@ -444,7 +451,8 @@ this.on('getEncryptedSecurityPin',async(req) =>{
                     "OPENTEXT": await getOpenTextCredentials(connection),
                     "CLIENT_INFO": await getClientDetails(connection),
                     "TOTALCOUNT": totalCount,
-                    "SETTINGS": aSettings
+                    "SETTINGS": aSettings,
+                    "LABELS": await getLabelsForFormID(connection)
                 };
                 // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", 200);
                 return responseObj;
@@ -1827,6 +1835,32 @@ this.on('getEncryptedSecurityPin',async(req) =>{
             }
 
             return aDataObj;
+        }
+        catch (error) { throw error; }
+    }
+    async function getLabelsForFormID(connection) {
+        try {
+            var aDataObj = "";
+            var responseObj = []
+
+            let aResult = await connection.run(
+                SELECT`FIELDS,DESCRIPTION`
+                    .from`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_ID_DESC']}`
+                    );
+            // var sQuery =
+            // 	'SELECT "CLIENT_FULL_NAME", "CLIENT_SHORT_NAME", "CLIENT_COUNTRY" FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_EMAIL_CONTACT_ID" WHERE SR_NO = ?';
+            // var aResult = conn.executeQuery(sQuery, 1);
+
+            if (aResult.length > 0) {
+                aDataObj = aResult[0];
+                aResult.map(function(record){
+                    var obj ={}
+                    obj[record.FIELDS] = record.DESCRIPTION
+                    responseObj.push(obj)
+                })
+            }
+
+            return responseObj;
         }
         catch (error) { throw error; }
     }

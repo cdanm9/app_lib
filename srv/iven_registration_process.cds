@@ -71,7 +71,8 @@ service registrationProcessService {
   type securityPinResponse {
     
     CREATED_ON    : Timestamp;
-    IS_MATCH:String(10);
+    IS_MATCH:Boolean;
+    RESPONSE_MESSAGE:String(30);
   }
 
   type User_Details : {
@@ -122,6 +123,6 @@ service registrationProcessService {
   action   ManageCMS(action : String, attachmentId : AttachmentID, inputData : many RegFormCMS, userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              returns many String;
 
 // test security pin
-function getEncryptedSecurityPin(pin:String) returns many String;
+// function getEncryptedSecurityPin(pin:String) returns many String;
 
 }

@@ -182,6 +182,7 @@ context VENDOR_PORTAL {
             COLUMN_COUNT      : Integer not null;
             TABLE_DESCRIPTION : String(100);
             PRIMARY_KEY :String(300);
+            PRMIARY_KEY_DATA_TYPE :String(300);
     }
 
     entity MASTER_TELECODE {
