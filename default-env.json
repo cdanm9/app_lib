@@ -51,6 +51,16 @@
 			"url": "http://a17.hana.com:17/",
 			"username": "fioriadmin",
 			"password": "Ibiz@1234"
+		},
+		{
+			"name":"BTP_DMS_Token",
+			"url":"https://ibs-portal-dev.authentication.us10.hana.ondemand.com",
+			"username": "sb-744e3f5a-0256-4a9a-af67-cb974b95e557!b84678|sdm-di-DocumentManagement-sdm_integration!b6332",
+			"password": "Hs7dPRJwd/5Zek3CAkeXqUYGpkU="
+		},
+		{
+			"name":"BTP_DMS_Dest",
+			"url":"https://api-sdm-di.cfapps.us10.hana.ondemand.com"
 		}
 	]
 }
