@@ -241,13 +241,35 @@ module.exports = {
             restxt.status = error.reason.response.status;
             restxt.statusText = error.reason.response.statusText;
             if (restxt.status == 200) {
-                restxt.statusText = "Folder/object Deleted sucessfully";
+                restxt.statusText = "Folder/object Deleted Successfully";
             }
 
             return restxt;
         }
     },
-    _uploadDocument: async function () {
-
-    }
+     _RenameFolder: async function (ObjectId, RepoID, NewforlderName) {
+        const lv_JWToken = await this._fetchJwtToken();
+        let ConDMS = await cds.connect.to('DMS_Dest');
+        var path = 'browser/' + RepoID + '/root';
+        var JToken = 'Bearer ' + lv_JWToken;
+        try {
+          const data =
+            `objectId=${ObjectId}` +
+            `&cmisaction=update` +
+            `&propertyId[0]=cmis:name` +
+            `&propertyValue[0]=${NewforlderName}` ;
+          const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
+          const Resp = await ConDMS.send("POST", path, data, headers);
+          var restxt = {};
+          restxt.name = Resp.properties["cmis:name"].value;
+          restxt.message  = 'Object name changed Successfully';
+          restxt.status = 200;
+          return restxt;
+        } catch (error) {
+          var restxt = {};
+          restxt.status = error.reason.response.status;
+          restxt.statusText = error.reason.response.statusText;
+          return restxt;
+        }
+      }
 }

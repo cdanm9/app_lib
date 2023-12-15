@@ -21,8 +21,6 @@
 
    4. //create subfolder 
     // This is to create a folder in the repository for every new book that is getting created.
-
-
     // var id = "30029f8000b5d3cc4a212756";
     // var fname = "10000002";
     // var RepoID = 'iVEN';
@@ -31,12 +29,19 @@
 
 5.//read subfolder data of main repo and subfolder 
 
-    // var fname = '10000001'; //optional if need to read main repo iVEN
+    // var fname = '10000001'; //optional if need to read main repo iVEN only
     // var RepoID = 'iVEN';
     code---->>>>>>>> let a = await DMSlib._getSubFolderItems(RepoID, fname);
 
 6.//Delete subfolder data of main repo and subfolder 
 
-    // var id = 'BQ1ayzJ0aYlro-p-M2dm77-zT7RyDN9A_eCSL0PdsKQ'; //optional if need to read main repo iVEN
+    // var id = 'BQ1ayzJ0aYlro-p-M2dm77-zT7RyDN9A_eCSL0PdsKQ'; //o
     // var RepoID = 'iVEN';
     code---->>>>>>>> let a = await DMSlib._DeleteSubFolder(id , RepoID);
+
+7.    // to rename any folder - pass folder id
+    //_RenameFolder: async function (ObjectId, RepoID, NewforlderName)
+    var ObjectId = '427nKXGdTqb2-kxgLGpRzYe2k8m_lc3ubpRYfUXFhaY'; //optional if need to read main repo iVEN
+    var RepoID = 'iVEN';
+    var NewforlderName = '700000001';
+   code---->>>>>>>>  let a = await DMSlib._RenameFolder(ObjectId , RepoID,NewforlderName);
