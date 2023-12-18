@@ -1,5 +1,7 @@
-using {VENDOR_PORTAL,
-USERMASTER_ENTITIES 
+using {
+       VENDOR_PORTAL,
+       USERMASTER_ENTITIES,
+       CALC_HEIRARCHY_MATRIX
 } from '../db/MASTER_TABLES';
 
 service approvalMatrixService {
@@ -31,9 +33,11 @@ service approvalMatrixService {
        entity MasteriVenAttachments      as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
        entity MatrixRequestApproval      as projection on VENDOR_PORTAL.MATRIX_REQUEST_APPR;
        entity MatrixRegistrationApproval as projection on VENDOR_PORTAL.MATRIX_REGISTRATION_APPR;
-
-  //Calculation View
-   entity userMasterEntities as projection on USERMASTER_ENTITIES;
+       entity MasterApprovalHierarchy    as projection on VENDOR_PORTAL.MASTER_APPROVAL_HIERARCHY;
+      
+       //Calculation View
+       entity userMasterEntities         as projection on USERMASTER_ENTITIES;
+       entity calcHierarchyMatrix        as projection on CALC_HEIRARCHY_MATRIX;
 
        //CRUD Payload
        type approvalMatrixPayload {
@@ -46,13 +50,14 @@ service approvalMatrixService {
                      USER_ID        : String(100);
                      ENTITY_CODE    : String(50);
               }
-       }   
-
-       type User_Details:{
-              USER_ROLE: String(50);
-              USER_ID: String(50);
        }
 
-       //CRUD operation action   
-       action PostApprovalMatrix(input : approvalMatrixPayload) returns String;
+       type User_Details : {
+              USER_ROLE : String(50);
+              USER_ID   : String(50);
+       }
+
+       //CRUD operation action
+       action PostApprovalMatrix(input : approvalMatrixPayload)                                       returns String;
+       // action PostDynamicApprovalMatrix(action : String, approvalHierarchy : many MasterApprovalHierarchy,userId:String(1000),userDetails : User_Details) returns String;
 }

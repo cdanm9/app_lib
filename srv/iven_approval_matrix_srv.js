@@ -82,6 +82,36 @@ module.exports = cds.service.impl(function () {
     }
   })
 
+  //Dynamic Approval Matrix
+  // this.on('PostDynamicApprovalMatrix',async(req) =>{
+  //   try{
+
+  //     var {action,inputData,userDetails} = req.data;
+  //           var oUserDetails=oReqData.USER_DETAILS;
+  //           var sUserId=oUserDetails.USER_ID || null;
+  //           var sUserRole=oUserDetails.USER_ROLE || null;
+  //           var sAction = oReqData.ACTION;
+  //           var aHierarchyMatrixData = req.data.input.VALUE;
+  //           var vEntityCode = aHierarchyMatrixData[0].ENTITY_CODE;
+  //           var vType = aHierarchyMatrixData[0].TYPE;
+  //           var fLevel = aHierarchyMatrixData[0].LEVEL;
+  //           var vRole = aHierarchyMatrixData[0].ROLE_CODE;
+    
+  //   if(fLevel !== null || fLevel !== '' || sAction === 'UPDATE' || sAction === 'DELETE')
+  //           {
+    
+  //               // load procedure
+  //               const loadProc = await dbconn.loadProcedurePromisified(hdbext, null, 'DYNAMIC_MATRIX_APPROVAL')
+  //               // excute procedure
+  //               const result = await dbconn.callProcedurePromisified(loadProc,[vType, sAction, 	aHierarchyMatrixData,aHierarchyMatrixData[0].HIERARCHY_ID,fLevel,sUserId,vRole]);
+  //               return result
+  //           }
+  //   }
+  //   catch (error) {
+  //           req.error({message:  error.message ? error.message : error });      
+  //         } 
+  // })
+
   async function _checkDuplicateOnReqMatrix(data) {
     try{
      //Connection to database

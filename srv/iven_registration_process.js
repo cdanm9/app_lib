@@ -386,7 +386,7 @@ module.exports = cds.service.impl(function () {
 // })
     this.on('GetDraftData', async (req) => {
         try {
-            //local Variables
+            //local Variables   
             var { requestNo, entityCode, creationType,userRole,userId } = req.data;
             var oCcodeRType = null,
                 Result2 = {},
@@ -1846,21 +1846,28 @@ module.exports = cds.service.impl(function () {
             let aResult = await connection.run(
                 SELECT`FIELDS,DESCRIPTION`
                     .from`${connection.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_ID_DESC']}`
+                    .orderBy("FIELDS")
                     );
             // var sQuery =
             // 	'SELECT "CLIENT_FULL_NAME", "CLIENT_SHORT_NAME", "CLIENT_COUNTRY" FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_EMAIL_CONTACT_ID" WHERE SR_NO = ?';
             // var aResult = conn.executeQuery(sQuery, 1);
-
-            if (aResult.length > 0) {
-                aDataObj = aResult[0];
-                aResult.map(function(record){
-                    var obj ={}
-                    obj[record.FIELDS] = record.DESCRIPTION
-                    responseObj.push(obj)
-                })
-            }
-
-            return responseObj;
+            var obj ={}
+            // obj= Object.assign({}, ...aResult);     
+            // if (aResult.length > 0) {
+                // aDataObj = aResult[0];
+                // obj= Object.assign({}, ...aResult);   
+                // aResult.map(function(record){
+                //     // var obj ={}
+                //     obj[record.FIELDS] = record.DESCRIPTION   
+                //     responseObj.push(obj)
+                // })                 
+            // }   
+            const outputObject = aResult.reduce((result, item) => {
+                result[item["FIELDS"]] = item["DESCRIPTION"];
+                return result;
+              }, {});  
+      
+            return [outputObject];
         }
         catch (error) { throw error; }
     }

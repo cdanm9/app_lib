@@ -15,6 +15,7 @@ service adminPanelService {
   entity MasterRequestType     as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
   entity MasterIvenSettings    as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS;
   entity IvenErrorLog          as projection on VENDOR_PORTAL.IVEN_ERROR_LOG;
+  entity IvenEmailLog          as projection on VENDOR_PORTAL.IVEN_EMAIL_LOG;   
   entity RegFormFolderIds      as projection on VENDOR_PORTAL.REGFORM_FOLDER_IDS;
   entity MasterCountry         as projection on VENDOR_PORTAL.MASTER_COUNTRY;
   entity MasterEntityCode      as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;

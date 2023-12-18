@@ -207,7 +207,9 @@
   
     <attribute id="REMINDER_COUNT" order="22" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="REMINDER_COUNT"/>
+  
       <keyMapping columnObjectName="Join_1" columnName="REMINDER_COUNT"/>
+  
     </attribute>
   </attributes>
   <calculatedAttributes/>

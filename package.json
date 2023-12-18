@@ -12,7 +12,7 @@
     "@sap-cloud-sdk/resilience": "^3.4.0",
     "@sap/cds": "^7.3.1",
     "@sap/cds-hana": "^2",
-    "@sap/hana-client": "^2.18.22",
+    "@sap/hana-client": "^2.19.20",
     "@sap/hdbext": "^7.7.6",
     "core-util-is": "^1.0.3",
     "crypto": "^1.0.1",

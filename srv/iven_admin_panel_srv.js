@@ -528,93 +528,35 @@ module.exports = cds.service.impl(function () {
       req.error({ code:iErrorCode, message:  error.message ? error.message : error });
     }
 
-  })    
+  })       
  
-  this.on('GetAllVisibleMandatoryEntity',async req=>{   
-    try{
-        var {reqTypeCode,userId,userRole}=req.data
-        var conn = await cds.connect.to('db');   
-        var aMandatoryCode,aVisibleCode,aMandatoryReqExist=[],aVisibleReqExist=[],aMandatoryReqNotExist=[],aVisibleReqNotExist=[],
-        sResponse={
-          "AVAILABLE":{},
-          "NOT_AVAILABLE":{}
-        };   
-        var aEntityData=await SELECT .columns(['BUTXT','BUKRS']) .from('VENDOR_PORTAL_MASTER_ENTITY_CODE'); 
-        for(var i in aEntityData){
-            var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
-            if(aMandatoryFieldsData.length!=0)
-              aMandatoryReqExist.push(aEntityData[i])
-            else
-              aMandatoryReqNotExist.push(aEntityData[i])
-            var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
-            if(aVisibleFieldsData.length!=0)
-              aVisibleReqExist.push(aEntityData[i])
-            else
-              aVisibleReqNotExist.push(aEntityData[i])   
-        }     
-          // aMandatoryReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_MANDATORY') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
-          // aMandatoryCode = aMandatoryReqExist.map(obj => obj.CCODE);
-          // sResponse.AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aMandatoryCode}); 
-          // sResponse.NOT_AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':{'<>':aMandatoryCode}});     
-
-          // aVisibleReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_VISIBLE') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
-          // aVisibleCode = aVisibleReqExist.map(obj => obj.CCODE);
-          // sResponse.AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aVisibleCode});  
-          sResponse.AVAILABLE.VISIBLE=aVisibleReqExist
-          sResponse.AVAILABLE.MANDATORY=aMandatoryReqExist
-          sResponse.NOT_AVAILABLE.VISIBLE=aVisibleReqNotExist    
-          sResponse.NOT_AVAILABLE.MANDATORY=aMandatoryReqNotExist           
-        req.reply(sResponse)   
-        // var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, copyEntityCode, requestType);
-        // var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, copyEntityCode, requestType);
-
-    }catch(error){
-        var sType=error.code?"Procedure":"Node Js";    
-        var iErrorCode=error.code??500;     
-        let Result = {
-            OUT_ERROR_CODE: iErrorCode,
-            OUT_ERROR_MESSAGE:  error.message ? error.message : error   
-        }
-        lib_common.postErrorLog(Result,null,userId,userRole,"System Configuration",sType,dbConn,hdbext);
-        req.error({ code:iErrorCode, message:  error.message ? error.message : error });
-    }
-  });    
-
   // this.on('GetAllVisibleMandatoryEntity',async req=>{   
-  //   var client = await dbClass.createConnectionFromEnv();
-  //   var dbConn = new dbClass(client);    
   //   try{
   //       var {reqTypeCode,userId,userRole}=req.data
   //       var conn = await cds.connect.to('db');   
-  //       var aMandatoryCode,aVisibleCode,aMandatoryReqExist=[],aVisibleReqExist=[],
+  //       var aMandatoryCode,aVisibleCode,aMandatoryReqExist=[],aVisibleReqExist=[],aMandatoryReqNotExist=[],aVisibleReqNotExist=[],
   //       sResponse={
   //         "AVAILABLE":{},
   //         "NOT_AVAILABLE":{}
-  //       };     
-  //         aMandatoryReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_MANDATORY') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
-  //         aMandatoryCode = aMandatoryReqExist.map(obj => obj.CCODE);
-  //         if(aMandatoryCode.length==0){
-  //           sResponse.AVAILABLE.MANDATORY=[]
-  //           sResponse.NOT_AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE')
-  //         }
-  //         else{   
-  //           sResponse.AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aMandatoryCode});
-  //           sResponse.NOT_AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':{'NOT IN':aMandatoryCode}}); 
-  //         }
-          
-  //         aVisibleReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_VISIBLE') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
-  //         aVisibleCode = aVisibleReqExist.map(obj => obj.CCODE);
-
-  //         if(aVisibleCode.length==0){
-  //           sResponse.AVAILABLE.VISIBLE=[]
-  //           sResponse.NOT_AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE')
-  //         }
-  //         else{   
-  //           sResponse.AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aVisibleCode});
-  //           sResponse.NOT_AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':{'NOT IN':aVisibleCode}}); 
-  //         }        
-                     
-  //       req.reply(sResponse)       
+  //       };   
+  //       var aEntityData=await SELECT .columns(['BUTXT','BUKRS']) .from('VENDOR_PORTAL_MASTER_ENTITY_CODE'); 
+  //       for(var i in aEntityData){
+  //           var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
+  //           if(aMandatoryFieldsData.length!=0)
+  //             aMandatoryReqExist.push(aEntityData[i])
+  //           else
+  //             aMandatoryReqNotExist.push(aEntityData[i])
+  //           var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
+  //           if(aVisibleFieldsData.length!=0)
+  //             aVisibleReqExist.push(aEntityData[i])
+  //           else
+  //             aVisibleReqNotExist.push(aEntityData[i])   
+  //       }     
+  //         sResponse.AVAILABLE.VISIBLE=aVisibleReqExist
+  //         sResponse.AVAILABLE.MANDATORY=aMandatoryReqExist
+  //         sResponse.NOT_AVAILABLE.VISIBLE=aVisibleReqNotExist    
+  //         sResponse.NOT_AVAILABLE.MANDATORY=aMandatoryReqNotExist           
+  //       req.reply(sResponse)   
 
   //   }catch(error){
   //       var sType=error.code?"Procedure":"Node Js";    
@@ -626,7 +568,55 @@ module.exports = cds.service.impl(function () {
   //       lib_common.postErrorLog(Result,null,userId,userRole,"System Configuration",sType,dbConn,hdbext);
   //       req.error({ code:iErrorCode, message:  error.message ? error.message : error });
   //   }
-  // });
+  // });    
+
+  this.on('GetAllVisibleMandatoryEntity',async req=>{   
+    var client = await dbClass.createConnectionFromEnv();
+    var dbConn = new dbClass(client);    
+    try{
+        var {reqTypeCode,userId,userRole}=req.data
+        var conn = await cds.connect.to('db');   
+        var aMandatoryCode,aVisibleCode,aMandatoryReqExist=[],aVisibleReqExist=[],
+        sResponse={
+          "AVAILABLE":{},
+          "NOT_AVAILABLE":{}
+        };     
+          aMandatoryReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_MANDATORY') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
+          aMandatoryCode = aMandatoryReqExist.map(obj => obj.CCODE);
+          if(aMandatoryCode.length==0){
+            sResponse.AVAILABLE.MANDATORY=[]
+            sResponse.NOT_AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE')
+          }
+          else{   
+            sResponse.AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aMandatoryCode});
+            sResponse.NOT_AVAILABLE.MANDATORY=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':{'NOT IN':aMandatoryCode}}); 
+          }
+          
+          aVisibleReqExist=await SELECT .columns(['CCODE']) .from('VENDOR_PORTAL_MASTER_REGFORM_FIELDS_VISIBLE') .where({TYPE:reqTypeCode,CCODE:{'!=':'TEMPLATE'}});
+          aVisibleCode = aVisibleReqExist.map(obj => obj.CCODE);
+
+          if(aVisibleCode.length==0){
+            sResponse.AVAILABLE.VISIBLE=[]     
+            sResponse.NOT_AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE')
+          }
+          else{   
+            sResponse.AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':aVisibleCode});
+            sResponse.NOT_AVAILABLE.VISIBLE=await SELECT .from('VENDOR_PORTAL_MASTER_ENTITY_CODE') .where({'BUKRS':{'NOT IN':aVisibleCode}}); 
+          }           
+                     
+        req.reply(sResponse)       
+
+    }catch(error){
+        var sType=error.code?"Procedure":"Node Js";    
+        var iErrorCode=error.code??500;     
+        let Result = {
+            OUT_ERROR_CODE: iErrorCode,
+            OUT_ERROR_MESSAGE:  error.message ? error.message : error   
+        }
+        lib_common.postErrorLog(Result,null,userId,userRole,"System Configuration",sType,dbConn,hdbext);
+        req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+    }
+  });
 
 
   // this.on('EditUserManual',async req=>{   

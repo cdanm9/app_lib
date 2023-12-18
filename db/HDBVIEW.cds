@@ -23,4 +23,5 @@ AS SELECT
   substr_before(B.COMPANY_CODE, ')') AS COMPANY_CODE
 FROM USER_V AS B
 WHERE B.EMP_NO <> 'null';
-        
+
+

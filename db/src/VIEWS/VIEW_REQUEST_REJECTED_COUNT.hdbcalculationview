@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="VIEW_REQUEST_REJECTED_COUNT" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="true">
+<descriptions defaultDescription="VIEW_REQUEST_REJECTED_COUNT"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="VENDOR_PORTAL_REQUEST_INFO">
+    <resourceUri>VENDOR_PORTAL_REQUEST_INFO</resourceUri>
+  </DataSource>
+  <DataSource id="VENDOR_PORTAL_MASTER_STATUS">
+    <resourceUri>VENDOR_PORTAL_MASTER_STATUS</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="CN_N" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="REQUEST_NO"/>
+      <viewAttribute id="SAP_VENDOR_CODE"/>
+      <viewAttribute id="IVEN_VENDOR_CODE"/>
+      <viewAttribute id="ENTITY_CODE"/>
+      <viewAttribute id="REQUEST_TYPE"/>
+      <viewAttribute id="DESCRIPTION"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute hidden="true" id="JOIN$STATUS$CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="VENDOR_PORTAL_REQUEST_INFO">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_NO" source="REQUEST_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="SAP_VENDOR_CODE" source="SAP_VENDOR_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_VENDOR_CODE" source="IVEN_VENDOR_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ENTITY_CODE" source="ENTITY_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_TYPE" source="REQUEST_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$STATUS$CODE" source="STATUS"/>
+    </input>
+    <input node="VENDOR_PORTAL_MASTER_STATUS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="DESCRIPTION" source="DESCRIPTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$STATUS$CODE" source="CODE"/>
+    </input>
+    <joinAttribute name="JOIN$STATUS$CODE"/>
+  </calculationView>
+</calculationViews>
+
+<logicalModel id="Join_1" filterExpressionLanguage="SQL">
+  <attributes>
+    <attribute id="REQUEST_NO" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_NO"/>
+      <keyMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
+    </attribute>
+    <attribute id="SAP_VENDOR_CODE" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SAP_VENDOR_CODE"/>
+      <keyMapping columnObjectName="Join_1" columnName="SAP_VENDOR_CODE"/>
+    </attribute>
+    <attribute id="IVEN_VENDOR_CODE" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IVEN_VENDOR_CODE"/>
+      <keyMapping columnObjectName="Join_1" columnName="IVEN_VENDOR_CODE"/>
+    </attribute>
+    <attribute id="ENTITY_CODE" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ENTITY_CODE"/>
+      <keyMapping columnObjectName="Join_1" columnName="ENTITY_CODE"/>
+    </attribute>
+    <attribute id="REQUEST_TYPE" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_TYPE"/>
+      <keyMapping columnObjectName="Join_1" columnName="REQUEST_TYPE"/>
+    </attribute>
+    <attribute id="DESCRIPTION" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DESCRIPTION"/>
+      <keyMapping columnObjectName="Join_1" columnName="DESCRIPTION"/>
+    </attribute>
+    <attribute id="STATUS" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes>
+    <calculatedAttribute id="REQ_REJECTED_CHECK" order="1" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQ_REJECTED"/>
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="COLUMN_ENGINE" length="13">
+        <formula>if(&quot;STATUS&quot; == 3,'X','')</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+    <calculatedAttribute id="FORM_REJECT_CHECK" order="9" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="INTEGER" expressionLanguage="COLUMN_ENGINE">
+        <formula>if(&quot;STATUS&quot;==8,1,0)</formula>
+      </keyCalculation>
+      </calculatedAttribute>
+  </calculatedAttributes>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+    
+  
+    <shape expanded="true" modelObjectName="Join_1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="100" y="194"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="VENDOR_PORTAL_REQUEST_INFO" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="270.47265625"/>
+    </shape>
+    <shape modelObjectName="VENDOR_PORTAL_MASTER_STATUS" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="280.685546875"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>
