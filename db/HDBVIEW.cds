@@ -1,4 +1,6 @@
 using {VENDOR_PORTAL} from '../db/MASTER_TABLES.cds';
+using VENDOR_PORTAL.MASTER_STATUS as MasterStatus from '../db/MASTER_TABLES.cds';
+using VENDOR_PORTAL.REQUEST_INFO as RequestInfo from '../db/TRANSACTION_TABLES';
 
 view  USER_V
 AS SELECT 
@@ -24,4 +26,6 @@ AS SELECT
 FROM USER_V AS B
 WHERE B.EMP_NO <> 'null';
 
+view REQUEST_STATUS_VIEW as SELECT COUNT(RequestInfo.STATUS) AS STATUS_COUNT FROM
+     RequestInfo INNER JOIN MasterStatus ON RequestInfo.STATUS = MasterStatus.CODE;    
 

@@ -484,8 +484,8 @@ module.exports = cds.service.impl(function () {
             }
  
             if(error.errorType !== "Warning")
-            lib_common.postErrorLog(Result,null,userId,userRole,"Vendor Registration Form",sType,dbConn,hdbext);   
-              
+            lib_common.postErrorLog(Result,requestNo,userId,userRole,"Vendor Registration Form",sType,dbConn,hdbext);  //New  
+                   // lib_common.postErrorLog(Result,null,userId,userRole,"Vendor Registration Form",sType,dbConn,hdbext);   // Old   
             req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
     })
@@ -1851,7 +1851,6 @@ module.exports = cds.service.impl(function () {
             // var sQuery =
             // 	'SELECT "CLIENT_FULL_NAME", "CLIENT_SHORT_NAME", "CLIENT_COUNTRY" FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::MASTER_EMAIL_CONTACT_ID" WHERE SR_NO = ?';
             // var aResult = conn.executeQuery(sQuery, 1);
-            var obj ={}
             // obj= Object.assign({}, ...aResult);     
             // if (aResult.length > 0) {
                 // aDataObj = aResult[0];
@@ -1861,11 +1860,12 @@ module.exports = cds.service.impl(function () {
                 //     obj[record.FIELDS] = record.DESCRIPTION   
                 //     responseObj.push(obj)
                 // })                 
-            // }   
-            const outputObject = aResult.reduce((result, item) => {
+            // }     
+
+             const outputObject = aResult.reduce((result, item) => {
                 result[item["FIELDS"]] = item["DESCRIPTION"];
                 return result;
-              }, {});  
+              }, {});         
       
             return [outputObject];
         }

@@ -29,7 +29,7 @@ code---->>>>>>>>//     let a = await DMSlib._GetRepositores();
 
 5.//read subfolder data of main repo and subfolder 
 
-    // var fname = '10000001'; //optional if need to read main repo iVEN only
+    // var fname = '10000001/100004'; //optional if need to read main repo iVEN only
     // var RepoID = 'iVEN';
     code---->>>>>>>> let a = await DMSlib._getSubFolderItems(RepoID, fname);
 
@@ -41,7 +41,7 @@ code---->>>>>>>>//     let a = await DMSlib._GetRepositores();
 
 7.    // to rename any folder - pass folder id
     //_RenameFolder: async function (ObjectId, RepoID, NewforlderName)
-    var ObjectId = '427nKXGdTqb2-kxgLGpRzYe2k8m_lc3ubpRYfUXFhaY'; //optional if need to read main repo iVEN
+    var ObjectId = '427nKXGdTqb2-kxgLGpRzYe2k8m_lc3ubpRYfUXFhaY'; //
     var RepoID = 'iVEN';
     var NewforlderName = '700000001';
    code---->>>>>>>>  let a = await DMSlib._RenameFolder(ObjectId , RepoID,NewforlderName);

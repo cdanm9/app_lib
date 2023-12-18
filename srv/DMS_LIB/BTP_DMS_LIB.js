@@ -247,7 +247,7 @@ module.exports = {
             return restxt;
         }
     },
-     _RenameFolder: async function (ObjectId, RepoID, NewforlderName) {
+    _RenameFolder: async function (ObjectId, RepoID, NewforlderName) {
         const lv_JWToken = await this._fetchJwtToken();
         let ConDMS = await cds.connect.to('DMS_Dest');
         var path = 'browser/' + RepoID + '/root';

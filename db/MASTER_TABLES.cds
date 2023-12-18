@@ -1286,7 +1286,6 @@ context VENDOR_PORTAL {
         key HIERARCHY_ID : String(10);
         key TYPE         : String(10);
             USER_IDS     : String(1000);
-
     }
 
 }
@@ -1358,4 +1357,6 @@ key     HIERARCHY_ID: String(10)  @title: 'HIERARCHY_ID: HIERARCHY_ID' ;
         ACCESS_SENDBACK: String(1)  @title: 'ACCESS_SENDBACK: ACCESS_SENDBACK' ; 
         ACCESS_REJECT: String(1)  @title: 'ACCESS_REJECT: ACCESS_REJECT' ; 
         USER_IDS: String(1000)  @title: 'USER_IDS: USER_IDS' ; 
+        TO_ENTITY_CODE   : Association to one VENDOR_PORTAL.MASTER_ENTITY_CODE
+                             on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
 }

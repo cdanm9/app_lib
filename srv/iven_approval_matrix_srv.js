@@ -3,6 +3,7 @@ const cds = require('@sap/cds')
 const dbClass = require("sap-hdbext-promisfied")
 const hdbext = require("@sap/hdbext")
 const lib_common = require('./LIB/iven_library')
+const res = require('express/lib/response')
 
 module.exports = cds.service.impl(function () {
   this.on('PostApprovalMatrix', async (req) => {
@@ -83,34 +84,37 @@ module.exports = cds.service.impl(function () {
   })
 
   //Dynamic Approval Matrix
-  // this.on('PostDynamicApprovalMatrix',async(req) =>{
-  //   try{
+  this.on('PostDynamicApprovalMatrix',async(req) =>{
+    try{
 
-  //     var {action,inputData,userDetails} = req.data;
-  //           var oUserDetails=oReqData.USER_DETAILS;
-  //           var sUserId=oUserDetails.USER_ID || null;
-  //           var sUserRole=oUserDetails.USER_ROLE || null;
-  //           var sAction = oReqData.ACTION;
-  //           var aHierarchyMatrixData = req.data.input.VALUE;
-  //           var vEntityCode = aHierarchyMatrixData[0].ENTITY_CODE;
-  //           var vType = aHierarchyMatrixData[0].TYPE;
-  //           var fLevel = aHierarchyMatrixData[0].LEVEL;
-  //           var vRole = aHierarchyMatrixData[0].ROLE_CODE;
-    
-  //   if(fLevel !== null || fLevel !== '' || sAction === 'UPDATE' || sAction === 'DELETE')
-  //           {
-    
-  //               // load procedure
-  //               const loadProc = await dbconn.loadProcedurePromisified(hdbext, null, 'DYNAMIC_MATRIX_APPROVAL')
-  //               // excute procedure
-  //               const result = await dbconn.callProcedurePromisified(loadProc,[vType, sAction, 	aHierarchyMatrixData,aHierarchyMatrixData[0].HIERARCHY_ID,fLevel,sUserId,vRole]);
-  //               return result
-  //           }
-  //   }
-  //   catch (error) {
-  //           req.error({message:  error.message ? error.message : error });      
-  //         } 
-  // })
+      var {action,approvalHierarchy,userIds,userDetails} = req.data;
+            var sUserId=userDetails.USER_ID || null;
+            var sUserRole=userDetails.USER_ROLE || null;
+            var response = null;
+            var client = await dbClass.createConnectionFromEnv();
+            var dbConn = new dbClass(client);
+                // load procedure
+                const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'POST_DYNAMIC_APPROVAL_MATRIX')
+                // excute procedure
+                 response = await dbConn.callProcedurePromisified(loadProc,[action,approvalHierarchy,userIds]);
+               if(response.outputScalar.OUT_SUCCESS !== null)
+                  req.reply(response);
+
+    }
+    catch (error) {
+            var sType=error.code?"Procedure":"Node Js";    
+            var iErrorCode=error.code??500;
+           
+            let Result = {
+                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_MESSAGE:  error.message ? error.message : error
+            }
+            lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Approval Matrix",sType,dbConn,hdbext);
+            // console.error(error)     
+            // return error.messsage     
+            req.error({ code:iErrorCode, message:  error.message ? error.message : error });   
+          } 
+  })
 
   async function _checkDuplicateOnReqMatrix(data) {
     try{
