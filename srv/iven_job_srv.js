@@ -4,15 +4,21 @@ const dbClass = require("sap-hdbext-promisfied")
 const hdbext = require("@sap/hdbext")
 const lib_ias = require('./LIB/iven_library_ias')
 const lib_common = require('./LIB/iven_library')
-
+// const lib_dms = require('./DMS_LIB/BTP_DMS_LIB')
 module.exports = cds.service.impl(function () {
     this.on('FetchIASUser', async (req) => {
         
         try {
+        //     // let a = await lib_dms._GetRepositores();
+
+        //      var fname = '10000002'; //optional if need to read main repo iVEN only
+        // //    var fname = '';//all folders within repo
+        //      var RepoID = 'iVEN';
+        //     let a = await lib_dms._getSubFolderItems(RepoID, fname);
               var client = await dbClass.createConnectionFromEnv();
               var dbConn = new dbClass(client);
               await lib_ias.getIASUser();
-            //   console.log('done');
+              console.log('done');
        
         } catch (error) {
             

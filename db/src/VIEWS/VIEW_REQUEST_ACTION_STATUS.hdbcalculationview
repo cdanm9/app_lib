@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="VIEW_REQUEST_STATUS_COUNT" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="true" application="BAS">
-<descriptions defaultDescription="VIEW_REQUEST_STATUS_COUNT"/>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="VIEW_REQUEST_ACTION_STATUS" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="true" application="BAS">
+<descriptions defaultDescription="VIEW_REQUEST_ACTION_STATUS"/>
 <localVariables/>
 <variableMappings/>
 <dataSources>
@@ -15,18 +15,18 @@
 <calculationViews>
   <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="CN_N" joinType="inner">
     <viewAttributes>
+      <viewAttribute id="CODE" aggregationType="sum"/>
       <viewAttribute id="DESCRIPTION"/>
-      <viewAttribute id="STATUS" aggregationType="sum"/>
       <viewAttribute id="REQUEST_NO" aggregationType="sum"/>
       <viewAttribute hidden="true" id="JOIN$CODE$STATUS"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="VENDOR_PORTAL_MASTER_STATUS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CODE" source="CODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DESCRIPTION" source="DESCRIPTION"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODE$STATUS" source="CODE"/>
     </input>
     <input node="VENDOR_PORTAL_REQUEST_INFO">
-      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_NO" source="REQUEST_NO"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODE$STATUS" source="STATUS"/>
     </input>
@@ -34,57 +34,57 @@
   </calculationView>
 </calculationViews>
 
-<logicalModel id="Join_1">
+<logicalModel id="Join_1" filterExpressionLanguage="COLUMN_ENGINE">
   <attributes>
-    <attribute id="STATUS" order="1" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="STATUS"/>
-      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
-    </attribute>
-    <attribute id="REQUEST_NO" order="2" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="REQUEST_NO"/>
-      <keyMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
+    <attribute id="DESCRIPTION" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DESCRIPTION"/>
+      <keyMapping columnObjectName="Join_1" columnName="DESCRIPTION"/>
     </attribute>
   </attributes>
   <calculatedAttributes/>
-  <baseMeasures/>
-  <calculatedMeasures>
-    <measure id="DISTINCT_REQ" order="3" aggregationType="sum" measureType="simple" calculatedMeasureType="counter" datatype="BIGINT" length="">
-      <descriptions defaultDescription="DISTINCT_REQ"/>
-      <exceptionAggregation>
-        <attribute attributeName="REQUEST_NO"/>
-      </exceptionAggregation>
-      <formula>1</formula>
-      
-      <exceptionAggregationMetadata>
-      
-        <attribute attributeName="STATUS"/>
-      
-      </exceptionAggregationMetadata>
+  <baseMeasures>
+    <measure id="CODE" order="1" aggregationType="max" measureType="simple">
+      <descriptions defaultDescription="CODE"/>
+      <measureMapping columnObjectName="Join_1" columnName="CODE"/>
+      <exceptionAggregationMetadata/>
     </measure>
-  </calculatedMeasures>
+    <measure id="ACT_STATUS_COUNT" order="3" aggregationType="count" measureType="simple">
+      <descriptions defaultDescription="REQUEST_NO"/>
+      <measureMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
+      <exceptionAggregationMetadata/>
+    </measure>
+  </baseMeasures>
+  <calculatedMeasures/>
   <restrictedMeasures/>
+
+  <sortAttributes>
+
+    <sortAttribute id="CODE" direction="ASC"/>
+
+  </sortAttributes>
   <localDimensions/>
+
+
+  <filter>int(&quot;CODE&quot;)=1 or int(&quot;CODE&quot;)=2 or int(&quot;CODE&quot;)=4 or int(&quot;CODE&quot;)=5 or int(&quot;CODE&quot;)=6 or int(&quot;CODE&quot;)=10 or int(&quot;CODE&quot;)=11</filter>
+
 </logicalModel>
 <layout>
   <shapes>
     <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
-      <upperLeftCorner x="42" y="111"/>
-    
-      <rectangleSize width="160"/>
+      <upperLeftCorner x="40" y="85"/>
     </shape>
     
   
     <shape expanded="true" modelObjectName="Join_1" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="41" y="231"/>
+      <upperLeftCorner x="100" y="192"/>
       <rectangleSize height="30" width="160"/>
     </shape>
     <shape modelObjectName="VENDOR_PORTAL_MASTER_STATUS" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
-      <upperLeftCorner x="194" y="-36"/>
+      <upperLeftCorner x="20" y="30"/>
       <rectangleSize width="280"/>
     </shape>
-  
     <shape modelObjectName="VENDOR_PORTAL_REQUEST_INFO" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
-      <upperLeftCorner x="-138" y="-58"/>
+      <upperLeftCorner x="320" y="30"/>
       <rectangleSize width="270"/>
     </shape>
   </shapes>

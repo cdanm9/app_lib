@@ -84,19 +84,19 @@ module.exports = cds.service.impl(function () {
   })
 
   //Dynamic Approval Matrix
-  this.on('PostDynamicApprovalMatrix',async(req) =>{
+  this.on('PostDynamicApprovalHierarchy',async(req) =>{
     try{
 
-      var {action,approvalHierarchy,userIds,userDetails} = req.data;
+      var {action,approvalHierarchy,userDetails} = req.data;
             var sUserId=userDetails.USER_ID || null;
             var sUserRole=userDetails.USER_ROLE || null;
             var response = null;
             var client = await dbClass.createConnectionFromEnv();
             var dbConn = new dbClass(client);
                 // load procedure
-                const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'POST_DYNAMIC_APPROVAL_MATRIX')
+                const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'POST_DYNAMIC_APPROVAL_HIERARCHY')
                 // excute procedure
-                 response = await dbConn.callProcedurePromisified(loadProc,[action,approvalHierarchy,userIds]);
+                 response = await dbConn.callProcedurePromisified(loadProc,[action,approvalHierarchy]);
                if(response.outputScalar.OUT_SUCCESS !== null)
                   req.reply(response);
 

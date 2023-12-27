@@ -505,13 +505,18 @@ this.on('DataMigrationConfiguration',async(req) =>{
     req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
   }
 })
-this.on('getBackendAvailability',async(req)=>{
-  var client = await dbClass.createConnectionFromEnv();
-  var dbConn = new dbClass(client);
+this.on('checkServiceAvailability',async(req)=>{
+
   try{
+      var {cloudSrv,onPremiseSrv} = req.data;
+
+    var client = await dbClass.createConnectionFromEnv();
+    var dbConn = new dbClass(client);
     // var {sapClient,destFileName} = req.data;
-    var response = {"onPremise":null,"Cloud":null};
+    var response = {"onPremiseSrv":null,"cloudSrv":null};
     var sapClient ='';
+
+    if(onPremiseSrv){
     //   set connection to ZIVN_VENDOR_REG_SRV Destination
     var iVenVendorConnection = await cds.connect.to('ZIVN_VENDOR_REG_SRV');
     var onPremResponse = await iVenVendorConnection.send({
@@ -524,14 +529,18 @@ this.on('getBackendAvailability',async(req)=>{
     }
     })
     if( onPremResponse.length >= 0)
-      response.onPremise = "Loaded"
+      response.onPremiseSrv = "Loaded"
 
-    let connection = await cds.connect.to('db');
-    let cloudResponse =  await connection.run(SELECT
+  }
+  if(cloudSrv){
+    var connection = await cds.connect.to('db');
+    var cloudResponse =  await connection.run(SELECT
       .from`${connection.entities['VENDOR_PORTAL.MASTER_SUBACCOUNT']}`);
 
       if( cloudResponse.length >= 0)
-      response.Cloud = "Loaded"
+      response.cloudSrv = "Loaded"
+
+    }
  req.reply(response);   
 }
 catch(error)

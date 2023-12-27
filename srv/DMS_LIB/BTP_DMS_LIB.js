@@ -253,23 +253,72 @@ module.exports = {
         var path = 'browser/' + RepoID + '/root';
         var JToken = 'Bearer ' + lv_JWToken;
         try {
-          const data =
-            `objectId=${ObjectId}` +
-            `&cmisaction=update` +
-            `&propertyId[0]=cmis:name` +
-            `&propertyValue[0]=${NewforlderName}` ;
-          const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
-          const Resp = await ConDMS.send("POST", path, data, headers);
-          var restxt = {};
-          restxt.name = Resp.properties["cmis:name"].value;
-          restxt.message  = 'Object name changed Successfully';
-          restxt.status = 200;
-          return restxt;
+            const data =
+                `objectId=${ObjectId}` +
+                `&cmisaction=update` +
+                `&propertyId[0]=cmis:name` +
+                `&propertyValue[0]=${NewforlderName}`;
+            const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
+            const Resp = await ConDMS.send("POST", path, data, headers);
+            var restxt = {};
+            restxt.name = Resp.properties["cmis:name"].value;
+            restxt.message = 'Object name changed Successfully';
+            restxt.status = 200;
+            return restxt;
         } catch (error) {
-          var restxt = {};
-          restxt.status = error.reason.response.status;
-          restxt.statusText = error.reason.response.statusText;
-          return restxt;
+            var restxt = {};
+            restxt.status = error.reason.response.status;
+            restxt.statusText = error.reason.response.statusText;
+            return restxt;
         }
-      }
+    },
+    _MoveObjectFTF: async function (ObjectId, RepoID, targetFolderId, sourceFolderId) {
+        const lv_JWToken = await this._fetchJwtToken();
+        let ConDMS = await cds.connect.to('DMS_Dest');
+        var path = 'browser/' + RepoID + '/root';
+        var JToken = 'Bearer ' + lv_JWToken;
+        try {
+            const data =
+                `objectId=${ObjectId}` +
+                `&cmisaction=move` +
+                `&sourceFolderId=${sourceFolderId}` +
+                `&targetFolderId=${targetFolderId}`;
+            const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
+            const Resp = await ConDMS.send("POST", path, data, headers);
+            var restxt = {};
+            restxt.name = Resp.properties["cmis:name"].value;
+            restxt.message = 'Object Moved Successfully';
+            restxt.status = 201;
+            return restxt;
+        } catch (error) {
+            var restxt = {};
+            restxt.status = error.reason.response.status;
+            restxt.statusText = error.reason.response.body.message;
+            return restxt;
+        }
+    },
+    _DeleteFile: async function (ObjectId, RepoID) {
+        try {
+            const lv_JWToken = await this._fetchJwtToken();
+            let ConDMS = await cds.connect.to('DMS_Dest');
+            var path = 'browser/' + RepoID + '/root';
+            var JToken = 'Bearer ' + lv_JWToken;
+            const data =
+                `objectId=${ObjectId}` +
+                `&cmisaction=delete` +
+                `&continueOnFalure='true'`;
+            const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
+
+            const Resp = await ConDMS.send("POST", path, data, headers);
+            return Resp;
+        } catch (error) {
+            var restxt = {};
+            restxt.status = error.reason.response.status;
+            restxt.statusText = error.reason.response.statusText;
+            if (restxt.status == 200) {
+                restxt.statusText = "File/object Deleted Successfully";
+            }
+            return restxt;
+        }
+    }
 }

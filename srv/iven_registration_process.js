@@ -387,12 +387,19 @@ module.exports = cds.service.impl(function () {
     this.on('GetDraftData', async (req) => {
         try {
             //local Variables   
-            var { requestNo, entityCode, creationType,userRole,userId } = req.data;
+            // var { requestNo, entityCode, creationType,userRole,userId } = req.data;
+            var inputData = JSON.parse(req.data.input);
+            var requestNo = inputData.requestNo;
+            var entityCode = inputData.entityCode;
+            var creationType = inputData.creationType;
+            var userRole = inputData.userRole;
+            var userId = inputData.userId;
             var oCcodeRType = null,
                 Result2 = {},
                 Result = {},
                 sUserID = null,
-                sTypeDesc = null;
+                sTypeDesc = null,
+                responseObj ={};
               //intialize connection to database
                let connection = await cds.connect.to('db');
             var client = await dbClass.createConnectionFromEnv();
@@ -420,16 +427,34 @@ module.exports = cds.service.impl(function () {
                 throw "Creation Type Missing"
             }
             else {
-
+                if(inputData.draftData){
                 var aDraftData = await getDraftData(connection, requestNo);
                 if (aDraftData.MAIN.length > 0) {
                     sUserID = aDraftData.MAIN[0].REGISTERED_ID || null;
                 }
+                responseObj.draftData = (aDraftData.MAIN.length || aDraftData.ADDRESS.length) > 0 ? aDraftData : [];
+                }
+                if(inputData.visibility){
                 var aVisibleFieldsData = await getVisibleFieldsData(connection, entityCode, creationType);
-                var aMandatoryFieldsData = await getMandatoryFieldsData(connection, entityCode, creationType);
-                var aUpdatedFieldsData = await getUpdatedFieldsData(connection, requestNo);
-                var aSettings = await getObjectFromRows(await getiVenSettings(connection));
+                responseObj.visibility =  aVisibleFieldsData.length > 0 ? aVisibleFieldsData : [];
+                }
 
+                if(inputData.mandatory){
+                var aMandatoryFieldsData = await getMandatoryFieldsData(connection, entityCode, creationType);
+                    responseObj.mandatory = aMandatoryFieldsData.length > 0 ? aMandatoryFieldsData : []
+            }
+
+                if(inputData.updated){
+                var aUpdatedFieldsData = await getUpdatedFieldsData(connection, requestNo);
+                responseObj.updated = aUpdatedFieldsData.length > 0 ? aUpdatedFieldsData : []
+                }
+
+                if(inputData.settings){
+                var aSettings = await getObjectFromRows(await getiVenSettings(connection));
+                    responseObj.settings = aSettings;
+            }
+
+                if(inputData.totalCount){
                 // Total Count of Mandatory Fields For Progress Bar
                 var obj1 = aMandatoryFieldsData[0] || {};
                 var totalCount = 0;
@@ -441,19 +466,36 @@ module.exports = cds.service.impl(function () {
                         }
                     }
                 }
+                responseObj.totalCount = totalCount
+            }
+            if(inputData.openText)
+            {
+                var openTextResponse = await getOpenTextCredentials(connection);
+                responseObj.openText = openTextResponse
+            }
+            if(inputData.clientInfo)
+            {
+                var clientInfoResponse =await getClientDetails(connection);
+                responseObj.clientInfo = clientInfoResponse
+            }
 
-                var responseObj = {
-                    "DRAFT": (aDraftData.MAIN.length || aDraftData.ADDRESS.length) > 0 ? aDraftData : [], // changes to save country from registration form 10/04/2023
-                    // "DRAFT": aDraftData.MAIN.length > 0 ? aDraftData : [],
-                    "VISIBLE": aVisibleFieldsData.length > 0 ? aVisibleFieldsData : [],
-                    "MANDATORY": aMandatoryFieldsData.length > 0 ? aMandatoryFieldsData : [],
-                    "UPDATED": aUpdatedFieldsData.length > 0 ? aUpdatedFieldsData : [],
-                    "OPENTEXT": await getOpenTextCredentials(connection),
-                    "CLIENT_INFO": await getClientDetails(connection),
-                    "TOTALCOUNT": totalCount,
-                    "SETTINGS": aSettings,
-                    "LABELS": await getLabelsForFormID(connection)
-                };
+            if(inputData.labels)
+            {
+                var labelsResponse =await getLabelsForFormID(connection);
+                responseObj.labels = labelsResponse
+            }
+                //  responseObj = {
+                //     "DRAFT": (aDraftData.MAIN.length || aDraftData.ADDRESS.length) > 0 ? aDraftData : [], // changes to save country from registration form 10/04/2023
+                //     // "DRAFT": aDraftData.MAIN.length > 0 ? aDraftData : [],
+                //     "VISIBLE": aVisibleFieldsData.length > 0 ? aVisibleFieldsData : [],
+                //     "MANDATORY": aMandatoryFieldsData.length > 0 ? aMandatoryFieldsData : [],
+                //     "UPDATED": aUpdatedFieldsData.length > 0 ? aUpdatedFieldsData : [],
+                //     "OPENTEXT": await getOpenTextCredentials(connection),
+                //     "CLIENT_INFO": await getClientDetails(connection),
+                //     "TOTALCOUNT": totalCount,
+                //     "SETTINGS": aSettings,
+                //     "LABELS": await getLabelsForFormID(connection)
+                // };
                 // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", 200);
                 return responseObj;
             }

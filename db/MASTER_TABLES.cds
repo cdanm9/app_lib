@@ -304,6 +304,7 @@ context VENDOR_PORTAL {
             S1G1T2F12 : String(1); //Street 2
             S1G1T2F13 : String(1); //Street 3
             S1G1T2F14 : String(1); //Street 4
+              S1G1T2F15 : String(1);//Street No.
             S1G1T2F4  : String(1); //City
             S1G1T2F5  : String(1); //State
             S1G1T2F6  : String(1); //Country
@@ -361,6 +362,7 @@ context VENDOR_PORTAL {
             // Type 1: Supplier Category's Information
             S1G5T1F1  : String(1); //Supplier Category
             S1G5T2F1  : String(1); //Supplier Type
+               S1G5T3F1 : String(1); //Certificate of Incorporation
 
             // Section 2: Financial Information -------------------------------------------------------
             // Group 1: Payment Information
@@ -452,6 +454,8 @@ context VENDOR_PORTAL {
             // Group 4: Major Clients / customers
             // Type 1: Major Clients / customers details
             S3G4T1F1  : String(1); // Provide list of major clients / customers
+            S3G4T1F2 : String(1); //Customer Name
+            S3G4T1F3 : String(1); //Percentage Share of Business in Major Clients / Customers
 
             // Group 5: Original equipment manufacturer details
             // Type 1: Exclusive Distributor of OEM
@@ -631,6 +635,7 @@ context VENDOR_PORTAL {
             S1G1T2F12 : String(1); //Street 2
             S1G1T2F13 : String(1); //Street 3
             S1G1T2F14 : String(1); //Street 4
+              S1G1T2F15 : String(1);//Street No.
             S1G1T2F4  : String(1); //City
             S1G1T2F5  : String(1); //State
             S1G1T2F6  : String(1); //Country
@@ -687,6 +692,7 @@ context VENDOR_PORTAL {
             // Type 1: Supplier Category's Information
             S1G5T1F1  : String(1); //Supplier Category
             S1G5T2F1  : String(1); //Supplier Type
+               S1G5T3F1 : String(1); //Certificate of Incorporation
 
             // Section 2: Financial Information -------------------------------------------------------
             // Group 1: Payment Information
@@ -778,6 +784,9 @@ context VENDOR_PORTAL {
             // Group 4: Major Clients / customers
             // Type 1: Major Clients / customers details
             S3G4T1F1  : String(1); // Provide list of major clients / customers
+             S3G4T1F2 : String(1); //Customer Name
+            S3G4T1F3 : String(1); //Percentage Share of Business in Major Clients / Customers
+
 
             // Group 5: Original equipment manufacturer details
             // Type 1: Exclusive Distributor of OEM
@@ -959,6 +968,7 @@ context VENDOR_PORTAL {
             S1G1T2F12 : String(1); //Street 2
             S1G1T2F13 : String(1); //Street 3
             S1G1T2F14 : String(1); //Street 4
+            S1G1T2F15 : String(1);//Street No.
             S1G1T2F4  : String(1); //City
             S1G1T2F5  : String(1); //State
             S1G1T2F6  : String(1); //Country
@@ -1015,6 +1025,7 @@ context VENDOR_PORTAL {
             // Type 1: Supplier Category's Information
             S1G5T1F1  : String(1); //Supplier Category
             S1G5T2F1  : String(1); //Supplier Type
+            S1G5T3F1 : String(1); //Certificate of Incorporation
 
             // Section 2: Financial Information -------------------------------------------------------
             // Group 1: Payment Information
@@ -1106,6 +1117,9 @@ context VENDOR_PORTAL {
             // Group 4: Major Clients / customers
             // Type 1: Major Clients / customers details
             S3G4T1F1  : String(1); // Provide list of major clients / customers
+             S3G4T1F2 : String(1); //Customer Name
+            S3G4T1F3 : String(1); //Percentage Share of Business in Major Clients / Customers
+
 
             // Group 5: Original equipment manufacturer details
             // Type 1: Exclusive Distributor of OEM
@@ -1280,6 +1294,7 @@ context VENDOR_PORTAL {
             ACCESS_APPROVE  : String(1);
             ACCESS_SENDBACK : String(1);
             ACCESS_REJECT   : String(1);
+          
     }
 
     entity MASTER_APPROVAL_MATRIX {
@@ -1359,4 +1374,82 @@ key     HIERARCHY_ID: String(10)  @title: 'HIERARCHY_ID: HIERARCHY_ID' ;
         USER_IDS: String(1000)  @title: 'USER_IDS: USER_IDS' ; 
         TO_ENTITY_CODE   : Association to one VENDOR_PORTAL.MASTER_ENTITY_CODE
                              on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
+      TO_ROLE     : Association to one VENDOR_PORTAL.MASTER_USER_ROLE
+                                   on TO_ROLE.CODE = ROLE_CODE;
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview    
+Entity VIEW_REQUEST_COUNTER_STATUS {
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        STATUS: Integer  @title: 'STATUS: STATUS' ; 
+        CODE: Integer  @title: 'CODE: CODE' ; 
+        REQUEST_NO: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ; 
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REQUEST_TYPE_COUNT {
+        CODE: Integer  @title: 'CODE: CODE' ; 
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        REQ_TYPE_COUNT: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ;     
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REG_PM_APPR {
+        CODE: Integer  @title: 'CODE: CODE' ; 
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        STATUS_COUNT: Integer64  @title: 'STATUS_COUNT: REQUEST_NO' ; 
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_ENTITY_CODE_COUNT {
+key     BUKRS: String(4)  @title: 'BUKRS: BUKRS' ; 
+key     BUTXT: String(50)  @title: 'BUTXT: BUTXT' ; 
+        ENTITY_COUNT: Integer64  @title: 'ENTITY_COUNT: REQUEST_NO' ; 
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_PENDING_BYR_COUNT {
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        PND_BYR_COUNT: Integer64  @title: 'PND_BYR_COUNT: REQUEST_NO' ; 
+        STATUS: Integer  @title: 'STATUS: STATUS' ; 
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REQUEST_ACTION_STATUS {
+        CODE: Integer  @title: 'CODE: CODE' ; 
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        ACT_STATUS_COUNT: Integer64  @title: 'ACT_STATUS_COUNT: REQUEST_NO' ; 
+}
+
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REQUEST_ALL_STATUS_COUNT {
+        CODE: Integer  @title: 'CODE: CODE' ; 
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        STATUS_COUNT: Integer64  @title: 'STATUS_COUNT: REQUEST_NO' ; 
+}
+
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REQUEST_PM_APPR {
+        CODE: Integer  @title: 'CODE: CODE' ; 
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        PM_REQ_COUNT: Integer64  @title: 'PM_REQ_COUNT: REQUEST_NO' ; 
+}
+
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REQUEST_REJECTED_STATUS {
+        CODE: Integer  @title: 'CODE: CODE' ; 
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        REJ_STATUS_COUNT: Integer64  @title: 'REJ_STATUS_COUNT: REQUEST_NO' ; 
 }

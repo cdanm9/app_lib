@@ -45,3 +45,17 @@ code---->>>>>>>>//     let a = await DMSlib._GetRepositores();
     var RepoID = 'iVEN';
     var NewforlderName = '700000001';
    code---->>>>>>>>  let a = await DMSlib._RenameFolder(ObjectId , RepoID,NewforlderName);
+
+8. // Move file from one folder to another folder
+    var RepoID = 'iVEN'; //main repository
+    var sf = '427nKXGdTqb2-kxgLGpRzYe2k8m_lc3ubpRYfUXFhaY'; // source folder objcet id
+    var tf = 'jE1Xgmc9LAHPKDZqiJOzGH_hzm75k7yIC9YJjci1DgE'; // target folder objcet id
+    var ObjectId = 'BSARfyLKYktcDDkfAMgDxT0iEl0vNE71hS3DbM9LQbg'; // file object id
+
+    code---->>>>>>>>  let a = await DMSlib._MoveObjectFTF(ObjectId, RepoID, tf, sf);
+  
+9.//Delete file from DMS
+
+    // var ObjectId = 'BSARfyLKYktcDDkfAMgDxT0iEl0vNE71hS3DbM9LQbg'; // file object id
+    // var RepoID = 'iVEN'; //main repository
+    code---->>>>>>>> let a = await DMSlib._DeleteFile(ObjectId , RepoID);

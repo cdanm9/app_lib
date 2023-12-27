@@ -77,6 +77,20 @@
           "path": "/sap/opu/odata/sap/ZMDG_VENDOR_REG_SRV"
         }
       },
+      "BTP_DMS_Token": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BTP_DMS_Token",
+          "path": "/oauth/token"
+        }
+      },
+      "BTP_DMS_Dest": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BTP_DMS_Dest",
+          "path": ""
+        }
+      },
       "auth": {
         "kind": "mocked"
       },

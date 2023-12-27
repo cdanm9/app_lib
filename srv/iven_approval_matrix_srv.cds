@@ -59,5 +59,5 @@ service approvalMatrixService {
 
        //CRUD operation action
        action PostApprovalMatrix(input : approvalMatrixPayload)                                       returns String;
-       action PostDynamicApprovalMatrix(action : String, approvalHierarchy : many MasterApprovalHierarchy,userIds:String(1000),userDetails : User_Details) returns String;
+       action PostDynamicApprovalHierarchy(action : String, approvalHierarchy : many MasterApprovalHierarchy,userDetails : User_Details) returns String;
 }

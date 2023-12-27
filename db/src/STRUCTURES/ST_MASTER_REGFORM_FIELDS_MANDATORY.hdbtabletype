@@ -28,6 +28,7 @@ type "ST_MASTER_REGFORM_FIELDS_MANDATORY"  AS TABLE(
       S1G1T2F12 NVARCHAR(1),   /*Street 2*/
      S1G1T2F13 NVARCHAR(1),   /*Street 3*/
        S1G1T2F14 NVARCHAR(1),   /*Street 4*/
+       S1G1T2F15  NVARCHAR(1), /*Street No.*/
       S1G1T2F4 NVARCHAR(1),   /*City*/
        S1G1T2F5 NVARCHAR(1),   /*State*/
       S1G1T2F6 NVARCHAR(1),   /*Country*/
@@ -84,6 +85,7 @@ type "ST_MASTER_REGFORM_FIELDS_MANDATORY"  AS TABLE(
           /*Type 1: Supplier Categorys Information*/
       S1G5T1F1 NVARCHAR(1),   /*Supplier Category*/
       S1G5T2F1 NVARCHAR(1),   /*Supplier Type*/
+      S1G5T3F1  NVARCHAR(1), /*Certificate of Incorporation*/
         
   /* Section 2: Financial Information -------------------------------------------------------
        /* Group 1: Payment Information
@@ -175,6 +177,9 @@ type "ST_MASTER_REGFORM_FIELDS_MANDATORY"  AS TABLE(
       /* Group 4: Major Clients / customers
           /* Type 1: Major Clients / customers details   */ 
       S3G4T1F1 NVARCHAR(1),   /* Provide list of major clients / customers*/
+      S3G4T1F2  NVARCHAR(1), /*Customer Name*/
+      S3G4T1F3  NVARCHAR(1), /*Percentage Share of Business in Major Clients / Customers*/
+
         
       /* Group 5: Original equipment manufacturer details
           /* Type 1: Exclusive Distributor of OEM   */
