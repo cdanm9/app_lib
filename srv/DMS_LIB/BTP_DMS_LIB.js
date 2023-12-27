@@ -35,7 +35,10 @@ module.exports = {
             var JToken = 'Bearer ' + lv_JWToken;
             const Resp = await ConDMS.send('POST', '/rest/v2/repositories', body, { 'Authorization': JToken });
             var dlist = Resp;
-            var output = [];
+            // var output = [{
+            //     statusText:"Repository "+dlist.description+" Created Successfully"
+            // }];  
+            var output=[];      
             return output;
         } catch (error) {
             // error.message = error.reason.response.body.message;
@@ -133,8 +136,9 @@ module.exports = {
             const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
 
 
-            const Resp = await ConDMS.send("POST", path, data, headers);
+            const Resp = await ConDMS.send("POST", path, data, headers);    
             return Resp;
+
         } catch (error) {
             var err = error.reason.response.body;
             return err;
@@ -249,7 +253,7 @@ module.exports = {
     },
     _RenameFolder: async function (ObjectId, RepoID, NewforlderName) {
         const lv_JWToken = await this._fetchJwtToken();
-        let ConDMS = await cds.connect.to('DMS_Dest');
+        let ConDMS = await cds.connect.to('BTP_DMS_Dest');
         var path = 'browser/' + RepoID + '/root';
         var JToken = 'Bearer ' + lv_JWToken;
         try {
@@ -264,7 +268,7 @@ module.exports = {
             restxt.name = Resp.properties["cmis:name"].value;
             restxt.message = 'Object name changed Successfully';
             restxt.status = 200;
-            return restxt;
+            return restxt;   
         } catch (error) {
             var restxt = {};
             restxt.status = error.reason.response.status;
@@ -274,11 +278,11 @@ module.exports = {
     },
     _MoveObjectFTF: async function (ObjectId, RepoID, targetFolderId, sourceFolderId) {
         const lv_JWToken = await this._fetchJwtToken();
-        let ConDMS = await cds.connect.to('DMS_Dest');
+        let ConDMS = await cds.connect.to('BTP_DMS_Dest');
         var path = 'browser/' + RepoID + '/root';
         var JToken = 'Bearer ' + lv_JWToken;
         try {
-            const data =
+            const data =      
                 `objectId=${ObjectId}` +
                 `&cmisaction=move` +
                 `&sourceFolderId=${sourceFolderId}` +
@@ -297,10 +301,10 @@ module.exports = {
             return restxt;
         }
     },
-    _DeleteFile: async function (ObjectId, RepoID) {
+    _DeleteFile: async function (ObjectId, RepoID) {   
         try {
             const lv_JWToken = await this._fetchJwtToken();
-            let ConDMS = await cds.connect.to('DMS_Dest');
+            let ConDMS = await cds.connect.to('BTP_DMS_Dest');
             var path = 'browser/' + RepoID + '/root';
             var JToken = 'Bearer ' + lv_JWToken;
             const data =

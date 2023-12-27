@@ -72,8 +72,13 @@ module.exports = cds.service.impl(function () {
 
             var client = await dbClass.createConnectionFromEnv();
             var dbConn = new dbClass(client);
-            let response = await lib_dms._createSubFolder(sId,sExternalId,sFName);   
-            req.reply(response);
+            let response = await lib_dms._createSubFolder(sId,sExternalId,sFName); 
+            var responseChk=response.properties??null;   
+            if(responseChk)    
+            {    
+                response.properties.statusText="Folder "+response.properties["cmis:name"].value+" Created Successfully";         
+                req.reply(response);       
+            }    
         } catch (error) {
             
             var sType=error.code?"Procedure":"Node Js";    
@@ -211,7 +216,7 @@ try {
     var client = await dbClass.createConnectionFromEnv();        
     var dbConn = new dbClass(client);
     let response = await lib_dms._MoveObjectFTF(objectId,externalId,trgFolderId,srcFolderId);                           
-    req.reply(response);        
+    req.reply(response);           
 } catch (error) {
     
     var sType=error.code?"Procedure":"Node Js";    

@@ -432,26 +432,26 @@ module.exports = cds.service.impl(function () {
                 if (aDraftData.MAIN.length > 0) {
                     sUserID = aDraftData.MAIN[0].REGISTERED_ID || null;
                 }
-                responseObj.draftData = (aDraftData.MAIN.length || aDraftData.ADDRESS.length) > 0 ? aDraftData : [];
+                responseObj.DRAFT = (aDraftData.MAIN.length || aDraftData.ADDRESS.length) > 0 ? aDraftData : [];
                 }
                 if(inputData.visibility){
                 var aVisibleFieldsData = await getVisibleFieldsData(connection, entityCode, creationType);
-                responseObj.visibility =  aVisibleFieldsData.length > 0 ? aVisibleFieldsData : [];
+                responseObj.VISIBLE =  aVisibleFieldsData.length > 0 ? aVisibleFieldsData : [];
                 }
 
                 if(inputData.mandatory){
                 var aMandatoryFieldsData = await getMandatoryFieldsData(connection, entityCode, creationType);
-                    responseObj.mandatory = aMandatoryFieldsData.length > 0 ? aMandatoryFieldsData : []
+                    responseObj.MANDATORY = aMandatoryFieldsData.length > 0 ? aMandatoryFieldsData : []
             }
 
                 if(inputData.updated){
                 var aUpdatedFieldsData = await getUpdatedFieldsData(connection, requestNo);
-                responseObj.updated = aUpdatedFieldsData.length > 0 ? aUpdatedFieldsData : []
+                responseObj.UPDATED = aUpdatedFieldsData.length > 0 ? aUpdatedFieldsData : []
                 }
 
                 if(inputData.settings){
                 var aSettings = await getObjectFromRows(await getiVenSettings(connection));
-                    responseObj.settings = aSettings;
+                    responseObj.SETTINGS = aSettings;
             }
 
                 if(inputData.totalCount){
@@ -466,23 +466,23 @@ module.exports = cds.service.impl(function () {
                         }
                     }
                 }
-                responseObj.totalCount = totalCount
+                responseObj.TOTALCOUNT = totalCount
             }
             if(inputData.openText)
             {
                 var openTextResponse = await getOpenTextCredentials(connection);
-                responseObj.openText = openTextResponse
+                responseObj.OPENTEXT = openTextResponse
             }
             if(inputData.clientInfo)
             {
                 var clientInfoResponse =await getClientDetails(connection);
-                responseObj.clientInfo = clientInfoResponse
+                responseObj.CLIENT_INFO = clientInfoResponse
             }
 
             if(inputData.labels)
             {
                 var labelsResponse =await getLabelsForFormID(connection);
-                responseObj.labels = labelsResponse
+                responseObj.LABELS = labelsResponse
             }
                 //  responseObj = {
                 //     "DRAFT": (aDraftData.MAIN.length || aDraftData.ADDRESS.length) > 0 ? aDraftData : [], // changes to save country from registration form 10/04/2023
