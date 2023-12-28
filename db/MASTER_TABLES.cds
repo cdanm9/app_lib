@@ -362,7 +362,8 @@ context VENDOR_PORTAL {
             // Type 1: Supplier Category's Information
             S1G5T1F1  : String(1); //Supplier Category
             S1G5T2F1  : String(1); //Supplier Type
-               S1G5T3F1 : String(1); //Certificate of Incorporation
+            S1G5T3F1 : String(1); //Certificate of Incorporation
+            S1G5T4F1 : String(1);//Vendor Sub Type
 
             // Section 2: Financial Information -------------------------------------------------------
             // Group 1: Payment Information
@@ -693,6 +694,7 @@ context VENDOR_PORTAL {
             S1G5T1F1  : String(1); //Supplier Category
             S1G5T2F1  : String(1); //Supplier Type
                S1G5T3F1 : String(1); //Certificate of Incorporation
+                S1G5T4F1 : String(1);//Vendor Sub Type
 
             // Section 2: Financial Information -------------------------------------------------------
             // Group 1: Payment Information
@@ -1026,6 +1028,7 @@ context VENDOR_PORTAL {
             S1G5T1F1  : String(1); //Supplier Category
             S1G5T2F1  : String(1); //Supplier Type
             S1G5T3F1 : String(1); //Certificate of Incorporation
+             S1G5T4F1 : String(1);//Vendor Sub Type
 
             // Section 2: Financial Information -------------------------------------------------------
             // Group 1: Payment Information

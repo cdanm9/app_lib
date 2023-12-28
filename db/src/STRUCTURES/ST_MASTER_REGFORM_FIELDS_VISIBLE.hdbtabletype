@@ -86,6 +86,7 @@ type "ST_ENTITY_FIELDS_VISIBLE"  AS TABLE(
       S1G5T1F1 NVARCHAR(1),   /*Supplier Category*/
       S1G5T2F1 NVARCHAR(1),   /*Supplier Type*/
       S1G5T3F1  NVARCHAR(1), /*Certificate of Incorporation*/
+      S1G5T4F1 NVARCHAR(1),/*Vendor Sub Type*/
         
   /* Section 2: Financial Information -------------------------------------------------------
        /* Group 1: Payment Information
