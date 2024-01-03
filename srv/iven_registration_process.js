@@ -61,7 +61,7 @@ module.exports = cds.service.impl(function () {
                 var iReqNo = reqHeader[0].REQUEST_NO;
                 var iReqType = reqHeader[0].REQUEST_TYPE;
                 var iStep = stepNo;
-
+                
                 // --Section 2--
                 var aMainObj = reqHeader;
                 if (aMainObj.length > 0) {
@@ -390,8 +390,9 @@ module.exports = cds.service.impl(function () {
             // var { requestNo, entityCode, creationType,userRole,userId } = req.data;
             var inputData = JSON.parse(req.data.input);
             var requestNo = inputData.requestNo;
-            var entityCode = inputData.entityCode;
-            var creationType = inputData.creationType;
+            // var entityCode = inputData.entityCode;
+            // var creationType = inputData.creationType;
+            var entityCode,creationType;
             var userRole = inputData.userRole;
             var userId = inputData.userId;
             var oCcodeRType = null,
@@ -410,7 +411,7 @@ module.exports = cds.service.impl(function () {
 
           
             // try {
-            if (entityCode === undefined || entityCode === null || entityCode === "" || creationType === undefined || creationType === null || creationType === "") {
+            // if (entityCode === undefined || entityCode === null || entityCode === "" || creationType === undefined || creationType === null || creationType === "") {
 
                 oCcodeRType = await getCcodeRType(connection, requestNo, "REQUEST_INFO");
 
@@ -418,15 +419,18 @@ module.exports = cds.service.impl(function () {
                 // requestType = oCcodeRType.RequestType;
                 creationType = oCcodeRType.CreationType;
                 sTypeDesc = oCcodeRType.RequestTypeDesc;
-            }
+            // }
 
-            if (entityCode === null || entityCode === "" || entityCode === undefined) {
-                throw "Entity Code missing";
-            }
-            else if(creationType === null || creationType === "" || creationType === undefined){
-                throw "Creation Type Missing"
-            }
-            else {
+            // if (entityCode === null || entityCode === "" || entityCode === undefined) {
+            //     throw "Entity Code missing";
+              
+
+            // }
+            // else if(creationType === null || creationType === "" || creationType === undefined){
+            //     throw "Creation Type Missing"
+             
+            // }
+            // else {
                 if(inputData.draftData){
                 var aDraftData = await getDraftData(connection, requestNo);
                 if (aDraftData.MAIN.length > 0) {
@@ -498,7 +502,7 @@ module.exports = cds.service.impl(function () {
                 // };
                 // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", 200);
                 return responseObj;
-            }
+            // }
 
             // } catch (e) {
             //     Result2 = {

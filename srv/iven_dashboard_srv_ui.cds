@@ -230,11 +230,24 @@ annotate dashboardService.PendingPMReqCount with @(
   }
 );   
 
+     
+
+
 annotate dashboardService.PendingPMReqCount with {
   @Analytics.Dimension      : true
   DESCRIPTION @(title  : 'PM Status');
   @Analytics.Measure        : true   
   @Core.Computed
   PM_REQ_COUNT @(title                   : 'Total Request Approval Pending');        
-}      
+}    
+   
+annotate dashboardService.SupplierTypeCount with {
+  @Analytics.Dimension      : true
+  SUPPL_TYPE_DESC @(title  : 'Supplier Type');
+  @Analytics.Measure        : true   
+  @Core.Computed
+  REQUEST_NO @(title                   : 'Total Requests');                
+} 
+
+
 

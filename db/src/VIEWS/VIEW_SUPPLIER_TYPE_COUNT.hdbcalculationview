@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="VIEW_SUPPLIER_TYPE_COUNT" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="true" application="BAS">
+<descriptions defaultDescription="VIEW_SUPPLIER_TYPE_COUNT"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="VENDOR_PORTAL_REQUEST_INFO">
+    <resourceUri>VENDOR_PORTAL_REQUEST_INFO</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="Projection_1">
+    <viewAttributes>
+      <viewAttribute id="REQUEST_NO"/>
+      <viewAttribute id="SAP_VENDOR_CODE"/>
+      <viewAttribute id="IVEN_VENDOR_CODE"/>
+      <viewAttribute id="STATUS"/>
+      <viewAttribute id="REGISTERED_ID"/>
+      <viewAttribute id="ENTITY_CODE"/>
+      <viewAttribute id="REQUEST_TYPE"/>
+      <viewAttribute id="CREATION_TYPE"/>
+      <viewAttribute id="VENDOR_NAME1"/>
+      <viewAttribute id="VENDOR_NAME2"/>
+      <viewAttribute id="VENDOR_CODE"/>
+      <viewAttribute id="APPROVER_LEVEL"/>
+      <viewAttribute id="APPROVER_ROLE"/>
+      <viewAttribute id="NEXT_APPROVER"/>
+      <viewAttribute id="REQUESTER_ID"/>
+      <viewAttribute id="SUPPL_TYPE"/>
+      <viewAttribute id="SUPPL_TYPE_DESC"/>
+      <viewAttribute id="BP_TYPE_CODE"/>
+      <viewAttribute id="BP_TYPE_DESC"/>
+      <viewAttribute id="REQUEST_RESENT"/>
+      <viewAttribute id="MDG_CR_NO"/>
+      <viewAttribute id="LAST_ACTIVE_REQ_NO"/>
+      <viewAttribute id="SECONDARY_EMAILS_ID"/>
+      <viewAttribute id="WEBSITE"/>
+      <viewAttribute id="LEGAL_STRUCTURE"/>
+      <viewAttribute id="LEGAL_STRUCTURE_OTHER"/>
+      <viewAttribute id="ESTAB_YEAR"/>
+      <viewAttribute id="NO_OF_EMP"/>
+      <viewAttribute id="NO_OF_ENGG"/>
+      <viewAttribute id="NO_OF_QUALITY"/>
+      <viewAttribute id="NO_OF_PROD"/>
+      <viewAttribute id="NO_OF_ADMIN"/>
+      <viewAttribute id="NO_OF_OTHERS"/>
+      <viewAttribute id="BUSINESS_TYPE"/>
+      <viewAttribute id="TRADE_LIC_NO"/>
+      <viewAttribute id="TRADE_LIC_NO_DATE"/>
+      <viewAttribute id="VAT_REG_NUMBER"/>
+      <viewAttribute id="VAT_REG_DATE"/>
+      <viewAttribute id="SUPPL_CATEGORY"/>
+      <viewAttribute id="SUPPL_CATEGORY_DESC"/>
+      <viewAttribute id="ACTIVITY_TYPE"/>
+      <viewAttribute id="ORDER_SIZE_MIN"/>
+      <viewAttribute id="ORDER_SIZE_MAX"/>
+      <viewAttribute id="TOTAL_PROD_CAPACITY"/>
+      <viewAttribute id="LAST_SAVED_STEP"/>
+      <viewAttribute id="COMPLETED_BY"/>
+      <viewAttribute id="COMPLETED_BY_POSITION"/>
+      <viewAttribute id="ACK_VALIDATION"/>
+      <viewAttribute id="SUBMISSION_DATE"/>
+      <viewAttribute id="LAST_UPDATED_ON"/>
+      <viewAttribute id="OT_PARENT_ID"/>
+      <viewAttribute id="OT_FOLDER1_ID"/>
+      <viewAttribute id="OT_FOLDER2_ID"/>
+      <viewAttribute id="OT_FOLDER3_ID"/>
+      <viewAttribute id="OT_FOLDER4_ID"/>
+      <viewAttribute id="VAT_CHECK"/>
+      <viewAttribute id="ICV_SCORE"/>
+      <viewAttribute id="ICV_DATE"/>
+      <viewAttribute id="ICV_CHECK"/>
+      <viewAttribute id="NDA_TYPE"/>
+      <viewAttribute id="REMINDER_COUNT"/>
+      <viewAttribute id="BUYER_ASSIGN_CHECK"/>
+      <viewAttribute id="CREATED_ON"/>
+      <viewAttribute id="COMMENT"/>
+      <viewAttribute id="LEGACY_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="VENDOR_PORTAL_REQUEST_INFO"/>
+  </calculationView>
+</calculationViews>
+
+<logicalModel id="Projection_1">
+  <attributes>
+    <attribute id="SUPPL_TYPE" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SUPPL_TYPE"/>
+      <keyMapping columnObjectName="Projection_1" columnName="SUPPL_TYPE"/>
+    </attribute>
+    <attribute id="SUPPL_TYPE_DESC" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SUPPL_TYPE_DESC"/>
+      <keyMapping columnObjectName="Projection_1" columnName="SUPPL_TYPE_DESC"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures>
+    <measure id="REQUEST_NO" order="3" aggregationType="count" measureType="simple">
+      <descriptions defaultDescription="REQUEST_NO"/>
+      <measureMapping columnObjectName="Projection_1" columnName="REQUEST_NO"/>
+      <exceptionAggregationMetadata/>
+    </measure>
+  </baseMeasures>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+  <localDimensions/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+    
+  
+    <shape expanded="true" modelObjectName="Projection_1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="100" y="196"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

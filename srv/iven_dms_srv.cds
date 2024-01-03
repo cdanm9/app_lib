@@ -6,31 +6,34 @@
 service dmsService {
 
   function GetRepository(userId:String,userRole:String) returns many String;
-function GetSubFolderItem(parentFolderID:String,folderName:String,userId:String,userRole:String) returns many String;
+function GetSubFolderItem(externalId:String,folderName:String,userId:String,userRole:String) returns many String;
 action CreateSubFolderItem(folderDetails:FolderDetail,userDetails:User_Details) returns many String;
-action DeleteSubFolderItem(deleteFolderDetails:DeleteDataDetail,userDetails:User_Details) returns many String;  
-
-
+// action DeleteSubFolderItem(deleteFolderDetails:DeleteDataDetail,userDetails:User_Details) returns many String;  
+    
+    
 action CreateRepository(externalId:String,description:String,userDetails:User_Details) returns many String; 
- action DeleteRepository(cmisRepositoryId:String,userDetails:User_Details) returns many String;    
- action RenameFolder(renameFolderDetails:RenameFolderDetail,userDetails:User_Details) returns many String;
- action MoveObjectFTF(objectId:String,externalId:String,srcFolderId:String,trgFolderId:String,userDetails:User_Details) returns many String;
- action DeleteFile(deleteFileDetails:DeleteDataDetail,userDetails:User_Details) returns many String;
- 
+ action DeleteRepository(cmisRepositoryId:String,userDetails:User_Details) returns many String; 
 
-//type
+//  action RenameFolder(renameFolderDetails:RenameFolderDetail,userDetails:User_Details) returns many String;
+ action RenameObject(renameObjDetails:RenameObjDetail,userDetails:User_Details) returns many String;
+ action MoveObjectFTF(objectId:String,externalId:String,srcFolderId:String,trgFolderId:String,userDetails:User_Details) returns many String;
+ 
+//  action DeleteFile(deleteFileDetails:DeleteDataDetail,userDetails:User_Details) returns many String;
+ action DeleteObject(deleteObjDetails:DeleteObjDetail,userDetails:User_Details) returns many String;
+
   type FolderDetail:{   
     cmisRepositoryId: String; //Repository ID
     externalId:String;     //Repository Name
     fname:String;           //Folder Name
   }
     
-  type DeleteDataDetail:{   
+  type DeleteObjDetail:{   
     externalId: String; //Repository Name
     objectId:String;           //Folder ID
+    objectTypeId:String;   //File Type
   }
 
-  type RenameFolderDetail:{
+  type RenameObjDetail:{
     externalId: String; //Repository Name
     objectId:String;           //Folder ID
     newFname:String;           // New Folder Name

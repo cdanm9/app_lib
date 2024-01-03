@@ -1456,3 +1456,11 @@ Entity VIEW_REQUEST_REJECTED_STATUS {
 key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
         REJ_STATUS_COUNT: Integer64  @title: 'REJ_STATUS_COUNT: REQUEST_NO' ; 
 }
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_SUPPLIER_TYPE_COUNT {
+key     SUPPL_TYPE: String(50)  @title: 'SUPPL_TYPE: SUPPL_TYPE' ; 
+key     SUPPL_TYPE_DESC: String(50)  @title: 'SUPPL_TYPE_DESC: SUPPL_TYPE_DESC' ; 
+        REQUEST_NO: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ;    
+}

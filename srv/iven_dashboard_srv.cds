@@ -10,7 +10,8 @@ using {
   VIEW_REQUEST_ACTION_STATUS,
   VIEW_REQUEST_ALL_STATUS_COUNT,
   VIEW_REQUEST_PM_APPR,
-  VIEW_REQUEST_REJECTED_STATUS
+  VIEW_REQUEST_REJECTED_STATUS,
+  VIEW_SUPPLIER_TYPE_COUNT
 } from '../db/MASTER_TABLES';
 using {
   VENDOR_PORTAL.REQUEST_INFO,
@@ -73,6 +74,7 @@ service dashboardService {
   entity RequestAllStatusCount    as projection on VIEW_REQUEST_ALL_STATUS_COUNT;
   entity PendingPMReqCount        as projection on VIEW_REQUEST_PM_APPR;
   entity RequestRejStatusCount    as projection on VIEW_REQUEST_REJECTED_STATUS;
+  entity SupplierTypeCount        as projection on VIEW_SUPPLIER_TYPE_COUNT;
 
   //S4HANA
 

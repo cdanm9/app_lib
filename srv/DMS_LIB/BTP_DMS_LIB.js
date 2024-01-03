@@ -34,12 +34,13 @@ module.exports = {
             let ConDMS = await cds.connect.to('BTP_DMS_Dest');
             var JToken = 'Bearer ' + lv_JWToken;
             const Resp = await ConDMS.send('POST', '/rest/v2/repositories', body, { 'Authorization': JToken });
-            var dlist = Resp;
-            // var output = [{
-            //     statusText:"Repository "+dlist.description+" Created Successfully"
-            // }];  
-            var output=[];      
-            return output;
+            var dlist = Resp;  
+            if(dlist){
+                dlist.statusText="Repository "+dlist.description+" Created Successfully";
+            }    
+            var output=[];
+            output.push(dlist);                 
+            return output;    
         } catch (error) {
             // error.message = error.reason.response.body.message;
             var err = error.reason.response.body.message;
@@ -53,8 +54,10 @@ module.exports = {
             var JToken = 'Bearer ' + lv_JWToken;
             const Resp = await ConDMS.send('GET', '/rest/v2/repositories', '', { 'Authorization': JToken });
             const StorageData = await ConDMS.send('GET', '/rest/v2/usage/storage', '', { 'Authorization': JToken });
-            var StorageDataRepoList = StorageData.usageListOfTenants[0].perTenantStorageUsageList.storageUsagePerRepository;
-            var output = [];
+            if (StorageData.usageListOfTenants[0].hasOwnProperty('perTenantStorageUsageList')) {
+                var StorageDataRepoList = StorageData.usageListOfTenants[0].perTenantStorageUsageList.storageUsagePerRepository;
+              }
+               var output = [];
             var MainFolderlist = Resp.repoAndConnectionInfos;
             if (MainFolderlist) {
                 var CheckArray = Array.isArray(MainFolderlist);
@@ -68,11 +71,13 @@ module.exports = {
                         item.repositoryType = MainFolderlistvalue.repository.repositoryType;
                         item.cmisRepositoryId = MainFolderlistvalue.repository.cmisRepositoryId;
                         item.createdTime = MainFolderlistvalue.repository.createdTime;
+                        if(StorageDataRepoList !== undefined){
                         StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
                             if (StorageDataRepoListValue.repositoryId === item.id)
                                 item.storage_metrics = StorageDataRepoListValue.metrics;
                             item.storage_usage = StorageDataRepoListValue.usage;
                         });
+                    }
                         output.push(item);
                     });
                 } else {
@@ -84,11 +89,13 @@ module.exports = {
                     item.repositoryType = MainFolderlist.repository.repositoryType;
                     item.cmisRepositoryId = MainFolderlist.repository.cmisRepositoryId;
                     item.createdTime = MainFolderlist.repository.createdTime;
+                    if(StorageDataRepoList !== undefined){
                     StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
                         if (StorageDataRepoListValue.repositoryId === item.id)
                             item.storage_metrics = StorageDataRepoListValue.metrics;
                         item.storage_usage = StorageDataRepoListValue.usage;
                     });
+                }
                     output.push(item);
                 }
                 return output;
@@ -96,7 +103,8 @@ module.exports = {
                 return "No Data Found!";
             }
         } catch (error) {
-            error.message = error.reason.response.body.message;
+            // error.message = error.reason.response.body.message;
+            error.message = error;
             throw (error)
         }
     },

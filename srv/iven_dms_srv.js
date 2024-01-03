@@ -12,7 +12,7 @@ module.exports = cds.service.impl(function () {
             var {userId,userRole}= req.data;
             var client = await dbClass.createConnectionFromEnv();
             var dbConn = new dbClass(client);
-            let response = await lib_dms._GetRepositores();
+            var response = await lib_dms._GetRepositores();
             req.reply(response);
        
         } catch (error) {
@@ -20,7 +20,7 @@ module.exports = cds.service.impl(function () {
             var sType=error.code?"Procedure":"Node Js";    
             var iErrorCode=error.code??500;
             let Result = {
-                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_CODE: iErrorCode,   
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
             lib_common.postErrorLog(Result,null,userId,userRole,"Get DMS Repository",sType,dbConn,hdbext);
@@ -33,7 +33,7 @@ module.exports = cds.service.impl(function () {
     this.on('GetSubFolderItem', async (req) => {
         
         try {
-            var {parentFolderID,folderName,userId,userRole} = req.data;
+            var {externalId,folderName,userId,userRole} = req.data;
 
             var client = await dbClass.createConnectionFromEnv();
             var dbConn = new dbClass(client);
@@ -42,7 +42,7 @@ module.exports = cds.service.impl(function () {
         // //    var fname = '';//all folders within repo
         //      var RepoID = 'iVEN';
         //     let a = await lib_dms._getSubFolderItems(RepoID, fname);
-            let response = await lib_dms._getSubFolderItems(parentFolderID,folderName);   
+            let response = await lib_dms._getSubFolderItems(externalId,folderName);   
             req.reply(response);
         } catch (error) {
             
@@ -94,29 +94,64 @@ module.exports = cds.service.impl(function () {
         }
     })
 
-    this.on('DeleteSubFolderItem', async (req) => {
+    // this.on('DeleteSubFolderItem', async (req) => {
+        
+    //     try {
+    //         var {deleteFolderDetails,userDetails} = req.data;
+    //         var sExternalId=deleteFolderDetails.externalId||null;
+    //         var sObjectId=deleteFolderDetails.objectId||null;       
+            
+    //         var sUserId=userDetails.USER_ID||null;
+    //         var sUserRole=userDetails.USER_ROLE||null;
+
+    //         var client = await dbClass.createConnectionFromEnv();
+    //         var dbConn = new dbClass(client);
+    //         let response = await lib_dms._DeleteSubFolder(sObjectId,sExternalId);                    
+    //         req.reply(response);        
+    //     } catch (error) {
+            
+    //         var sType=error.code?"Procedure":"Node Js";    
+    //         var iErrorCode=error.code??500;
+    //         let Result = {
+    //             OUT_ERROR_CODE: iErrorCode,
+    //             OUT_ERROR_MESSAGE:  error.message ? error.message : error
+    //         }
+    //         lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Delete DMS Sub Folders",sType,dbConn,hdbext);
+    //         console.error(error)     
+    //         // return error.messsage            
+    //         req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+    //     }
+    // })
+
+    this.on('DeleteObject', async (req) => {
         
         try {
-            var {deleteFolderDetails,userDetails} = req.data;
-            var sExternalId=deleteFolderDetails.externalId||null;
-            var sObjectId=deleteFolderDetails.objectId||null;       
+            var {deleteObjDetails,userDetails} = req.data;
+            var sExternalId=deleteObjDetails.externalId||null;
+            var sObjectId=deleteObjDetails.objectId||null; 
+            var sObjectTypeId=deleteObjDetails.objectTypeId||null; 
+            var response;    
             
             var sUserId=userDetails.USER_ID||null;
             var sUserRole=userDetails.USER_ROLE||null;
 
             var client = await dbClass.createConnectionFromEnv();
             var dbConn = new dbClass(client);
-            let response = await lib_dms._DeleteSubFolder(sObjectId,sExternalId);                    
+            if(sObjectTypeId=='cmis:folder'){
+                response = await lib_dms._DeleteSubFolder(sObjectId,sExternalId);  
+            }else if(sObjectTypeId=='cmis:document'){
+                response = await lib_dms._DeleteFile(sObjectId,sExternalId);  
+            }                  
             req.reply(response);        
         } catch (error) {
-            
+                  
             var sType=error.code?"Procedure":"Node Js";    
             var iErrorCode=error.code??500;
             let Result = {
                 OUT_ERROR_CODE: iErrorCode,
-                OUT_ERROR_MESSAGE:  error.message ? error.message : error
+                OUT_ERROR_MESSAGE:  error.message ? error.message : error   
             }
-            lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Delete DMS Sub Folders",sType,dbConn,hdbext);
+            lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Delete DMS Object",sType,dbConn,hdbext);
             console.error(error)     
             // return error.messsage            
             req.error({ code:iErrorCode, message:  error.message ? error.message : error });
@@ -124,7 +159,7 @@ module.exports = cds.service.impl(function () {
     })
 
     this.on('CreateRepository', async (req) => {
-        
+           
         try {
             var {externalId,description,userDetails}= req.data;
             var sUserId=userDetails.USER_ID||null;
@@ -157,7 +192,7 @@ module.exports = cds.service.impl(function () {
             var sUserRole=userDetails.USER_ROLE||null;
             var client = await dbClass.createConnectionFromEnv();
             var dbConn = new dbClass(client);
-            let response = await lib_dms._DeleteRepositore(cmisRepositoryId);
+            let response = await lib_dms._DeleteRepositore(cmisRepositoryId);    
             req.reply(response);
        
         } catch (error) {
@@ -175,13 +210,13 @@ module.exports = cds.service.impl(function () {
         }
     })
     
-this.on('RenameFolder', async (req) => {
+this.on('RenameObject', async (req) => {
 
 try {
-    var {renameFolderDetails,userDetails} = req.data;
-    var sExternalId=renameFolderDetails.externalId||null;
-    var sObjectId=renameFolderDetails.objectId||null;       
-    var sNewFname=renameFolderDetails.newFname||null;       
+    var {renameObjDetails,userDetails} = req.data;
+    var sExternalId=renameObjDetails.externalId||null;
+    var sObjectId=renameObjDetails.objectId||null;       
+    var sNewFname=renameObjDetails.newFname||null;       
     
     var sUserId=userDetails.USER_ID||null;    
     var sUserRole=userDetails.USER_ROLE||null;
@@ -198,7 +233,7 @@ try {
         OUT_ERROR_CODE: iErrorCode,
         OUT_ERROR_MESSAGE:  error.message ? error.message : error
     }
-    lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Rename DMS Folders",sType,dbConn,hdbext);
+    lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Rename DMS Object",sType,dbConn,hdbext);
     console.error(error)     
     // return error.messsage            
     req.error({ code:iErrorCode, message:  error.message ? error.message : error });
@@ -225,42 +260,42 @@ try {
         OUT_ERROR_CODE: iErrorCode,
         OUT_ERROR_MESSAGE:  error.message ? error.message : error
     }
-    lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Rename DMS Folders",sType,dbConn,hdbext);
+    lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Moving Object Folder To Folder",sType,dbConn,hdbext);
     console.error(error)     
     // return error.messsage            
     req.error({ code:iErrorCode, message:  error.message ? error.message : error });
 }
-})
+})     
 
-this.on('DeleteFile', async (req) => {
+// this.on('DeleteFile', async (req) => {
 
-try {
-    var {deleteFileDetails,userDetails} = req.data;    
+// try {
+//     var {deleteFileDetails,userDetails} = req.data;    
     
-    var sExternalId=deleteFileDetails.externalId||null;
-    var sObjectId=deleteFileDetails.objectId||null;  
+//     var sExternalId=deleteFileDetails.externalId||null;
+//     var sObjectId=deleteFileDetails.objectId||null;  
     
-    var sUserId=userDetails.USER_ID||null;          
-    var sUserRole=userDetails.USER_ROLE||null;
+//     var sUserId=userDetails.USER_ID||null;          
+//     var sUserRole=userDetails.USER_ROLE||null;
 
-    var client = await dbClass.createConnectionFromEnv();        
-    var dbConn = new dbClass(client);
-    let response = await lib_dms._DeleteFile(sObjectId,sExternalId);                                         
-    req.reply(response);        
-} catch (error) {    
+//     var client = await dbClass.createConnectionFromEnv();        
+//     var dbConn = new dbClass(client);
+//     let response = await lib_dms._DeleteFile(sObjectId,sExternalId);                                         
+//     req.reply(response);        
+// } catch (error) {    
     
-    var sType=error.code?"Procedure":"Node Js";    
-    var iErrorCode=error.code??500;
-    let Result = {
-        OUT_ERROR_CODE: iErrorCode,
-        OUT_ERROR_MESSAGE:  error.message ? error.message : error
-    }
-    lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Rename DMS Folders",sType,dbConn,hdbext);
-    console.error(error)     
-    // return error.messsage            
-    req.error({ code:iErrorCode, message:  error.message ? error.message : error });
-}
-})
+//     var sType=error.code?"Procedure":"Node Js";    
+//     var iErrorCode=error.code??500;
+//     let Result = {
+//         OUT_ERROR_CODE: iErrorCode,
+//         OUT_ERROR_MESSAGE:  error.message ? error.message : error
+//     }
+//     lib_common.postErrorLog(Result,null,sUserId,sUserRole,"Rename DMS Folders",sType,dbConn,hdbext);
+//     console.error(error)     
+//     // return error.messsage            
+//     req.error({ code:iErrorCode, message:  error.message ? error.message : error });
+// }
+// })
     
 }
 )
