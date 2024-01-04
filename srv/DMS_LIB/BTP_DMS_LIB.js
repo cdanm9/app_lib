@@ -34,13 +34,13 @@ module.exports = {
             let ConDMS = await cds.connect.to('BTP_DMS_Dest');
             var JToken = 'Bearer ' + lv_JWToken;
             const Resp = await ConDMS.send('POST', '/rest/v2/repositories', body, { 'Authorization': JToken });
-            var dlist = Resp;  
-            if(dlist){
-                dlist.statusText="Repository "+dlist.description+" Created Successfully";
-            }    
-            var output=[];
-            output.push(dlist);                 
-            return output;    
+            var dlist = Resp;
+            if (dlist) {
+                dlist.statusText = "Repository " + dlist.description + " Created Successfully";
+            }
+            var output = [];
+            output.push(dlist);
+            return output;
         } catch (error) {
             // error.message = error.reason.response.body.message;
             var err = error.reason.response.body.message;
@@ -56,8 +56,8 @@ module.exports = {
             const StorageData = await ConDMS.send('GET', '/rest/v2/usage/storage', '', { 'Authorization': JToken });
             if (StorageData.usageListOfTenants[0].hasOwnProperty('perTenantStorageUsageList')) {
                 var StorageDataRepoList = StorageData.usageListOfTenants[0].perTenantStorageUsageList.storageUsagePerRepository;
-              }
-               var output = [];
+            }
+            var output = [];
             var MainFolderlist = Resp.repoAndConnectionInfos;
             if (MainFolderlist) {
                 var CheckArray = Array.isArray(MainFolderlist);
@@ -71,13 +71,13 @@ module.exports = {
                         item.repositoryType = MainFolderlistvalue.repository.repositoryType;
                         item.cmisRepositoryId = MainFolderlistvalue.repository.cmisRepositoryId;
                         item.createdTime = MainFolderlistvalue.repository.createdTime;
-                        if(StorageDataRepoList !== undefined){
-                        StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
-                            if (StorageDataRepoListValue.repositoryId === item.id)
-                                item.storage_metrics = StorageDataRepoListValue.metrics;
-                            item.storage_usage = StorageDataRepoListValue.usage;
-                        });
-                    }
+                        if (StorageDataRepoList !== undefined) {
+                            StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
+                                if (StorageDataRepoListValue.repositoryId === item.id)
+                                    item.storage_metrics = StorageDataRepoListValue.metrics;
+                                item.storage_usage = StorageDataRepoListValue.usage;
+                            });
+                        }
                         output.push(item);
                     });
                 } else {
@@ -89,13 +89,20 @@ module.exports = {
                     item.repositoryType = MainFolderlist.repository.repositoryType;
                     item.cmisRepositoryId = MainFolderlist.repository.cmisRepositoryId;
                     item.createdTime = MainFolderlist.repository.createdTime;
-                    if(StorageDataRepoList !== undefined){
-                    StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
-                        if (StorageDataRepoListValue.repositoryId === item.id)
-                            item.storage_metrics = StorageDataRepoListValue.metrics;
-                        item.storage_usage = StorageDataRepoListValue.usage;
-                    });
-                }
+
+                    var CheckArray_StorageDataRepoList = Array.isArray(StorageDataRepoList);
+                    if (CheckArray_StorageDataRepoList === true) {
+                        if (StorageDataRepoList !== undefined) {
+                            StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
+                                if (StorageDataRepoListValue.repositoryId === item.id)
+                                    item.storage_metrics = StorageDataRepoListValue.metrics;
+                                item.storage_usage = StorageDataRepoListValue.usage;
+                            });
+                        }
+                    } else {
+                        item.storage_metrics = StorageDataRepoList.metrics;
+                        item.storage_usage = StorageDataRepoList.usage;
+                    }
                     output.push(item);
                 }
                 return output;
@@ -106,6 +113,69 @@ module.exports = {
             // error.message = error.reason.response.body.message;
             error.message = error;
             throw (error)
+        }
+    },
+    _GetCopyRepositores: async function () {
+        const lv_JWToken = await this._fetchJwtToken();
+        try {
+            let ConDMS = await cds.connect.to('BTP_DMS_Dest');
+            var JToken = 'Bearer ' + lv_JWToken;
+            const Resp = await ConDMS.send('GET', '/rest/v2/repositories', '', { 'Authorization': JToken });
+            const StorageData = await ConDMS.send('GET', '/rest/v2/usage/storage', '', { 'Authorization': JToken });
+            if (StorageData.usageListOfTenants[0].hasOwnProperty('perTenantStorageUsageList')) {
+                var StorageDataRepoList = StorageData.usageListOfTenants[0].perTenantStorageUsageList.storageUsagePerRepository;
+            }
+            var output = [];
+            var MainFolderlist = Resp.repoAndConnectionInfos;
+            if (MainFolderlist) {
+                var CheckArray = Array.isArray(MainFolderlist);
+                if (CheckArray === true) {
+                    MainFolderlist.forEach(function (MainFolderlistvalue) {
+                        var item = {};
+                        item.externalId = MainFolderlistvalue.repository.externalId;
+                        item.id = MainFolderlistvalue.repository.id;
+                        item.description = MainFolderlistvalue.repository.description;
+                        item.repositorySubType = MainFolderlistvalue.repository.repositorySubType;
+                        item.repositoryType = MainFolderlistvalue.repository.repositoryType;
+                        item.cmisRepositoryId = MainFolderlistvalue.repository.cmisRepositoryId;
+                        item.createdTime = MainFolderlistvalue.repository.createdTime;
+                        if (StorageDataRepoList !== undefined) {
+                            StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
+                                if (StorageDataRepoListValue.repositoryId === item.id)
+                                    item.storage_metrics = StorageDataRepoListValue.metrics;
+                                item.storage_usage = StorageDataRepoListValue.usage;
+                            });
+                        }
+                        output.push(item);
+                    });
+                } else {
+                    var item = {};
+                    item.externalId = MainFolderlist.repository.externalId;
+                    item.id = MainFolderlist.repository.id;
+                    item.description = MainFolderlist.repository.description;
+                    item.repositorySubType = MainFolderlist.repository.repositorySubType;
+                    item.repositoryType = MainFolderlist.repository.repositoryType;
+                    item.cmisRepositoryId = MainFolderlist.repository.cmisRepositoryId;
+                    item.createdTime = MainFolderlist.repository.createdTime;
+                    var StorageDataRepoList1 = [];
+                    StorageDataRepoList1.push(StorageDataRepoList)
+                    if (StorageDataRepoList1 !== undefined) {
+                        StorageDataRepoList1.forEach(function (StorageDataRepoListValue) {
+                            if (StorageDataRepoListValue.repositoryId === item.id)
+                                item.storage_metrics = StorageDataRepoListValue.metrics;
+                            item.storage_usage = StorageDataRepoListValue.usage;
+                        });
+                    }
+                    output.push(item);
+                }
+                return output;
+            } else {
+                return "No Data Found!";
+            }
+        } catch (error) {
+            // error.message = error.reason.response.body.message;
+            error.message = error;
+            // throw (error)   
         }
     },
     _DeleteRepositore: async function (in_repo_id) {
@@ -144,7 +214,7 @@ module.exports = {
             const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
 
 
-            const Resp = await ConDMS.send("POST", path, data, headers);    
+            const Resp = await ConDMS.send("POST", path, data, headers);
             return Resp;
 
         } catch (error) {
@@ -276,7 +346,7 @@ module.exports = {
             restxt.name = Resp.properties["cmis:name"].value;
             restxt.message = 'Object name changed Successfully';
             restxt.status = 200;
-            return restxt;   
+            return restxt;
         } catch (error) {
             var restxt = {};
             restxt.status = error.reason.response.status;
@@ -290,7 +360,7 @@ module.exports = {
         var path = 'browser/' + RepoID + '/root';
         var JToken = 'Bearer ' + lv_JWToken;
         try {
-            const data =      
+            const data =
                 `objectId=${ObjectId}` +
                 `&cmisaction=move` +
                 `&sourceFolderId=${sourceFolderId}` +
@@ -309,7 +379,7 @@ module.exports = {
             return restxt;
         }
     },
-    _DeleteFile: async function (ObjectId, RepoID) {   
+    _DeleteFile: async function (ObjectId, RepoID) {
         try {
             const lv_JWToken = await this._fetchJwtToken();
             let ConDMS = await cds.connect.to('BTP_DMS_Dest');
