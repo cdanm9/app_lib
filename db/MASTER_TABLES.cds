@@ -1464,3 +1464,38 @@ key     SUPPL_TYPE: String(50)  @title: 'SUPPL_TYPE: SUPPL_TYPE' ;
 key     SUPPL_TYPE_DESC: String(50)  @title: 'SUPPL_TYPE_DESC: SUPPL_TYPE_DESC' ; 
         REQUEST_NO: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ;    
 }
+
+// @cds.persistence.exists 
+// @cds.persistence.calcview 
+// Entity VIEW_LGC_SUPPL {
+//         REQUEST_NO: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ; 
+// key     STATUS: Integer  @title: 'STATUS: STATUS' ; 
+// key     VENDOR_CODE: String(50)  @title: 'VENDOR_CODE: VENDOR_CODE' ; 
+// key     VEN_DESC: String(50)  @title: 'VEN_DESC: VEN_DESC' ; 
+// }
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_LG_SUPPL {
+key     VEN_DESC: String(25)  @title: 'VEN_DESC: VEN_DESC' ; 
+key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+        REQ_COUNT: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ; 
+key     VENDOR_CODE: String(50)  @title: 'VENDOR_CODE: VENDOR_CODE' ; 
+        STATUS: Integer  @title: 'STATUS: STATUS' ; 
+}   
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REG_APPR_PND {
+        STATUS_COUNT: Integer64  @title: 'STATUS_COUNT: STATUS_COUNT' ; 
+        CODE: Integer  @title: 'CODE: CODE' ; 
+key     PENDING_PM: String(25)  @title: 'PENDING_PM: PENDING_PM' ; 
+     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity VIEW_REG_APPROVE_PM {   
+        REQUEST_NO: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ; 
+key     PM_PENDING: String(25)  @title: 'PM_PENDING: PM_PENDING' ; 
+}

@@ -114,70 +114,7 @@ module.exports = {
             error.message = error;
             throw (error)
         }
-    },
-    _GetCopyRepositores: async function () {
-        const lv_JWToken = await this._fetchJwtToken();
-        try {
-            let ConDMS = await cds.connect.to('BTP_DMS_Dest');
-            var JToken = 'Bearer ' + lv_JWToken;
-            const Resp = await ConDMS.send('GET', '/rest/v2/repositories', '', { 'Authorization': JToken });
-            const StorageData = await ConDMS.send('GET', '/rest/v2/usage/storage', '', { 'Authorization': JToken });
-            if (StorageData.usageListOfTenants[0].hasOwnProperty('perTenantStorageUsageList')) {
-                var StorageDataRepoList = StorageData.usageListOfTenants[0].perTenantStorageUsageList.storageUsagePerRepository;
-            }
-            var output = [];
-            var MainFolderlist = Resp.repoAndConnectionInfos;
-            if (MainFolderlist) {
-                var CheckArray = Array.isArray(MainFolderlist);
-                if (CheckArray === true) {
-                    MainFolderlist.forEach(function (MainFolderlistvalue) {
-                        var item = {};
-                        item.externalId = MainFolderlistvalue.repository.externalId;
-                        item.id = MainFolderlistvalue.repository.id;
-                        item.description = MainFolderlistvalue.repository.description;
-                        item.repositorySubType = MainFolderlistvalue.repository.repositorySubType;
-                        item.repositoryType = MainFolderlistvalue.repository.repositoryType;
-                        item.cmisRepositoryId = MainFolderlistvalue.repository.cmisRepositoryId;
-                        item.createdTime = MainFolderlistvalue.repository.createdTime;
-                        if (StorageDataRepoList !== undefined) {
-                            StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
-                                if (StorageDataRepoListValue.repositoryId === item.id)
-                                    item.storage_metrics = StorageDataRepoListValue.metrics;
-                                item.storage_usage = StorageDataRepoListValue.usage;
-                            });
-                        }
-                        output.push(item);
-                    });
-                } else {
-                    var item = {};
-                    item.externalId = MainFolderlist.repository.externalId;
-                    item.id = MainFolderlist.repository.id;
-                    item.description = MainFolderlist.repository.description;
-                    item.repositorySubType = MainFolderlist.repository.repositorySubType;
-                    item.repositoryType = MainFolderlist.repository.repositoryType;
-                    item.cmisRepositoryId = MainFolderlist.repository.cmisRepositoryId;
-                    item.createdTime = MainFolderlist.repository.createdTime;
-                    var StorageDataRepoList1 = [];
-                    StorageDataRepoList1.push(StorageDataRepoList)
-                    if (StorageDataRepoList1 !== undefined) {
-                        StorageDataRepoList1.forEach(function (StorageDataRepoListValue) {
-                            if (StorageDataRepoListValue.repositoryId === item.id)
-                                item.storage_metrics = StorageDataRepoListValue.metrics;
-                            item.storage_usage = StorageDataRepoListValue.usage;
-                        });
-                    }
-                    output.push(item);
-                }
-                return output;
-            } else {
-                return "No Data Found!";
-            }
-        } catch (error) {
-            // error.message = error.reason.response.body.message;
-            error.message = error;
-            // throw (error)   
-        }
-    },
+    },  
     _DeleteRepositore: async function (in_repo_id) {
         try {
             if (in_repo_id) {

@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="REQUEST_TURN_AROUND_TIME" applyPrivilegeType="ANALYTIC_PRIVILEGE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" defaultClient="$$client$$" outputViewType="Projection" calculationScenarioType="TREE_BASED" enforceSqlExecution="false">
+<descriptions defaultDescription="RequestTurnAoundTime"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS">
+    <resourceUri>VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS</resourceUri>
+  </DataSource>
+  <DataSource id="Form_Submission$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+    <resourceUri>Form_Submission$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$</resourceUri>
+  </DataSource>
+  <DataSource id="Invite_Creation$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+    <resourceUri>Invite_Creation$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$</resourceUri>
+  </DataSource>
+  <DataSource id="iVen_Approval$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+    <resourceUri>iVen_Approval$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$</resourceUri>
+  </DataSource>
+  <DataSource id="MDG_Approval$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+    <resourceUri>MDG_Approval$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:AggregationView" id="Invite_Approval" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_TIMESTAMP" aggregationType="max"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_NO" aggregationType="max"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_TIMESTAMP" source="CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_NO" source="EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_CODE" source="EVENT_CODE"/>
+    </input>
+    <filter>&quot;REQUEST_APPROVAL_EVENT_CODE&quot; = 2 OR &quot;REQUEST_APPROVAL_EVENT_CODE&quot; = 16</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="Form_Submission" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="FORM_SUBMISSION_TIMESTAMP" aggregationType="max"/>
+      <viewAttribute id="FORM_SUBMISSION_EVENT_NO" aggregationType="max"/>
+      <viewAttribute id="FORM_SUBMISSION_EVENT_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="Form_Submission$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_TIMESTAMP" source="CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_EVENT_NO" source="EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_EVENT_CODE" source="EVENT_CODE"/>
+    </input>
+    <filter>&quot;FORM_SUBMISSION_EVENT_CODE&quot; = 4</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="Invite_Creation" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="REQUEST_CREATED_TIMESTAMP" aggregationType="max"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_NO" aggregationType="max"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="Invite_Creation$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_TIMESTAMP" source="CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_NO" source="EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_CODE" source="EVENT_CODE"/>
+    </input>
+    <filter>&quot;REQUEST_CREATED_EVENT_CODE&quot; = 1 OR &quot;REQUEST_CREATED_EVENT_CODE&quot; = 12
+OR &quot;REQUEST_CREATED_EVENT_CODE&quot; = 16
+</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="iVen_Approval" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="IVEN_APPROVAL_TIMESTAMP" aggregationType="max"/>
+      <viewAttribute id="IVEN_APPROVAL_EVENT_NO" aggregationType="max"/>
+      <viewAttribute id="IVEN_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="IVEN_APPROVER_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="iVen_Approval$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVAL_TIMESTAMP" source="CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVAL_EVENT_NO" source="EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVAL_EVENT_CODE" source="EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVER_ID" source="USER_ID"/>
+    </input>
+    <filter>&quot;IVEN_APPROVAL_EVENT_CODE&quot; = 9</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="MDG_Approval" filterExpressionLanguage="COLUMN_ENGINE">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="MDG_APPROVAL_TIMESTAMP" aggregationType="max"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_NO" aggregationType="max"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_CODE"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="MDG_Approval$$$$VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_TIMESTAMP" source="CREATED_ON"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_NO" source="EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_CODE" source="EVENT_CODE"/>
+    </input>
+    <filter>&quot;MDG_APPROVAL_EVENT_CODE&quot; = 18 or &quot;MDG_APPROVAL_EVENT_CODE&quot; = 19</filter>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_1" joinType="rightOuter">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="REQUEST_CREATED_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_NO"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_CODE"/>
+      <viewAttribute hidden="true" id="JOIN$REG_NO$REG_NO"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Invite_Approval">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REG_NO" source="REG_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_TIMESTAMP" source="REQUEST_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_NO" source="REQUEST_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_CODE" source="REQUEST_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <input node="Invite_Creation">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_TIMESTAMP" source="REQUEST_CREATED_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_NO" source="REQUEST_CREATED_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_CODE" source="REQUEST_CREATED_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <joinAttribute name="JOIN$REG_NO$REG_NO"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_2" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="REQUEST_CREATED_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_NO"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_CODE"/>
+      <viewAttribute id="MDG_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_CODE"/>
+      <viewAttribute hidden="true" id="JOIN$REG_NO$REG_NO"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Join_1">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REG_NO" source="REG_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_TIMESTAMP" source="REQUEST_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_NO" source="REQUEST_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_CODE" source="REQUEST_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_TIMESTAMP" source="REQUEST_CREATED_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_NO" source="REQUEST_CREATED_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_CODE" source="REQUEST_CREATED_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <input node="MDG_Approval">
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_TIMESTAMP" source="MDG_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_NO" source="MDG_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_CODE" source="MDG_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <joinAttribute name="JOIN$REG_NO$REG_NO"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_3" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="REQUEST_CREATED_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_NO"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_CODE"/>
+      <viewAttribute id="MDG_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="FORM_SUBMISSION_TIMESTAMP"/>
+      <viewAttribute id="FORM_SUBMISSION_EVENT_NO"/>
+      <viewAttribute id="FORM_SUBMISSION_EVENT_CODE"/>
+      <viewAttribute hidden="true" id="JOIN$REG_NO$REG_NO"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="Join_2">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REG_NO" source="REG_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_TIMESTAMP" source="REQUEST_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_NO" source="REQUEST_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_CODE" source="REQUEST_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_TIMESTAMP" source="REQUEST_CREATED_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_NO" source="REQUEST_CREATED_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_CODE" source="REQUEST_CREATED_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_TIMESTAMP" source="MDG_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_NO" source="MDG_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_CODE" source="MDG_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <input node="Form_Submission">
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_TIMESTAMP" source="FORM_SUBMISSION_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_EVENT_NO" source="FORM_SUBMISSION_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_EVENT_CODE" source="FORM_SUBMISSION_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <joinAttribute name="JOIN$REG_NO$REG_NO"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="Join_4" joinType="leftOuter">
+    <viewAttributes>
+      <viewAttribute id="REG_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="REQUEST_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="REQUEST_CREATED_TIMESTAMP"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_NO"/>
+      <viewAttribute id="REQUEST_CREATED_EVENT_CODE"/>
+      <viewAttribute id="MDG_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="MDG_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="FORM_SUBMISSION_TIMESTAMP"/>
+      <viewAttribute id="FORM_SUBMISSION_EVENT_NO"/>
+      <viewAttribute id="FORM_SUBMISSION_EVENT_CODE"/>
+      <viewAttribute id="IVEN_APPROVAL_TIMESTAMP"/>
+      <viewAttribute id="IVEN_APPROVAL_EVENT_NO"/>
+      <viewAttribute id="IVEN_APPROVAL_EVENT_CODE"/>
+      <viewAttribute id="IVEN_APPROVER_ID"/>
+      <viewAttribute hidden="true" id="JOIN$REG_NO$REG_NO"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="TAT_REQUEST_APPR" datatype="INTEGER" expressionLanguage="SQL">
+        <formula>seconds_Between(&quot;REQUEST_CREATED_TIMESTAMP&quot;,&quot;REQUEST_APPROVAL_TIMESTAMP&quot;)</formula>
+      </calculatedViewAttribute>
+      <calculatedViewAttribute id="TAT_REGFORM_SUBM" datatype="INTEGER" expressionLanguage="SQL">
+        <formula>seconds_Between(&quot;REQUEST_APPROVAL_TIMESTAMP&quot;,&quot;FORM_SUBMISSION_TIMESTAMP&quot;)</formula>
+      </calculatedViewAttribute>
+      <calculatedViewAttribute id="TAT_FINAL_IVEN_APPR" datatype="INTEGER" expressionLanguage="SQL">
+        <formula>seconds_Between(&quot;FORM_SUBMISSION_TIMESTAMP&quot;,&quot;IVEN_APPROVAL_TIMESTAMP&quot;)</formula>
+      </calculatedViewAttribute>
+      <calculatedViewAttribute id="TAT_FINAL_MDG_APPR" datatype="INTEGER" expressionLanguage="SQL">
+        <formula>seconds_Between(&quot;IVEN_APPROVAL_TIMESTAMP&quot;,&quot;MDG_APPROVAL_TIMESTAMP&quot;)</formula>
+      </calculatedViewAttribute>
+    
+      <calculatedViewAttribute id="TIME_TO_APPROVE_ON_IVEN" datatype="INTEGER" expressionLanguage="SQL">
+    
+        <formula>seconds_Between(&quot;REQUEST_CREATED_TIMESTAMP&quot;,&quot;IVEN_APPROVAL_TIMESTAMP&quot;)</formula>
+    
+      </calculatedViewAttribute>
+      <calculatedViewAttribute id="SUM_OF_TIME_APPROVAL_ON_IVEN" datatype="INTEGER" expressionLanguage="COLUMN_ENGINE">
+        <formula>&quot;TAT_FINAL_IVEN_APPR&quot; + &quot;TAT_REGFORM_SUBM&quot; + &quot;TAT_REQUEST_APPR&quot;</formula>
+      </calculatedViewAttribute>
+    
+      <calculatedViewAttribute id="TOTAL_APPROVAL_TIME" datatype="INTEGER" expressionLanguage="SQL">
+    
+        <formula>seconds_Between(&quot;REQUEST_CREATED_TIMESTAMP&quot;,&quot;MDG_APPROVAL_TIMESTAMP&quot;)</formula>
+    
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="Join_3">
+      <mapping xsi:type="Calculation:AttributeMapping" target="REG_NO" source="REG_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_TIMESTAMP" source="REQUEST_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_NO" source="REQUEST_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_APPROVAL_EVENT_CODE" source="REQUEST_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_TIMESTAMP" source="REQUEST_CREATED_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_NO" source="REQUEST_CREATED_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_CREATED_EVENT_CODE" source="REQUEST_CREATED_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_TIMESTAMP" source="MDG_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_NO" source="MDG_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="MDG_APPROVAL_EVENT_CODE" source="MDG_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_TIMESTAMP" source="FORM_SUBMISSION_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_EVENT_NO" source="FORM_SUBMISSION_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="FORM_SUBMISSION_EVENT_CODE" source="FORM_SUBMISSION_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <input node="iVen_Approval">
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVAL_TIMESTAMP" source="IVEN_APPROVAL_TIMESTAMP"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVAL_EVENT_NO" source="IVEN_APPROVAL_EVENT_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVAL_EVENT_CODE" source="IVEN_APPROVAL_EVENT_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="IVEN_APPROVER_ID" source="IVEN_APPROVER_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$REG_NO$REG_NO" source="REG_NO"/>
+    </input>
+    <joinAttribute name="JOIN$REG_NO$REG_NO"/>
+  </calculationView>
+</calculationViews>
+<logicalModel id="Join_4">
+  <attributes>
+    <attribute id="REG_NO" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REG_NO"/>
+      <keyMapping columnObjectName="Join_4" columnName="REG_NO"/>
+    </attribute>
+    <attribute id="REQUEST_APPROVAL_TIMESTAMP" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_APPROVAL_TIMESTAMP"/>
+      <keyMapping columnObjectName="Join_4" columnName="REQUEST_APPROVAL_TIMESTAMP"/>
+    </attribute>
+    <attribute id="REQUEST_APPROVAL_EVENT_NO" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_APPROVAL_EVENT_NO"/>
+      <keyMapping columnObjectName="Join_4" columnName="REQUEST_APPROVAL_EVENT_NO"/>
+    </attribute>
+    <attribute id="REQUEST_APPROVAL_EVENT_CODE" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_APPROVAL_EVENT_CODE"/>
+      <keyMapping columnObjectName="Join_4" columnName="REQUEST_APPROVAL_EVENT_CODE"/>
+    </attribute>
+    <attribute id="REQUEST_CREATED_TIMESTAMP" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_CREATED_TIMESTAMP"/>
+      <keyMapping columnObjectName="Join_4" columnName="REQUEST_CREATED_TIMESTAMP"/>
+    </attribute>
+    <attribute id="REQUEST_CREATED_EVENT_NO" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_CREATED_EVENT_NO"/>
+      <keyMapping columnObjectName="Join_4" columnName="REQUEST_CREATED_EVENT_NO"/>
+    </attribute>
+    <attribute id="REQUEST_CREATED_EVENT_CODE" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="REQUEST_CREATED_EVENT_CODE"/>
+      <keyMapping columnObjectName="Join_4" columnName="REQUEST_CREATED_EVENT_CODE"/>
+    </attribute>
+    <attribute id="MDG_APPROVAL_TIMESTAMP" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MDG_APPROVAL_TIMESTAMP"/>
+      <keyMapping columnObjectName="Join_4" columnName="MDG_APPROVAL_TIMESTAMP"/>
+    </attribute>
+    <attribute id="MDG_APPROVAL_EVENT_NO" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MDG_APPROVAL_EVENT_NO"/>
+      <keyMapping columnObjectName="Join_4" columnName="MDG_APPROVAL_EVENT_NO"/>
+    </attribute>
+    <attribute id="MDG_APPROVAL_EVENT_CODE" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="MDG_APPROVAL_EVENT_CODE"/>
+      <keyMapping columnObjectName="Join_4" columnName="MDG_APPROVAL_EVENT_CODE"/>
+    </attribute>
+    <attribute id="FORM_SUBMISSION_TIMESTAMP" order="11" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FORM_SUBMISSION_TIMESTAMP"/>
+      <keyMapping columnObjectName="Join_4" columnName="FORM_SUBMISSION_TIMESTAMP"/>
+    </attribute>
+    <attribute id="FORM_SUBMISSION_EVENT_NO" order="12" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FORM_SUBMISSION_EVENT_NO"/>
+      <keyMapping columnObjectName="Join_4" columnName="FORM_SUBMISSION_EVENT_NO"/>
+    </attribute>
+    <attribute id="FORM_SUBMISSION_EVENT_CODE" order="13" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="FORM_SUBMISSION_EVENT_CODE"/>
+      <keyMapping columnObjectName="Join_4" columnName="FORM_SUBMISSION_EVENT_CODE"/>
+    </attribute>
+    <attribute id="IVEN_APPROVAL_TIMESTAMP" order="14" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IVEN_APPROVAL_TIMESTAMP"/>
+      <keyMapping columnObjectName="Join_4" columnName="IVEN_APPROVAL_TIMESTAMP"/>
+    </attribute>
+    <attribute id="IVEN_APPROVAL_EVENT_NO" order="15" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IVEN_APPROVAL_EVENT_NO"/>
+      <keyMapping columnObjectName="Join_4" columnName="IVEN_APPROVAL_EVENT_NO"/>
+    </attribute>
+    <attribute id="IVEN_APPROVAL_EVENT_CODE" order="16" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IVEN_APPROVAL_EVENT_CODE"/>
+      <keyMapping columnObjectName="Join_4" columnName="IVEN_APPROVAL_EVENT_CODE"/>
+    </attribute>
+    <attribute id="IVEN_APPROVER_ID" order="17" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="IVEN_APPROVER_ID"/>
+      <keyMapping columnObjectName="Join_4" columnName="IVEN_APPROVER_ID"/>
+    </attribute>
+    <attribute id="TAT_REQUEST_APPR" order="18" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TAT_REQUEST_APPR"/>
+      <keyMapping columnObjectName="Join_4" columnName="TAT_REQUEST_APPR"/>
+    </attribute>
+    <attribute id="TAT_REGFORM_SUBM" order="19" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TAT_REGFORM_SUBM"/>
+      <keyMapping columnObjectName="Join_4" columnName="TAT_REGFORM_SUBM"/>
+    </attribute>
+    <attribute id="TAT_FINAL_IVEN_APPR" order="20" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TAT_FINAL_IVEN_APPR"/>
+      <keyMapping columnObjectName="Join_4" columnName="TAT_FINAL_IVEN_APPR"/>
+    </attribute>
+    <attribute id="TAT_FINAL_MDG_APPR" order="21" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TAT_FINAL_MDG_APPR"/>
+      <keyMapping columnObjectName="Join_4" columnName="TAT_FINAL_MDG_APPR"/>
+    </attribute>
+  
+    <attribute id="TIME_TO_APPROVE_ON_IVEN" order="22" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TIME_TO_APPROVE_ON_IVEN"/>
+  
+      <keyMapping columnObjectName="Join_4" columnName="TIME_TO_APPROVE_ON_IVEN"/>
+  
+    </attribute>
+    <attribute id="SUM_OF_TIME_APPROVAL_ON_IVEN" order="23" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="SUM_OF_TIME_APPROVAL_ON_IVEN"/>
+      <keyMapping columnObjectName="Join_4" columnName="SUM_OF_TIME_APPROVAL_ON_IVEN"/>
+    </attribute>
+  
+    <attribute id="TOTAL_APPROVAL_TIME" order="24" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="TOTAL_APPROVAL_TIME"/>
+  
+      <keyMapping columnObjectName="Join_4" columnName="TOTAL_APPROVAL_TIME"/>
+  
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="534" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="Invite_Approval" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="63" y="852"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Form_Submission" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="534" y="536"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Invite_Creation" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="232" y="852"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape expanded="true" modelObjectName="iVen_Approval" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="592" y="376"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="MDG_Approval" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="334" y="701"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="118" y="696"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="Invite_Approval" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="Invite_Creation" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_2" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="222" y="536"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="Join_1" modelObjectNameSpace="Join_2" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="MDG_Approval" modelObjectNameSpace="Join_2" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_3" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="372" y="376"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="Join_2" modelObjectNameSpace="Join_3" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="Form_Submission" modelObjectNameSpace="Join_3" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape expanded="true" modelObjectName="Join_4" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="534" y="217"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  
+    <shape modelObjectName="Join_3" modelObjectNameSpace="Join_4" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="iVen_Approval" modelObjectNameSpace="Join_4" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

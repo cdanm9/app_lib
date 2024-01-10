@@ -249,5 +249,21 @@ annotate dashboardService.SupplierTypeCount with {
   REQUEST_NO @(title                   : 'Total Requests');                
 } 
 
+annotate dashboardService.LegacySuppliers with{
+  @Analytics.Dimension      : true
+  DESCRIPTION @(title  : 'Status');   
+  @Analytics.Dimension      : true
+  VEN_DESC @(title  : 'Vendor');
+  @Analytics.Measure        : true   
+  @Core.Computed
+  REQ_COUNT @(title                   : 'Total Requests');     
+}
+
+annotate dashboardService.PendingPMRegisterCount with{
+  @Analytics.Dimension      : true
+  PM_PENDING @(title  : 'Pending By PM');            
+  @Analytics.Measure        : true     
+  REQUEST_NO @(title                   : 'Total Requests');     
+}
 
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="VIEW_REG_APPR_PEND" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="true" application="BAS">
+<descriptions defaultDescription="VIEW_REG_APPR_PEND"/>
+<localVariables/>
+<variableMappings/>
+<dataSources>
+  <DataSource id="VIEW_REG_PM_APPR">
+    <resourceUri>VIEW_REG_PM_APPR</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:ProjectionView" id="Projection_1">
+    <viewAttributes>
+      <viewAttribute id="CODE"/>
+      <viewAttribute id="STATUS_COUNT"/>
+      <viewAttribute id="DESCRIPTION"/>
+    </viewAttributes>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="PEND_PM" datatype="NVARCHAR" length="25" expressionLanguage="COLUMN_ENGINE">
+        <formula>if(&quot;CODE&quot;==6 OR &quot;CODE&quot;==9,'Pending By PM','N.A')</formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
+    <input node="VIEW_REG_PM_APPR"/>
+  </calculationView>
+</calculationViews>
+
+<logicalModel id="Projection_1">
+  <attributes>
+    <attribute id="PEND_PM" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PEND_PM"/>
+      <keyMapping columnObjectName="Projection_1" columnName="PEND_PM"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures>
+    <measure id="STATUS_COUNT" order="1" aggregationType="sum" measureType="simple">
+      <descriptions defaultDescription="STATUS_COUNT"/>
+      <measureMapping columnObjectName="Projection_1" columnName="STATUS_COUNT"/>
+      <exceptionAggregationMetadata/>
+    </measure>
+  </baseMeasures>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+  <localDimensions/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="40" y="85"/>
+    </shape>
+    
+  
+    <shape expanded="true" modelObjectName="Projection_1" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="100" y="208"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>

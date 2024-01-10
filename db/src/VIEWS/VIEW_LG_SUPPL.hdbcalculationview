@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="VIEW_REG_PM_APPR" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="true" application="BAS">
-<descriptions defaultDescription="VIEW_REG_PM_APPR"/>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="VIEW_LG_SUPPL" applyPrivilegeType="NONE" dataCategory="CUBE" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Aggregation" cacheInvalidationPeriod="NONE" enforceSqlExecution="true" application="BAS">
+<descriptions defaultDescription="VIEW_LG_SUPPL"/>
 <localVariables/>
 <variableMappings/>
 <dataSources>
@@ -13,80 +13,79 @@
 </dataSources>
 <snapshotProcedures/>
 <calculationViews>
-  <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="CN_N" joinType="inner">
+  <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="CN_N" joinType="inner" filterExpressionLanguage="COLUMN_ENGINE">
     <viewAttributes>
-      <viewAttribute id="CODE" aggregationType="sum"/>
       <viewAttribute id="DESCRIPTION"/>
       <viewAttribute id="REQUEST_NO" aggregationType="sum"/>
+      <viewAttribute id="VENDOR_CODE"/>
+      <viewAttribute id="STATUS" aggregationType="sum"/>
       <viewAttribute hidden="true" id="JOIN$CODE$STATUS"/>
     </viewAttributes>
     <calculatedViewAttributes/>
     <input node="VENDOR_PORTAL_MASTER_STATUS">
-      <mapping xsi:type="Calculation:AttributeMapping" target="CODE" source="CODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="DESCRIPTION" source="DESCRIPTION"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODE$STATUS" source="CODE"/>
     </input>
     <input node="VENDOR_PORTAL_REQUEST_INFO">
       <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_NO" source="REQUEST_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="VENDOR_CODE" source="VENDOR_CODE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODE$STATUS" source="STATUS"/>
     </input>
+    <filter>string(&quot;VENDOR_CODE&quot;)='LG'   </filter>
     <joinAttribute name="JOIN$CODE$STATUS"/>
   </calculationView>
 </calculationViews>
 
-<logicalModel id="Join_1" filterExpressionLanguage="COLUMN_ENGINE">
+<logicalModel id="Join_1">
   <attributes>
     <attribute id="DESCRIPTION" order="2" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="DESCRIPTION"/>
       <keyMapping columnObjectName="Join_1" columnName="DESCRIPTION"/>
     </attribute>
+    <attribute id="VENDOR_CODE" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="VENDOR_CODE"/>
+      <keyMapping columnObjectName="Join_1" columnName="VENDOR_CODE"/>
+    </attribute>
   </attributes>
-  <calculatedAttributes/>
+  <calculatedAttributes>
+    <calculatedAttribute id="VEN_DESC" order="1" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
+      <keyCalculation datatype="NVARCHAR" expressionLanguage="COLUMN_ENGINE" length="25">
+        <formula>if(&quot;VENDOR_CODE&quot;=='LG','Legacy Supplier','Normal Request')</formula>
+      </keyCalculation>
+    </calculatedAttribute>
+  </calculatedAttributes>
   <baseMeasures>
-    <measure id="CODE" order="1" aggregationType="max" measureType="simple">
-      <descriptions defaultDescription="CODE"/>
-      <measureMapping columnObjectName="Join_1" columnName="CODE"/>
+    <measure id="REQ_COUNT" order="3" aggregationType="count" measureType="simple">
+      <descriptions defaultDescription="REQUEST_NO"/>
+      <measureMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
       <exceptionAggregationMetadata/>
     </measure>
-    <measure id="STATUS_COUNT" order="3" aggregationType="count" measureType="simple">
-      <descriptions defaultDescription="STATUS_COUNT"/>
-      <measureMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
+    <measure id="STATUS" order="5" aggregationType="max" measureType="simple">
+      <descriptions defaultDescription="STATUS"/>
+      <measureMapping columnObjectName="Join_1" columnName="STATUS"/>
       <exceptionAggregationMetadata/>
     </measure>
   </baseMeasures>
   <calculatedMeasures/>
   <restrictedMeasures/>
-
-  <sortAttributes>
-
-    <sortAttribute id="CODE" direction="ASC"/>
-
-  </sortAttributes>
   <localDimensions/>
-
-
-  <filter>int(&quot;CODE&quot;)=6 or int(&quot;CODE&quot;)=9</filter>
-
 </logicalModel>
 <layout>
   <shapes>
     <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
       <upperLeftCorner x="40" y="85"/>
-    
-      <rectangleSize width="160"/>
     </shape>
-    
-  
     <shape expanded="true" modelObjectName="Join_1" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="101" y="201"/>
+      <upperLeftCorner x="100" y="201"/>
       <rectangleSize height="30" width="160"/>
     </shape>
     <shape modelObjectName="VENDOR_PORTAL_MASTER_STATUS" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
-      <upperLeftCorner x="2" y="24"/>
+      <upperLeftCorner x="620" y="30"/>
       <rectangleSize width="280"/>
     </shape>
     <shape modelObjectName="VENDOR_PORTAL_REQUEST_INFO" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">
-      <upperLeftCorner x="309" y="54"/>
+      <upperLeftCorner x="920" y="30"/>
       <rectangleSize width="270"/>
     </shape>
   </shapes>
