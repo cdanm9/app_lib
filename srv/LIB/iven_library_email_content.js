@@ -55,7 +55,7 @@ module.exports = {
 		
 		var greetingsTo;
 		var linkcontent;
-
+		var sRows = "";
 		if (sAppType === "REQUEST") {
 			var supEmailContent = {};
 			if (sAction === "CREATE") {
@@ -259,8 +259,8 @@ module.exports = {
 				var sRequestTypeText = "";
 				if (oEmailData.ReqType === 5) {
 					sRequestTypeText = "profile update ";
-					sProcessTypeText = '';
-					sActionTypeText = '';
+					sProcessTypeText = '';   
+					// sActionTypeText = '';
 					greetingsTo = 'Dear Approver,'
 					linkcontent = "Please click " + "<a href=" + sLink_Portal_LoginAccess + sLink_Registraion_Approval + parseInt(oEmailData.ReqNo, 10) +
 						">here</a>"
@@ -326,7 +326,7 @@ module.exports = {
 					"</span> has been rejected.<br>" + "<br>"
 				if (oEmailData.ReqType === 5) {
 					sRequestTypeText = "updated ";
-					req = 'Update';
+					req = 'Update ';
 					sSupplierName = " for <span style=\"text-transform:uppercase\">" +
 						oEmailData.SupplierName +
 						"</span> has been rejected.<br>" + "<br>"
@@ -392,7 +392,7 @@ module.exports = {
 				var sActionTypeText = "approved ";
 				// 			var sActionTypeText = "approved at L" + oEmailData.Approver_Level;
 				if (oEmailData.ReqType === 5) {
-					sRequestTypeText = "update form";
+					sRequestTypeText = " update form";
 					req = 'update ';
 				}
 
@@ -522,7 +522,7 @@ module.exports = {
 
 			} else if (sAction === "MASTER_REJECT") {
 				var sRequestTypeText = "";
-				if (oEmailData.ReqType === 5) {
+				if (oEmailData.ReqType === 5) {      
 					sRequestTypeText = "Updated ";
 				}
 
@@ -818,8 +818,8 @@ module.exports = {
 			oEmailContent.subject = "" + sClientShortName + " Registration form login PIN.";
 
 			oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
-				"Please use the below 6-digit PIN to login to your Vendor registartion form as <span style=\"text-transform:uppercase\">" +
-				oEmailData.SupplierName + "</span> and regsitered email id <span style=\"text-transform:bold\">" + oEmailData.SupplierId +
+				"Please use the below 6-digit PIN to login to your Vendor Registration Form as <span style=\"text-transform:uppercase\">" +
+				oEmailData.SupplierName + "</span> and registered email id <span style=\"text-transform:bold\">" + oEmailData.SupplierId +
 				"</span><br><br>";
 
 			oEmailContent.emailBody += "Security login PIN: <strong>" + oEmailData.sSecurityPin + "</strong><br>" + "<br><br>" +

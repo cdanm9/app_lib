@@ -1,4 +1,7 @@
 using {VENDOR_PORTAL} from '../db/MASTER_TABLES';
+using {
+  VENDOR_PORTAL.REQUEST_INFO
+} from '../db/TRANSACTION_TABLES';
 
 service userMasterService {
 
@@ -7,7 +10,8 @@ service userMasterService {
   entity MasterEntityCode     as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
   entity MasterUserRole       as projection on VENDOR_PORTAL.MASTER_USER_ROLE;
   entity MasterIvenUserEntity as projection on VENDOR_PORTAL.MASTER_USER_ENTITY_CODES;
-
+  entity RequestInfo          as projection on VENDOR_PORTAL.REQUEST_INFO;            
+   
   //CRUD Payload
   type UserMasterPayload {
     ACTION         : String;
@@ -40,6 +44,7 @@ service userMasterService {
     USER_ID: String(50);
   }
 
-//CRUD operation action
-action PostUserMaster(input : UserMasterPayload) returns String;
+//CRUD operation action      
+// action PostUserMaster(input : UserMasterPayload) returns String;
+action PostUserMaster(action: String,userMaster:many MasterIvenUsers,entityData:many MasterIvenUserEntity,userDetails:User_Details)  returns String;
 }  

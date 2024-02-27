@@ -57,7 +57,7 @@ service approvalMatrixService {
               USER_ID   : String(50);
        }
 
-       //CRUD operation action
-       action PostApprovalMatrix(input : approvalMatrixPayload)                                       returns String;
+       //CRUD operation action  
+       action PostApprovalMatrix(action : String,appType:String,approvalMatrixData:many MatrixRequestApproval,userDetails:User_Details) returns String;           
        action PostDynamicApprovalHierarchy(action : String, approvalHierarchy : many MasterApprovalHierarchy,userDetails : User_Details) returns String;
 }

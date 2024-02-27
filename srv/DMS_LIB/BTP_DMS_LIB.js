@@ -43,7 +43,9 @@ module.exports = {
             return output;
         } catch (error) {
             // error.message = error.reason.response.body.message;
-            var err = error.reason.response.body.message;
+            // var err = error.reason.response.body.message;
+            error.reason.response.body.code=200;
+            var err=error.reason.response.body
             return err;
         }
     },
@@ -71,14 +73,20 @@ module.exports = {
                         item.repositoryType = MainFolderlistvalue.repository.repositoryType;
                         item.cmisRepositoryId = MainFolderlistvalue.repository.cmisRepositoryId;
                         item.createdTime = MainFolderlistvalue.repository.createdTime;
-                        if (StorageDataRepoList !== undefined) {
-                            StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
-                                if (StorageDataRepoListValue.repositoryId === item.id)
-                                    item.storage_metrics = StorageDataRepoListValue.metrics;
-                                item.storage_usage = StorageDataRepoListValue.usage;
-                            });
-                        }
-                        output.push(item);
+                        var CheckArray_StorageDataRepoList = Array.isArray(StorageDataRepoList);
+                        if (CheckArray_StorageDataRepoList === true) {
+                            if (StorageDataRepoList !== undefined) {
+                                StorageDataRepoList.forEach(function (StorageDataRepoListValue) {
+                                    if (StorageDataRepoListValue.repositoryId === item.id)
+                                        item.storage_metrics = StorageDataRepoListValue.metrics;
+                                    item.storage_usage = StorageDataRepoListValue.usage;
+                                });
+                            }    
+                        } else {
+                            item.storage_metrics = StorageDataRepoList.metrics;
+                            item.storage_usage = StorageDataRepoList.usage;
+                        }                  
+                        output.push(item);   
                     });
                 } else {
                     var item = {};
@@ -339,5 +347,21 @@ module.exports = {
             }
             return restxt;
         }
-    }
+    },
+    _DownloadFile: async function (ObjectID, RepoID) {
+        const lv_JWToken = await this._fetchJwtToken();
+        try {
+          let ConDMS = await cds.connect.to('BTP_DMS_Dest');
+          var JToken = 'Bearer ' + lv_JWToken;
+          var path = 'browser/' + RepoID + '/root?objectId='+ ObjectID +'&=attachment';
+          const Resp = await ConDMS.send('GET', path  , '', { 'Authorization': JToken }) ;
+          return Resp; 
+          
+        } catch (error) {
+          var restxt = {};
+          restxt.status = error.reason.response.status;
+          restxt.statusText = error.reason.response.body.message;
+          throw restxt;
+        }
+      }
 }

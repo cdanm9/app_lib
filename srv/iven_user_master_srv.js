@@ -32,30 +32,28 @@ module.exports = cds.service.impl(function () {
       //Changes By Chandan M 21/11/23 End
     try {
       // local variables
-      var oReqData = req.data.input;
-      var oUserDetails=oReqData.USER_DETAILS;
-      var sUserId=oUserDetails.USER_ID || null;
-      var sUserRole=oUserDetails.USER_ROLE || null;
-      var sAction = oReqData.ACTION
-      var aUserData = oReqData.VALUE[0].USERMASTER
-      var aEntityData = oReqData.VALUE[0].ENTITYDATA
-      var bIsDuplicateUser = null
+      // var oReqData = req.data.input;
 
-      if (sAction === "CREATE") {
+      var {action,userMaster,entityData,userDetails}=req.data
+      var sUserId=userDetails.USER_ID || null;
+      var sUserRole=userDetails.USER_ROLE || null;
+      var bIsDuplicateUser = null;          
+         
+      if (action === "CREATE") {
         // Check Duplicate User
-        bIsDuplicateUser = await _checkDuplicateUser(aUserData);
+        bIsDuplicateUser = await _checkDuplicateUser(userMaster);
       }
 
-      if (!bIsDuplicateUser || (sAction === "UPDATE" || sAction === "DELETE")) {
+      if (!bIsDuplicateUser || (action === "UPDATE" || action === "DELETE")) {
         
 
         // load procedure
         const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MASTER_IVEN_USERS')
-        console.log(oReqData)
+        // console.log(oReqData)
 
         // excute procedure
         const result = await dbConn.callProcedurePromisified(loadProc,
-          [sAction, aUserData, aEntityData]);
+          [action, userMaster, entityData]);
 
         return result;
       }   

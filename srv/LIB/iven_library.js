@@ -344,9 +344,9 @@ module.exports = {
            
 			// var execProcedure = conn.loadProcedure("VENDOR_PORTAL", "VENDOR_PORTAL.Procedure::ERROR_LOG");
 			var errorLogStructure = await this.errorLogPayload(REQUEST_NO, null, Result.OUT_ERROR_CODE, Result.OUT_ERROR_MESSAGE, null, USER_ID,USER_ROLE,APP_NAME, TYPE);
-			// execProcedure(errorLogStructure);
+			// execProcedure(errorLogStructure);   
 			sResponse = await dbConn.callProcedurePromisified(loadProc, errorLogStructure);
-
+    
 		}
 	},
 	createLogID: function () {   
@@ -374,12 +374,13 @@ module.exports = {
 		const algorithm = 'aes-256-cbc'; //Using AES encryption
 		const key = crypto.randomBytes(32);
 		const iv = crypto.randomBytes(16);
-   let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
-   let encrypted = cipher.update(sSecurityPin);
-   encrypted = Buffer.concat([encrypted, cipher.final()]);
-   return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
-		}
+		let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+		let encrypted = cipher.update(sSecurityPin);
+		encrypted = Buffer.concat([encrypted, cipher.final()]);   
+		return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };       
+			}
 		catch(error){throw error;}
+		
 	}
 
 

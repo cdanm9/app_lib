@@ -230,7 +230,7 @@ module.exports = cds.service.impl(function () {
 				"Message": sResponse.outputScalar.OUT_SUCCESS !== null ? "Internal Vendor request created successfully" : "Internal Vendor request creation failed"
 			};
 			if (sResponse.outputScalar.OUT_SUCCESS !== null) {
-				var oEmailData = {
+				var oEmailData = {     
 					"ReqNo": responseObj.REQUEST_NO,
 					"ReqType": 5,
 					"SupplierName": sSupplerName,
@@ -245,7 +245,7 @@ module.exports = cds.service.impl(function () {
             oEmaiContent = await lib_email_content.getEmailContent(connection, "INTERNALREQ", "REGISTER", oEmailData, null)
             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
             // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null, null)
-            var sCCEmail = await lib_email.setSampleCC( null);
+            var sCCEmail = await lib_email.setDynamicCC( null);
             await  lib_email.sendivenEmail(oEmailData.Next_Approver,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
         
           }
@@ -371,7 +371,7 @@ const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'VENDOR_DAT
                 oEmaiContent = await lib_email_content.getEmailContent(connection, "DATA_MIGRATION", "DATA_MIGRATION", oEmailData, null)
                 // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
                 // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.MailTo], null, null)
-                var sCCEmail = await lib_email.setSampleCC(null );
+                var sCCEmail = await lib_email.setDynamicCC(null );
                 await  lib_email.sendivenEmail(oEmailData.MailTo,sCCEmail,'html',  oEmaiContent.subject, oEmaiContent.emailBody)
             
 						}
@@ -577,7 +577,7 @@ this.on('triggerEmailBulk',async(req)=>{
         // }
             // setEmailData(supplierReq);
         oEmailContentInv = await lib_email_content.getEmailContent(conn, "INVITE", "REQUEST", oEmailDataInv, null)
-        var sCCEmail = await lib_email.setSampleCC(null );
+        var sCCEmail = await lib_email.setDynamicCC(null );
         oEmailOutput=await lib_email.sendivenEmail(oEmailDataInv.MailTo,sCCEmail,'html',oEmailContentInv.subject,oEmailContentInv.emailBody)
 
       // oEmaiContentInv = EMAIL_LIBRARY.getEmailData("INVITE", "REQUEST", oEmailDataInv, null);

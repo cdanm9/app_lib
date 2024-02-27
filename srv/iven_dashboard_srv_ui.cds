@@ -1,239 +1,84 @@
 using {dashboardService} from './iven_dashboard_srv';
 
-//Chart Annotation  
-annotate dashboardService.RequestRejStatusCount with @(
-  Aggregation: {
-    ApplySupported: {
-      PropertyRestrictions: true
-    }
-  },         
-  UI: {
-    SelectionFields: [DESCRIPTION],
-    PresentationVariant #Chart1: {Visualizations: ['@UI.Chart#DescByRejStatus']},
-    Chart #DescByRejStatus : {
-      ChartType                 : #Bar,   
-      Dimensions                : ['DESCRIPTION'],
-      DimensionAttributes       : [{
-        Dimension               : 'DESCRIPTION',
-        Role                    : #Category
-      }],
-      Measures                  : ['REJ_STATUS_COUNT'],
-      MeasureAttributes         : [{
-        Measure                 : 'REJ_STATUS_COUNT',
-        Role                    : #Axis1
-      }]
-    }
-  }
+//Hide SearchBar from Overview Page
+annotate dashboardService.RequestInfo with @(
+    Capabilities.SearchRestrictions : {
+        Searchable : false,
+    }            
 );
 
 //Measure - Dimension Annotation(X-Y Axis)
 annotate dashboardService.RequestRejStatusCount with {
   @Analytics.Dimension      : true
   DESCRIPTION @(title  : 'Status');
+   @Analytics.Dimension      : true
+  STATUS @(title  : 'Status');
   @Analytics.Measure        : true   
   @Core.Computed
   REJ_STATUS_COUNT @(title                   : 'Total Rejected Request');        
 }
 
-annotate dashboardService.RequestActionStatusCount with @(
-  Aggregation: {
-    ApplySupported: {
-      PropertyRestrictions: true
-    }
-  },         
-  UI: {
-    SelectionFields: [DESCRIPTION],
-    PresentationVariant #Chart1: {Visualizations: ['@UI.Chart#DescByActStatus']},
-    Chart #DescByActStatus : {
-      ChartType                 : #Column,   
-      Dimensions                : ['DESCRIPTION'],
-      DimensionAttributes       : [{
-        Dimension               : 'DESCRIPTION',
-        Role                    : #Category
-      }],
-      Measures                  : ['ACT_STATUS_COUNT'],
-      MeasureAttributes         : [{
-        Measure                 : 'ACT_STATUS_COUNT',
-        Role                    : #Axis1
-      }]
-    }   
-  }
-);    
-
 annotate dashboardService.RequestActionStatusCount with {
   @Analytics.Dimension      : true
   DESCRIPTION @(title  : 'Status');
+  @Analytics.Dimension      : true
+  STATUS @(title  : 'Status');
   @Analytics.Measure        : true   
   @Core.Computed
   ACT_STATUS_COUNT @(title                   : 'Total Request');        
 }
 
 
-annotate dashboardService.EntityCodeCount with @(
-  Aggregation: {
-    ApplySupported: {
-      PropertyRestrictions: true
-    }
-  },         
-  UI: {
-    SelectionFields: [BUTXT],
-    PresentationVariant #Chart1: {Visualizations: ['@UI.Chart#DescByEntity']},
-    Chart #DescByEntity : {
-      ChartType                 : #VerticalBullet,   
-      Dimensions                : ['BUTXT'],
-      DimensionAttributes       : [{
-        Dimension               : 'BUTXT',
-        Role                    : #Category
-      }],
-      Measures                  : ['ENTITY_COUNT'],
-      MeasureAttributes         : [{
-        Measure                 : 'ENTITY_COUNT',
-        Role                    : #Axis1
-      }]
-    }   
-  }
-);
 
 annotate dashboardService.EntityCodeCount with {
   @Analytics.Dimension      : true
   BUTXT @(title  : 'Entity');
+  @Analytics.Dimension      : true       
+  ENTITY_CODE @(title  : 'Entity Code');        
   @Analytics.Measure        : true   
   @Core.Computed
   ENTITY_COUNT @(title                   : 'Total Request');        
 }
 
 
-annotate dashboardService.RequestTypeCount with @(
-  Aggregation: {
-    ApplySupported: {
-      PropertyRestrictions: true
-    }
-  },         
-  UI: {
-    SelectionFields: [DESCRIPTION],
-    PresentationVariant #Chart1: {Visualizations: ['@UI.Chart#DescByReqType']},
-    Chart #DescByReqType : {
-      ChartType                 : #Line,   
-      Dimensions                : ['DESCRIPTION'],
-      DimensionAttributes       : [{
-        Dimension               : 'DESCRIPTION',
-        Role                    : #Category
-      }],
-      Measures                  : ['REQ_TYPE_COUNT'],
-      MeasureAttributes         : [{
-        Measure                 : 'REQ_TYPE_COUNT',
-        Role                    : #Axis1
-      }]
-    }   
-  }
-);
+
 
 annotate dashboardService.RequestTypeCount with {
   @Analytics.Dimension      : true
   DESCRIPTION @(title  : 'Request Type');
+   @Analytics.Dimension      : true
+  REQUEST_TYPE @(title  : 'Request Type');
   @Analytics.Measure        : true   
   @Core.Computed
   REQ_TYPE_COUNT @(title                   : 'Total Request');        
 }
 
 
-annotate dashboardService.PendingByrCount with @(
-  Aggregation: {
-    ApplySupported: {
-      PropertyRestrictions: true
-    }
-  },         
-  UI: {
-    SelectionFields: [DESCRIPTION],
-    PresentationVariant #Chart1: {Visualizations: ['@UI.Chart#DescByPendingByr']},
-    Chart #DescByPendingByr : {
-      ChartType                 : #Donut,   
-      Dimensions                : ['DESCRIPTION'],
-      DimensionAttributes       : [{
-        Dimension               : 'DESCRIPTION',
-        Role                    : #Category
-      }],
-      Measures                  : ['PND_BYR_COUNT'],
-      MeasureAttributes         : [{
-        Measure                 : 'PND_BYR_COUNT',
-        Role                    : #Axis1
-      }]
-    }   
-  }
-);
+
 
 annotate dashboardService.PendingByrCount with {
   @Analytics.Dimension      : true
   DESCRIPTION @(title  : 'Buyer Status');
-  @Analytics.Measure        : true   
+  @Analytics.Dimension      : true
+  STATUS @(title  : 'Buyer Status');   
+  @Analytics.Measure        : true      
   @Core.Computed
   PND_BYR_COUNT @(title                   : 'Total Request Pending ');        
 }   
 
-
-annotate dashboardService.PendingPMRegCount with @(
-  Aggregation: {
-    ApplySupported: {
-      PropertyRestrictions: true
-    }
-  },         
-  UI: {
-    SelectionFields: [DESCRIPTION],
-    PresentationVariant #Chart1: {Visualizations: ['@UI.Chart#DescByPendingPMReg']},
-    Chart #DescByPendingPMReg : {
-      ChartType                 : #Waterfall,   
-      Dimensions                : ['DESCRIPTION'],
-      DimensionAttributes       : [{
-        Dimension               : 'DESCRIPTION',
-        Role                    : #Category
-      }],
-      Measures                  : ['STATUS_COUNT'],
-      MeasureAttributes         : [{
-        Measure                 : 'STATUS_COUNT',
-        Role                    : #Axis1
-      }]
-    }   
-  }
-);   
-
 annotate dashboardService.PendingPMRegCount with {
   @Analytics.Dimension      : true
-  DESCRIPTION @(title  : 'PM Status');
+  STATUS @(title  : 'Status');    
+  @Analytics.Dimension      : true
+  DESCRIPTION @(title  : 'Status Description');    
   @Analytics.Measure        : true   
   @Core.Computed
   STATUS_COUNT @(title                   : 'Total Registration Approval Pending ');        
 }   
 
-
-annotate dashboardService.PendingPMReqCount with @(
-  Aggregation: {
-    ApplySupported: {
-      PropertyRestrictions: true
-    }
-  },         
-  UI: {
-    SelectionFields: [DESCRIPTION],
-    PresentationVariant #Chart1: {Visualizations: ['@UI.Chart#DescByPendingPMReq']},
-    Chart #DescByPendingPMReq : {   
-      ChartType                 : #Waterfall,   
-      Dimensions                : ['DESCRIPTION'],
-      DimensionAttributes       : [{
-        Dimension               : 'DESCRIPTION',
-        Role                    : #Category
-      }],
-      Measures                  : ['PM_REQ_COUNT'],
-      MeasureAttributes         : [{
-        Measure                 : 'PM_REQ_COUNT',
-        Role                    : #Axis1
-      }]
-    }   
-  }
-);   
-
-     
-
-
 annotate dashboardService.PendingPMReqCount with {
+  @Analytics.Dimension      : true
+  STATUS @(title  : 'Status');
   @Analytics.Dimension      : true
   DESCRIPTION @(title  : 'PM Status');
   @Analytics.Measure        : true   
@@ -243,7 +88,9 @@ annotate dashboardService.PendingPMReqCount with {
    
 annotate dashboardService.SupplierTypeCount with {
   @Analytics.Dimension      : true
-  SUPPL_TYPE_DESC @(title  : 'Supplier Type');
+  SUPPL_TYPE_DESC @(title  : 'Supplier Type Desc');
+  @Analytics.Dimension      : true
+  SUPPL_TYPE @(title  : 'Supplier Type');   
   @Analytics.Measure        : true   
   @Core.Computed
   REQUEST_NO @(title                   : 'Total Requests');                
@@ -251,13 +98,15 @@ annotate dashboardService.SupplierTypeCount with {
 
 annotate dashboardService.LegacySuppliers with{
   @Analytics.Dimension      : true
+  STATUS @(title  : 'Status'); 
+  @Analytics.Dimension      : true
   DESCRIPTION @(title  : 'Status');   
   @Analytics.Dimension      : true
   VEN_DESC @(title  : 'Vendor');
   @Analytics.Measure        : true   
   @Core.Computed
   REQ_COUNT @(title                   : 'Total Requests');     
-}
+}   
 
 annotate dashboardService.PendingPMRegisterCount with{
   @Analytics.Dimension      : true
@@ -266,4 +115,18 @@ annotate dashboardService.PendingPMRegisterCount with{
   REQUEST_NO @(title                   : 'Total Requests');     
 }
 
+annotate dashboardService.RequestAvgTurnAroundTime with {       
+        @Analytics.Dimension      : true
+        STAGE @(title: 'Stage');                
+        @Analytics.Measure        : true  
+        AVG_TAT_SEC   @(title: 'Average Turn Around Time (Seconds)');         
+        @Analytics.Measure        : true  
+        AVG_TAT_MIN   @(title: 'Average Turn Around Time (Minutes)');         
+        @Analytics.Measure        : true  
+        AVG_TAT_HRS   @(title: 'Average Turn Around Time (Hours)');     
+         @Analytics.Measure        : true  
+        AVG_TAT_DAYS   @(title: 'Average Turn Around Time (Days)');          
+}
 
+
+   

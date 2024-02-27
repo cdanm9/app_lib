@@ -14,43 +14,48 @@ module.exports = cds.service.impl(function () {
     //Changes By Chandan M 21/11/23 End
     try {     
       // local variables
-      var oReqData = req.data.input;
-      var oUserDetails=oReqData.USER_DETAILS;
-      var sUserId=oUserDetails.USER_ID || null;
-      var sUserRole=oUserDetails.USER_ROLE || null;
-      var sAction = oReqData.ACTION;
-      var aMatrixData = req.data.input.VALUE;
+      // var oReqData = req.data.input;
+      // var oUserDetails=oReqData.USER_DETAILS;
+      
+      // var sAction = oReqData.ACTION;
+      // var aMatrixData = req.data.input.VALUE;
+
+      var {action,appType,approvalMatrixData,userDetails}=req.data
+      var sUserId=userDetails.USER_ID || null;
+      var sUserRole=userDetails.USER_ROLE || null;        
+
+
       var sTableName,bCheckDuplicateMatrix,sEntityDescription;   
 
       //  // get connection
       //  var client = await dbClass.createConnectionFromEnv();
       //  let dbConn = new dbClass(client);
-       let connection = await cds.connect.to('db');
+       let connection = await cds.connect.to('db');                             
 
        // getEntity Description against Entity Code from library
-      sEntityDescription = await lib_common.getEntityDesc(connection, aMatrixData[0].ENTITY_CODE);
+      sEntityDescription = await lib_common.getEntityDesc(connection, approvalMatrixData[0].ENTITY_CODE);
 
       //Check for App Type
-      if(oReqData.APP_TYPE == 'REQUEST'){
+      if(appType == 'REQUEST'){
         sTableName = 'VENDOR_PORTAL_MATRIX_REQUEST_APPR';
-        bCheckDuplicateMatrix = await _checkDuplicateOnReqMatrix(aMatrixData);
+        bCheckDuplicateMatrix = await _checkDuplicateOnReqMatrix(approvalMatrixData);
         // _checkDuplicateOnReqMatrix(aMatrixData);
 
-      }else if(oReqData.APP_TYPE == 'REGISTRATION'){
+      }else if(appType == 'REGISTRATION'){
         sTableName = 'VENDOR_PORTAL_MATRIX_REGISTRATION_APPR';
-        bCheckDuplicateMatrix =await  _checkDuplicateOnRegMatrix(aMatrixData);
+        bCheckDuplicateMatrix =await  _checkDuplicateOnRegMatrix(approvalMatrixData);
       }
 
 
-      if((bCheckDuplicateMatrix === 0 || bCheckDuplicateMatrix === 1 ) || (sAction === "UPDATE" || sAction === "DELETE") )    
+      if((bCheckDuplicateMatrix === 0 || bCheckDuplicateMatrix === 1 ) || (action === "UPDATE" || action === "DELETE") )    
       {
       // load procedure
       const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MATRIX_APPROVAL_USERS')
-      console.log(oReqData)
+      // console.log(oReqData)    
 
       // excute procedure
       const result = await dbConn.callProcedurePromisified(loadProc,
-      [oReqData.APP_TYPE, oReqData.ACTION, aMatrixData,sTableName]);
+      [appType, action, approvalMatrixData,sTableName]);   
       return result
       }
       else {
@@ -78,8 +83,6 @@ module.exports = cds.service.impl(function () {
       console.error(error)     
       // return error.messsage     
       req.error({ code:iErrorCode, message:  error.message ? error.message : error });
-
-
     }
   })
 
@@ -179,13 +182,14 @@ async function _checkDuplicateOnRegMatrix(data) {
  	if (sResult.length !== 0 && sResult.length < 3) {
 		return "APPR_EXISTS_FOR_EC";
  	} else if (aResult.length !== 0) {
- 		return "APPR_EXISTS_DIFF_EC";
-        return 0;
+ 		// return "APPR_EXISTS_DIFF_EC";
+        return 0;    
 	} else if (aResult.length === 0 && sResult.length === 0) {
 		return 0;
    	}
   }
-  catch(error  ){  throw error; }
+  catch(error  ){  
+    throw error; }
 }
   
 })

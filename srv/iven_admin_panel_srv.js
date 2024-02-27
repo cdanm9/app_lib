@@ -12,22 +12,24 @@ const connect = require('passport/lib/framework/connect')
 
 module.exports = cds.service.impl(function () {
    //////////////////////////Dynamic Logic /////////////////////////
-   this.on('PostAdminPanelData', async (req) => {
-    // get connection
+
+  this.on('PostAdminPanelData', async (req) => {
+    // get connection       
     var client = await dbClass.createConnectionFromEnv();
       var dbConn = new dbClass(client);
-    try {
-
-      //local Variables
-      var oReqData = JSON.parse(req.data.input);
-      var sAction = oReqData.ACTION ;
-      var sTableName = oReqData.TABLE_NAME;
-      var sTableDesc = oReqData.TABLE_DESCRIPTION;    
-      var aInputData = oReqData.INPUT_DATA || null;
+    try {   
+     
+      //local Variables    
       var sResponse = null;
-      var oUserDetails=oReqData.USER_DETAILS||{};                 
-      var sUserID=oUserDetails.USER_ID || null;
-      var sUserRole=oUserDetails.USER_ROLE || null;  
+      var {action,inputData,userDetails}=req.data
+      var oReqData = JSON.parse(inputData);
+      // var oUserDetails=oReqData.USER_DETAILS||{};           
+      // var aInputData=JSON.parse(inputData);         
+      var sUserID=userDetails.USER_ID || null;   
+      var sUserRole=userDetails.USER_ROLE || null;    
+      var sTableName = oReqData.TABLE_NAME || null;
+      var sTableDesc = oReqData.TABLE_DESCRIPTION || null;         
+      var aInputData = oReqData.INPUT_DATA || null;   
 
       // get connection
       // var client = await dbClass.createConnectionFromEnv();
@@ -38,26 +40,26 @@ module.exports = cds.service.impl(function () {
       //connect to db
       let conn = await cds.connect.to('db');
 
-      if (sAction === "CREATE" || sAction === "IMPORT_CSV") {
+      if (action === "CREATE" || action === "IMPORT_CSV") {
 
         try{
         //Refactor payload for Import CSV
-          if(sAction === "IMPORT_CSV")
+          if(action === "IMPORT_CSV")
             aInputData =await lib_admin_panel.removeMetadata(aInputData);
         
           if(sTableName === 'MASTER_ENTITY_CODE' )
           {
              //Refactor payload for Import CSV
-            if(sAction === "IMPORT_CSV")
+            if(action === "IMPORT_CSV")
             aInputData = await lib_admin_panel.convertIntegerToString(aInputData);
           }
           else if(sTableName === 'MASTER_REGFORM_FIELDS_MANDATORY' || sTableName === 'MASTER_REGFORM_FIELDS_VISIBLE') {
             //Refactor payload for Import CSV
-            if(sAction === "IMPORT_CSV")
+            if(action === "IMPORT_CSV")
               aInputData = await lib_admin_panel.getUpdatedFieldsData(aInputData,conn);
           }
          
-            sResponse = await lib_admin_panel.funcPostAdminPanelData(conn,sAction,sTableName, sTableDesc,aInputData)
+            sResponse = await lib_admin_panel.funcPostAdminPanelData(conn,action,sTableName, sTableDesc,aInputData)
          
           return sResponse
         }catch(error){
@@ -72,7 +74,7 @@ module.exports = cds.service.impl(function () {
         }
 
       }
-      else if (sAction === "DELETE") {
+      else if (action === "DELETE") {    
         try{
           var oData = aInputData[0].DELETED_DETAILS;
           sResponse = await lib_admin_panel.funcDeleteAdminPanelData(conn,oData,sTableName,sTableDesc)
@@ -90,8 +92,8 @@ module.exports = cds.service.impl(function () {
           req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
       }
-      else if (sAction === "TEST_EMAIl") {
-        //Changes By Chandan M Start 15/11/23
+      else if (action === "TEST_EMAIL") {
+        //Changes By Chandan M Start 15/11/23   
         try{
           let connection = await cds.connect.to('db');
           var sEmailBody = aInputData[0].EMAIL_BODY;
@@ -100,21 +102,23 @@ module.exports = cds.service.impl(function () {
           var aEmailCC = aInputData[0].EMAIL_CC;
           var sEmailSender = aInputData[0].EMAIL_SENDER;
           // sResponse = await lib_email.sendEmail(connection, sEmailBody, sEmailSubject, aEmailTo, aEmailCC, sEmailSender)
-          var sCCEmail = await lib_email.setSampleCC( [aEmailCC]);
+          //To differentiate test email we are converting it into string here
+          var aEmailCCSystem=aEmailCC.toString()              
+          var sCCEmail = await lib_email.setDynamicCC(aEmailCCSystem);           
           await  lib_email.sendivenEmail(aEmailTo,sCCEmail,'html', sEmailSubject,sEmailBody)
-      
+
           return sResponse
         }catch(error){     
           var sType=error.code?"Procedure":"Node Js";    
           var iErrorCode=error.code??500;     
-          let Result = {
+          let Result = {    
               OUT_ERROR_CODE: iErrorCode,
               OUT_ERROR_MESSAGE:  error.message ? error.message : error
           }
           lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration",sType,dbConn,hdbext);
           req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
-
+                 
         //Changes By Chandan M End 15/11/23   
       }
 
@@ -125,33 +129,34 @@ module.exports = cds.service.impl(function () {
     }
   })
 
- 
-
   this.on('EditAdminPanelData', async (req) => {
     var client = await dbClass.createConnectionFromEnv();
     var dbConn = new dbClass(client);  
     try {
-      
+         
       //local Variables
-      var oReqData = JSON.parse(req.data.input);
-      var sEditType = oReqData.EDIT_TYPE || null;
+
+      
+      var {action,inputData,userDetails}=req.data
+      var oReqData = JSON.parse(inputData);
+      var sEditType = action || null;    
       var sTableName = oReqData.VALUE[0].TABLE_NAME || null;
       var sTableDesc = oReqData.VALUE[0].TABLE_DESCRIPTION || null;
-      var aMasterData = oReqData.VALUE[0].TABLE_DATA || [];
+      // var aMasterData = oReqData.VALUE[0].TABLE_DATA || [];
       var oPrimaryKeydetails = oReqData.VALUE[0].PRIMARY_KEY_DETAILS || [];
       var sResponse = null;
 
-      var oUserDetails=oReqData.USER_DETAILS;   
-      var sUserID=oUserDetails.USER_ID || null;
-      var sUserRole=oUserDetails.USER_ROLE || null;  
+      // // var oUserDetails=oReqData.USER_DETAILS||{};                 
+      var sUserID=userDetails.USER_ID || null;
+      var sUserRole=userDetails.USER_ROLE || null;   
 
-      // Edit Forms Fields
+      // Edit Forms Fields   
       var sEntityCode = oReqData.CCODE || null;
       var iType = oReqData.TYPE || null;
-      aData = oReqData.VALUE[0].TABLE_DATA;
+      var aData = oReqData.VALUE[0].TABLE_DATA || [];      
 
       //Local Variable for edit forms
-      var masterName, masterData, tableDescription, editType;
+      var masterName, masterData, tableDescription;
       // get connection
       // var client = await dbClass.createConnectionFromEnv();
       // let dbConn = new dbClass(client);
@@ -187,7 +192,7 @@ module.exports = cds.service.impl(function () {
             if (oReqData.VALUE[i].CHANGE_FLAG === "YES") {
               iChangeCount = iChangeCount + 1;
               masterName = oReqData.VALUE[i].TABLE_NAME;
-              editType = oReqData.EDIT_TYPE;
+              // editType = oReqData.EDIT_TYPE;
               masterData = oReqData.VALUE[i].TABLE_DATA;
               oPrimaryKeydetails =oReqData.VALUE[i].PRIMARY_KEY_DETAILS;
               tableDescription = oReqData.VALUE[i].TABLE_DESCRIPTION;
@@ -196,7 +201,7 @@ module.exports = cds.service.impl(function () {
                 sResponse = await lib_admin_panel.funcEditFormsAdminPanelData(connection,masterName,masterData,oPrimaryKeydetails);
             if (sResponse !== null) {
                 if (sResponse === 'Y') {
-                  aSuccessArray.push(sResponse);
+                  aSuccessArray.push(sResponse);    
                 }
               }
 
@@ -302,9 +307,9 @@ module.exports = cds.service.impl(function () {
         sResponse = await lib_admin_panel.funcFormSettingAdminPanelData(connection,aData)
         // aData = oPayload.VALUE.DATA || [];
         // results = updateSettings(conn, aData);    
-        sResponse.OUT_SUCCESS='User Manual Updated Successfully';        
-        sResponse.OUT_SUCCESS_FLAG ='U';       
-        return sResponse
+        sResponse.OUT_SUCCESS='User Manual Updated Successfully'||null;        
+        sResponse.OUT_SUCCESS_FLAG ='U'||null;           
+        return sResponse    
       }catch(error){    
         var sType=error.code?"Procedure":"Node Js";    
         var iErrorCode=error.code??500;     
@@ -315,19 +320,20 @@ module.exports = cds.service.impl(function () {
         lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration",sType,dbConn,hdbext);
         req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
       }
-    }       
-
+    }            
+         
     } catch (error) {       
       var sType=error.code?"Procedure":"Node Js";    
       var iErrorCode=error.code??500;     
       let Result = {
-          OUT_ERROR_CODE: iErrorCode,
+          OUT_ERROR_CODE: iErrorCode,    
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
       }
       lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration",sType,dbConn,hdbext);
       req.error({ code:iErrorCode, message:  error.message ? error.message : error });
     }
   })
+
  //////////////////////////Dynamic Logic /////////////////////////
   
   this.on('GetAdminPanelData', async (req) => {
@@ -530,46 +536,6 @@ module.exports = cds.service.impl(function () {
 
   })       
  
-  // this.on('GetAllVisibleMandatoryEntity',async req=>{   
-  //   try{
-  //       var {reqTypeCode,userId,userRole}=req.data
-  //       var conn = await cds.connect.to('db');   
-  //       var aMandatoryCode,aVisibleCode,aMandatoryReqExist=[],aVisibleReqExist=[],aMandatoryReqNotExist=[],aVisibleReqNotExist=[],
-  //       sResponse={
-  //         "AVAILABLE":{},
-  //         "NOT_AVAILABLE":{}
-  //       };   
-  //       var aEntityData=await SELECT .columns(['BUTXT','BUKRS']) .from('VENDOR_PORTAL_MASTER_ENTITY_CODE'); 
-  //       for(var i in aEntityData){
-  //           var aMandatoryFieldsData = await lib_admin_panel.getMandatoryFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
-  //           if(aMandatoryFieldsData.length!=0)
-  //             aMandatoryReqExist.push(aEntityData[i])
-  //           else
-  //             aMandatoryReqNotExist.push(aEntityData[i])
-  //           var aVisibleFieldsData = await lib_admin_panel.getVisibleFieldsData(conn, aEntityData[i].BUKRS,reqTypeCode);
-  //           if(aVisibleFieldsData.length!=0)
-  //             aVisibleReqExist.push(aEntityData[i])
-  //           else
-  //             aVisibleReqNotExist.push(aEntityData[i])   
-  //       }     
-  //         sResponse.AVAILABLE.VISIBLE=aVisibleReqExist
-  //         sResponse.AVAILABLE.MANDATORY=aMandatoryReqExist
-  //         sResponse.NOT_AVAILABLE.VISIBLE=aVisibleReqNotExist    
-  //         sResponse.NOT_AVAILABLE.MANDATORY=aMandatoryReqNotExist           
-  //       req.reply(sResponse)   
-
-  //   }catch(error){
-  //       var sType=error.code?"Procedure":"Node Js";    
-  //       var iErrorCode=error.code??500;     
-  //       let Result = {
-  //           OUT_ERROR_CODE: iErrorCode,
-  //           OUT_ERROR_MESSAGE:  error.message ? error.message : error   
-  //       }
-  //       lib_common.postErrorLog(Result,null,userId,userRole,"System Configuration",sType,dbConn,hdbext);
-  //       req.error({ code:iErrorCode, message:  error.message ? error.message : error });
-  //   }
-  // });    
-
   this.on('GetAllVisibleMandatoryEntity',async req=>{   
     var client = await dbClass.createConnectionFromEnv();
     var dbConn = new dbClass(client);    
@@ -617,33 +583,5 @@ module.exports = cds.service.impl(function () {
         req.error({ code:iErrorCode, message:  error.message ? error.message : error });
     }
   });
-
-
-  // this.on('EditUserManual',async req=>{   
-  //   try{
-  //       var {portalUserManual,userDetails}=req.data
-  //       var conn = await cds.connect.to('db'); 
-  //       var sCheck=portalUserManual.CHECK||null,
-  //       sUrl=portalUserManual.URL||null,
-  //       sResponse;
-  //       var sCode=['PORTAL_HELP_CONFIG','PORTAL_HELP_URL'];
-  //       var sSetting=[sCheck,sUrl];
-  //       for(var i in sCode){
-  //         var sUpdateCheck = await UPDATE('VENDOR_PORTAL.MASTER_IVEN_SETTINGS') .set({SETTING:sSetting[i]}) 
-  //         .where({CODE:sCode[i]})
-  //       }
-  //       sResponse="User Manual Has Been Updated Successfully!"
-  //       req.reply(sResponse)                 
-  //   }catch(error){
-  //       var sType=error.code?"Procedure":"Node Js";    
-  //       var iErrorCode=error.code??500;     
-  //       let Result = {
-  //           OUT_ERROR_CODE: iErrorCode,
-  //           OUT_ERROR_MESSAGE:  error.message ? error.message : error   
-  //       }
-  //       lib_common.postErrorLog(Result,null,userId,userRole,"System Configuration",sType,dbConn,hdbext);
-  //       req.error({ code:iErrorCode, message:  error.message ? error.message : error });
-  //   }
-  // });
 
 })

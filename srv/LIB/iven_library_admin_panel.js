@@ -411,7 +411,7 @@ module.exports = {
           dataObj.CLIENT_COUNTRY_DESC = await this.getCountryDesc(connection, dataObj.CLIENT_COUNTRY) || "";
         }
         aClientInfoWithDesc.push(dataObj);
-      }
+      }     
       // aClientInfoWithDesc = Object.keys(aClientInfoArr).map(function(key) {
       //   dataObj = JSON.parse(JSON.stringify(aClientInfoArr[key]));
 
@@ -822,7 +822,9 @@ module.exports = {
       );
       return aInsertResult;
     }
-    catch (error) { throw error; }
+    catch (error) { 
+      throw error;   
+    }
   },
   funcEditAdminPanelData: async function (connection, tableData, sTableName, tableDesc, oPrimaryKeydetails) {
     try {

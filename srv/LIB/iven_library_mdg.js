@@ -123,7 +123,7 @@ var iStatus = 200;
 	return resultData;
 }catch(error){throw error;}
 },
-
+     
     // get MDG Genreal section Head office address from array of all Addresses
  getHQAddressArray : async function (aAddressDataArr) {
 	try{
@@ -508,10 +508,10 @@ try{
 	try{
     
     var oDataObj = {
-		    "MAIN":await this.getTableData(conn, iReqNo, "REQUEST_INFO") || [],
-		    "ADDRESS": await this.getAddressWithDesc(conn,await this.getTableData(conn, iReqNo, "REGFORM_ADDRESS") || []),
-		    "CONTACTS": await this.getTableData(conn, iReqNo, "REGFORM_CONTACTS") || [],
-		    "BANK": await this.getPaymentsWithDesc(conn, await this.getTableData(conn, iReqNo, "REGFORM_BANKS") || [])
+		"MAIN":await this.getTableData(conn, iReqNo, "REQUEST_INFO") || [],
+		"ADDRESS": await this.getAddressWithDesc(conn,await this.getTableData(conn, iReqNo, "REGFORM_ADDRESS") || []),
+		"CONTACTS": await this.getTableData(conn, iReqNo, "REGFORM_CONTACTS") || [],
+		"BANK": await this.getPaymentsWithDesc(conn, await this.getTableData(conn, iReqNo, "REGFORM_BANKS") || [])
     };
 
 

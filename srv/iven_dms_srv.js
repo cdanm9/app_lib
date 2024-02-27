@@ -14,7 +14,7 @@ module.exports = cds.service.impl(function () {
             var dbConn = new dbClass(client);
             var response = await lib_dms._GetRepositores();   
             req.reply(response);    
-
+    
         } catch (error) {
 
             var sType = error.code ? "Procedure" : "Node Js";
@@ -166,7 +166,7 @@ module.exports = cds.service.impl(function () {
             var client = await dbClass.createConnectionFromEnv();
             var dbConn = new dbClass(client);
             let response = await lib_dms._CreateRepositorie(externalId, description);
-            req.reply(response);
+            req.reply(response);   
 
         } catch (error) {
 
@@ -265,7 +265,45 @@ module.exports = cds.service.impl(function () {
             req.error({ code: iErrorCode, message: error.message ? error.message : error });
         }
     })
+    
+    this.on('FileAccess', async (req) => {
 
+        try {
+            var { action,fileDetails, userDetails } = req.data;
+            var sUserId = userDetails.USER_ID || null;
+            var sUserRole = userDetails.USER_ROLE || null;
+            var client = await dbClass.createConnectionFromEnv();
+            var dbConn = new dbClass(client);
+            var response;    
+
+            var sExternalId = fileDetails.externalId || null;
+            var sObjectId = fileDetails.objectId || null;
+            if (action == 'Download') {
+                response = await lib_dms._DownloadFile(sObjectId, sExternalId);
+            } else if (action == 'Upload') {
+                // response = await lib_dms._DeleteFile(sObjectId, sExternalId);
+            }     
+            
+            req._.res.set('Content-disposition', 'attachment; filename=Quick_Time_Entry.pdf');
+            req._.res.set('Content-type', 'application/pdf');
+            var base64DataUri = 'data:application/pdf;base64,' + response;            
+            req._.res.send(base64DataUri);
+            req._.res.end();
+            req.reply(response);         
+        } catch (error) {
+
+            var sType = error.code ? "Procedure" : "Node Js";
+            var iErrorCode = error.code ?? 500;
+            let Result = {
+                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_MESSAGE: error.message ? error.message : error
+            }
+            lib_common.postErrorLog(Result, null, sUserId, sUserRole, "Delete DMS Repository", sType, dbConn, hdbext);
+            // console.error(error)     
+            // return error.messsage            
+            req.error({ code: iErrorCode, message: error.message ? error.message : error });
+        }
+    })
     // this.on('DeleteFile', async (req) => {
 
     // try {

@@ -84,12 +84,12 @@ service registrationProcessService {
   // function GetDraftData(requestNo : Integer, entityCode : String, creationType : Integer, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            returns many String;
  function GetDraftData(input:String)  returns many String;
   function GetSecurityPin(vendorName : String, vendorEmail : String, requesterId : String, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           returns many String;
-  function CheckSecurityPin(vendorEmail : String,securityPin:String, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns securityPinResponse;
-  
+  function CheckSecurityPin(vendorEmail : String,securityPin:String, userId : String, userRole : String,self:Boolean)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    returns securityPinResponse;
+     
   // Actions for Posting
   action   PostRegFormData(action : String, stepNo : Integer, reqHeader : many RequestInfo, addressData : many RegFormAddress, contactsData : many RegFormContacts, bankData : many RegFormBanks, financeData : many RegFormFinancial, ownersData : many RegFormOwners, prodServData : many RegFormProdServ, capacityData : many RegFormCapacity, customerData : many RegFormCustomers, oemData : many RegFormOEM, discFieldsData : many RegFormDiscInfo, discRelativesData : many RegFormDiscRelatives, discQaCertiData : many RegFormDiscQaCertif, attachmentFieldsData : many RegFormAttachFields, attachmentData : many RegFormAttachments, updatedFields : many String, eventsData : many RegEventsLog, userDetails : User_Details) returns many String;
 
-  action   EditRegFormData(action : String, // APPROVER | VENDOR
+  action   RegFormDataEdit(action : String, // APPROVER | VENDOR
                            stepNo : Integer,
                            reqHeader : many RequestInfo,
                            addressData : many RegFormAddress,
@@ -107,6 +107,8 @@ service registrationProcessService {
                                eventsData : many RegEventsLog,
                                userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               returns many String;
 
+  //Sync Button In Registration Approval
+  action RegFormDataSync(action:String,bankData : many RegFormBanks,userDetails: User_Details) returns many String;
   type MessengerData {
     loginId : String;
     mailTo  : String;
@@ -125,5 +127,11 @@ service registrationProcessService {
 
 // test security pin
 // function getEncryptedSecurityPin(pin:String) returns many String;
+  action RegFormSR(action : String,       
+                           reqHeader : many RequestInfo,
+                           addressData : many RegFormAddress,
+                           eventsData : many RegEventsLog,
+                           securityPin:String,
+                           userDetails : User_Details) returns many String;
 
 }

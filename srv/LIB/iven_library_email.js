@@ -264,11 +264,21 @@ module.exports = {
         }
 
     },
-    setSampleCC:async function(aEmailCC){
-        var aSampleCC =  ["supritha.m@intellectbizware.com","siddhesh.d@intellectbizware.com" ,
-         "farzeen.s@intellectbizware.com", "vishal.s@intellectbizware.com","chandan.m@intellectbizware.com"];
-        if (aEmailCC === null || aEmailCC.length < 0) aEmailCC = aSampleCC
-        else if (aEmailCC.length > 0) aEmailCC.push(aSampleCC.toString());   
-       return aEmailCC.toString();
+    // setSampleCC:async function(aEmailCC){
+    //     var aSampleCC =  ["supritha.m@intellectbizware.com","siddhesh.d@intellectbizware.com" ,
+    //      "farzeen.s@intellectbizware.com", "vishal.s@intellectbizware.com","chandan.m@intellectbizware.com"];           
+    //     if (aEmailCC === null || aEmailCC.length < 0) aEmailCC = aSampleCC
+    //     else if (aEmailCC.length > 0) aEmailCC.push(aSampleCC.toString());   
+    //    return aEmailCC.toString(); 
+    // },
+    setDynamicCC:async function(aEmailCC){
+        var aEmailTable=await SELECT .columns(['EMAIL_CC']) .from('VENDOR_PORTAL_MASTER_EMAIL_CONTACT_ID') .where({SR_NO:1});                    
+        var aEmailCCInfo=aEmailTable[0].EMAIL_CC.split(',')     
+        if(typeof(aEmailCC)=='string') return aEmailCC.toString()
+        else if (aEmailCC === null || aEmailCC.length < 0) 
+            aEmailCC = aEmailCCInfo;                      
+        else if (aEmailCC.length > 0) 
+            aEmailCC=[...new Set([...aEmailCC,...aEmailCCInfo])]   //set operator to keep only unique emails     
+       return aEmailCC.toString();            
     }
 }

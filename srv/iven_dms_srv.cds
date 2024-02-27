@@ -17,15 +17,16 @@ service dmsService {
   action   RenameObject(renameObjDetails : RenameObjDetail, userDetails : User_Details)                                                  returns many String;
   action   MoveObjectFTF(objectId : String, externalId : String, srcFolderId : String, trgFolderId : String, userDetails : User_Details) returns many String;
   //  action DeleteFile(deleteFileDetails:DeleteDataDetail,userDetails:User_Details) returns many String;
-  action   DeleteObject(deleteObjDetails : DeleteObjDetail, userDetails : User_Details)                                                  returns many String;
-
+  action   DeleteObject(deleteObjDetails : ObjDetail, userDetails : User_Details)                                                  returns many String;
+  action   FileAccess(action:String,fileDetails:ObjDetail,userDetails : User_Details)                                                  returns many String;
+    
   type FolderDetail    : {
     cmisRepositoryId : String; //Repository ID
     externalId       : String; //Repository Name
     fname            : String; //Folder Name
   }
 
-  type DeleteObjDetail : {
+  type ObjDetail : {
     externalId   : String; //Repository Name
     objectId     : String; //Folder ID
     objectTypeId : String; //File Type

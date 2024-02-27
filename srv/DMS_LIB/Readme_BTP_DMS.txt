@@ -59,3 +59,16 @@ code---->>>>>>>>//     let a = await DMSlib._GetRepositores();
     // var ObjectId = 'BSARfyLKYktcDDkfAMgDxT0iEl0vNE71hS3DbM9LQbg'; // file object id
     // var RepoID = 'iVEN'; //main repository
     code---->>>>>>>> let a = await DMSlib._DeleteFile(ObjectId , RepoID);
+
+
+10. download file   (still in testing use for function )
+    var ObjectId = 'pZ4G52V9y9eZ1lG0E-QEoqJCoz2dxK8qNRzubbVnSsI'; //opt 
+    var RepoID = 'iVEN';
+  code-------->>>  let mediaObj = await DMSlib._DownloadFile(ObjectId, RepoID);
+
+ // set response variable hardcoded to test download - file may not open
+    req._.res.set('Content-disposition', 'attachment; filename=Quick_Time_Entry.pdf');
+    req._.res.set('Content-type', 'application/pdf');
+    var base64DataUri = 'data:application/pdf;base64,' + mediaObj;
+    req._.res.send(base64DataUri);
+    req._.res.end();

@@ -29,13 +29,13 @@ module.exports = cds.service.impl(function () {
 //        let response = await lib_ias.UpdateVendorEmailIdIAS("500000111","test@gmailtest.com");
 //        throw response;
 //       *** to get IAS user and srore in db */
-      let response = await lib_ias.getIASUser();
+ //     let response = await lib_ias.getIASUser();
 //       ** Create vendor and assign roles(vendor group) */
-//       var sSAPVendoCode = "500000111";
-//       var sName1 = "CAP Test vendor";
-//       var sName2 = "CapM";
-//       var sEmaiID = "captestmail@testcap.com"
-//       let response = await lib_ias.CreateVendorIdIAS(sSAPVendoCode, sName1, sName2, sEmaiID);
+      var sSAPVendoCode = "500000111";
+      var sName1 = "CAP Test vendor";
+      var sName2 = "CapM";
+      var sEmaiID = "captestmail@testcap.com"
+     let response = await lib_ias.CreateVendorIdIAS(sSAPVendoCode, sName1, sName2, sEmaiID);
 //       // response.message = response.body;
 //       throw response;
 // darshan

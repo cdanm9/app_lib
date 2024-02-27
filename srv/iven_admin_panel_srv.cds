@@ -13,7 +13,7 @@ service adminPanelService {
   entity MasteriVenAttachments as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
   entity MasterAttachmentTypes as projection on VENDOR_PORTAL.MASTER_ATTACHMENT_TYPES;
   entity MasterRequestType     as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
-  entity MasterIvenSettings    as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS;
+  entity MasterIvenSettings    as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS;   
   entity IvenErrorLog          as projection on VENDOR_PORTAL.IVEN_ERROR_LOG;
   entity IvenEmailLog          as projection on VENDOR_PORTAL.IVEN_EMAIL_LOG;   
   entity RegFormFolderIds      as projection on VENDOR_PORTAL.REGFORM_FOLDER_IDS;
@@ -27,7 +27,7 @@ service adminPanelService {
 
   //TEST
   // entity region as projection on VENDOR_PORTAL.MASTER_REGION;
-  // entity address as projection on VENDOR_PORTAL.REGFORM_ADDRESS;
+  // entity address as projection on VENDOR_PORTAL.REGFORM_ADDRESS;  
 
   //Types
 
@@ -46,11 +46,11 @@ service adminPanelService {
   //Get Visible and Mandatory Fields
   function GetVisbleMandatoryFields(requestType : Integer, entityCode : String)        returns array of String;
   //Post Data for Admin Panel
-  action   PostAdminPanelData(input : String)                                          returns array of String;
+  action   PostAdminPanelData(action:String,inputData : String,userDetails:User_Details) returns array of String;   
   //Post Admin Panel Edits
-  action   EditAdminPanelData(input : String)                                          returns array of String;
+   action   EditAdminPanelData(action : String,inputData:String,userDetails:User_Details) returns array of String;       
   function TestOnPremiseConnection(sapClient : String, destFileName : String)          returns array of String;
-
+       
   action PostVisibleMandatoryFields(requestType : Integer, entityCode : String, copyEntityCode:String, userDetails:User_Details) returns array of String;
 
   function GetAllVisibleMandatoryEntity(reqTypeCode:Integer, userId : String, userRole : String) returns many String; 

@@ -141,9 +141,9 @@ module.exports = {
             var sStatus = "X";
             var sUSER_ID = oIASResponse.body["urn:ietf:params:scim:schemas:extension:sap:2.0:User"].userId;
             var oResponseObj = {
-                "USER_ID": oIASBodyPayload.id,
+                "USER_ID": sUSER_ID,
                 "DISPLAYNAME": oIASBodyPayload.displayName,
-                "ID": sID,
+                "ID": oIASResponse.body.id,
                 "VENDORCODE": oIASBodyPayload.userName,
                 "REMARK": sRemark,
                 "PAYLOAD": oIASBodyPayload,

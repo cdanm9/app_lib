@@ -66,6 +66,7 @@ service requestProcessService {
 
 
   action RequestProcess(action : String, inputData : many RequestInfo, eventsData : many RegEventsLog,userDetails:User_Details) returns many String;
-  action RequestEditProcess(input : String)                                                            returns many String;
+          
+  action RequestEditProcess(action:String,inputData : String,userDetails:User_Details) returns many String;    
 
 }

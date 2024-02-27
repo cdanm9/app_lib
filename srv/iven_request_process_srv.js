@@ -141,7 +141,7 @@ module.exports = cds.service.impl(function () {
                                 oEmaiContent = await lib_email_content.getEmailContent(connection, "QUICK_REG", "REGISTER", oEmailData, null)
                                 // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], [], null)
                                 // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null, null)
-                                var sCCEmail = await lib_email.setSampleCC(null);
+                                var sCCEmail = await lib_email.setDynamicCC(null);
                               await  lib_email.sendivenEmail(sBuyerEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                             }
                         } else {
@@ -159,7 +159,7 @@ module.exports = cds.service.impl(function () {
                                 // await lib_email.sendEmail(connection, 'TEST', 'Create Request', [email], [], null)
                                 // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [email], null, null)
                                 //  lib_email.sendivenEmail(email[0].USER_ID,"supritha.m@intellectbizware.com",'html', oEmaiContent.subject, oEmaiContent.emailBody)
-                                var sCCEmail = await lib_email.setSampleCC(null);
+                                var sCCEmail = await lib_email.setDynamicCC(null);
                                 await  lib_email.sendivenEmail(email[0].USER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                           
                             }
@@ -269,13 +269,13 @@ module.exports = cds.service.impl(function () {
 
                          // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REQUESTER_ID], null, null)
                         oEmaiContent = await lib_email_content.getEmailContent(connection, "APPROVE", "REQUEST", oEmailData, null)
-                        var sCCEmail = await lib_email.setSampleCC(null);
+                        var sCCEmail = await lib_email.setDynamicCC(null);
                         await  lib_email.sendivenEmail(aInputData[0].REQUESTER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                 
                         
                         // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null)
                         oEmaiContent = await lib_email_content.getEmailContent(connection, "INVITE", "REQUEST", oEmailData, null)
-                        var sCCEmail = await lib_email.setSampleCC(null);
+                        var sCCEmail = await lib_email.setDynamicCC(null);
                         await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                 
                        
@@ -350,7 +350,7 @@ module.exports = cds.service.impl(function () {
                         
                         oEmaiContent = await lib_email_content.getEmailContent(connection, sAction, "REQUEST", oEmailData, null)
                         // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REQUESTER_ID], ["supritha.m@intellectbizware.com"], null)
-                        var sCCEmail = await lib_email.setSampleCC(null);
+                        var sCCEmail = await lib_email.setDynamicCC(null);
                         await  lib_email.sendivenEmail(aInputData[0].REQUESTER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                 
                     
@@ -421,7 +421,7 @@ module.exports = cds.service.impl(function () {
                     oEmaiContent = await lib_email_content.getEmailContent(connection, "RE_INVITE", "REQUEST", oEmailData, null)
 
                     // sResponse = await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null);
-                    var sCCEmail = await lib_email.setSampleCC( null);
+                    var sCCEmail = await lib_email.setDynamicCC( null);
                      await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject,oEmaiContent.emailBody)
                 
                      //Capture events 
@@ -495,16 +495,21 @@ module.exports = cds.service.impl(function () {
         try {
             //local Variables
 
-            var oReqData = JSON.parse(req.data.input);
-            var sAction = oReqData.ACTION || null;
-            var aInputData = oReqData.INPUT_DATA || null;
-            var aEvents = oReqData.EVENTS || [];
+            // var oReqData = JSON.parse(req.data.input);
+            // var sAction = oReqData.ACTION || null;
+            // var aInputData = oReqData.INPUT_DATA || null;
+            // var aEvents = oReqData.EVENTS || [];
+            
+
+            // var oUserDetails=oReqData.USER_DETAILS;   
+            // var sUserIdentity=oUserDetails.USER_ID || null;
+            // var sUserRole=oUserDetails.USER_ROLE || null; 
+
+            var {action,userDetails,inputData}=req.data
+            var sUserIdentity=userDetails.USER_ID || null;
+            var sUserRole=userDetails.USER_ROLE || null;     
+            var aInputData=JSON.parse(inputData)
             var iRequestNo = aInputData[0].REQUEST_NO || null;
-
-            var oUserDetails=oReqData.USER_DETAILS;   
-            var sUserIdentity=oUserDetails.USER_ID || null;
-            var sUserRole=oUserDetails.USER_ROLE || null; 
-
             var isEmailNotificationEnabled = false;
             var Result = null;
 
@@ -519,7 +524,7 @@ module.exports = cds.service.impl(function () {
             var client = await dbClass.createConnectionFromEnv();
             let dbConn = new dbClass(client);
 
-            if (sAction === "REQUEST_EDIT") {
+            if (action === "REQUEST_EDIT") {
                 try{
                 // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::REQUEST_TYPE_CHANGE');
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REQUEST_TYPE_CHANGE')
@@ -534,7 +539,7 @@ module.exports = cds.service.impl(function () {
                 var iReqTypeChangeTo = aInputData[0].REQUEST_TYPE_TO_CODE;
                 var sChangedTo = aInputData[0].REQUEST_TYPE_TO_DESC.toUpperCase() || "";
                 var sChangedFrom = aInputData[0].REQUEST_TYPE_FROM_DESC.toUpperCase() || "";
-
+                           
                 var sChangeType = aInputData[0].CHANGE_TYPE;
                 var sSubType = aInputData[0].SUB_TYPE_TO_CODE;
                 var sSubTypeToDesc = aInputData[0].SUB_TYPE_TO_DESC.toUpperCase() || "";
@@ -603,7 +608,7 @@ module.exports = cds.service.impl(function () {
                         oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REQ_TYPE_CHANGE", oEmailData, null)
 
                         // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerId], null, null)
-                        var sCCEmail = await lib_email.setSampleCC(null);
+                        var sCCEmail = await lib_email.setDynamicCC(null);
                         await  lib_email.sendivenEmail(sBuyerId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                 
                         // var oEmaiContent = EMAIL_LIBRARY.getEmailData(null, "REQ_TYPE_CHANGE", oEmailData, null);
@@ -634,7 +639,7 @@ module.exports = cds.service.impl(function () {
                 req.error({ code:iErrorCode, message:  error.message ? error.message : error });
             } 
             }
-            else if (sAction === "REG_ID_EDIT") {
+            else if (action === "REG_ID_EDIT") {
                 try{
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGSITERED_ID_EDIT')
 
@@ -685,9 +690,9 @@ module.exports = cds.service.impl(function () {
                             oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REG_EMAILID_CHANGE", oEmailData, null)
 
                             // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
-                            var sCCEmail = await lib_email.setSampleCC( [sBuyerId, sOldRegId]);
+                            var sCCEmail = await lib_email.setDynamicCC( [sBuyerId, sOldRegId]);
                             await  lib_email.sendivenEmail(sNewRegId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
-                      
+                          
                         }
                     } else {
                         // Result = execProcedure(iRequestNo, iStatus, sNewRegId, aEventObj);
@@ -703,7 +708,7 @@ module.exports = cds.service.impl(function () {
                             oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REG_EMAILID_CHANGE", oEmailData, null)
 
                             // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
-                            var sCCEmail = await lib_email.setSampleCC( [sBuyerId, sOldRegId]);
+                            var sCCEmail = await lib_email.setDynamicCC( [sBuyerId, sOldRegId]);
                             await  lib_email.sendivenEmail(sNewRegId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                       
                         }
@@ -772,7 +777,7 @@ module.exports = cds.service.impl(function () {
                         oEmaiContent = await lib_email_content.getEmailContent(connection, null, "REG_EMAILID_CHANGE", oEmailData, null);
 
                         // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sNewRegId], [sBuyerId, sOldRegId], null)
-                        var sCCEmail = await lib_email.setSampleCC( [sBuyerId, sOldRegId]);
+                        var sCCEmail = await lib_email.setDynamicCC(null);
                         await  lib_email.sendivenEmail(sNewRegId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                   
                     }
@@ -799,7 +804,7 @@ module.exports = cds.service.impl(function () {
             } 
         }
             //user delegation & request forwarding
-            else if (sAction === "REQUEST_FORWARDING") {
+            else if (action === "REQUEST_FORWARDING") {
                 try{
                 // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::USER_DELEGATION');
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REQUEST_FORWARD')
@@ -848,19 +853,19 @@ module.exports = cds.service.impl(function () {
                         }
 
                         if (isEmailNotificationEnabled) {
-                            // var oEmaiContent = EMAIL_LIBRARY.getEmailData(sAction, "USER_DELEGATE", oEmailData, aRequests[i].STATUS);
+                            // var oEmaiContent = EMAIL_LIBRARY.getEmailData(action, "USER_DELEGATE", oEmailData, aRequests[i].STATUS);
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, aEmailto, null);
-                            oEmaiContent = await lib_email_content.getEmailContent(connection, sAction, "USER_DELEGATE", oEmailData, aRequests[i].STATUS);
+                            oEmaiContent = await lib_email_content.getEmailContent(connection, action, "USER_DELEGATE", oEmailData, aRequests[i].STATUS);
 
                             // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, aEmailto, null, null)
-                            var sCCEmail = await lib_email.setSampleCC( null);
+                            var sCCEmail = await lib_email.setDynamicCC( null);       
                             await  lib_email.sendivenEmail(aEmailto,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                       
                         }
-                    }
+                    }   
 
                     statusCode = 200;
-                    return responseObj;
+                    return responseObj;   
                 } else {
                     // responseObj = {
                     //     "Message": "Request re-assign failed!"
