@@ -48,6 +48,7 @@ context VENDOR_PORTAL {
             CLIENT_FULL_NAME  : String(100);
             CLIENT_SHORT_NAME : String(100);
             CLIENT_COUNTRY    : String(100);
+            EMAIL_CC: String(1000);
 
     }
 
@@ -1395,7 +1396,8 @@ key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ;
 Entity VIEW_REQUEST_TYPE_COUNT {
         CODE: Integer  @title: 'CODE: CODE' ; 
 key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
-        REQ_TYPE_COUNT: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ;     
+        REQ_TYPE_COUNT: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ;    
+        REQUEST_TYPE: Integer @title: 'REQUEST_TYPE: REQUEST_TYPE' ;    
 }
 
 @cds.persistence.exists 
@@ -1404,6 +1406,7 @@ Entity VIEW_REG_PM_APPR {
         CODE: Integer  @title: 'CODE: CODE' ; 
 key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
         STATUS_COUNT: Integer64  @title: 'STATUS_COUNT: REQUEST_NO' ; 
+        STATUS: Integer  @title: 'STATUS: STATUS' ; 
 }
 
 @cds.persistence.exists 
@@ -1412,6 +1415,7 @@ Entity VIEW_ENTITY_CODE_COUNT {
 key     BUKRS: String(4)  @title: 'BUKRS: BUKRS' ; 
 key     BUTXT: String(50)  @title: 'BUTXT: BUTXT' ; 
         ENTITY_COUNT: Integer64  @title: 'ENTITY_COUNT: REQUEST_NO' ; 
+        ENTITY_CODE: String(100)  @title: 'ENTITY_CODE: ENTITY_CODE' ;     
 }
 
 @cds.persistence.exists 
@@ -1428,6 +1432,7 @@ Entity VIEW_REQUEST_ACTION_STATUS {
         CODE: Integer  @title: 'CODE: CODE' ; 
 key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
         ACT_STATUS_COUNT: Integer64  @title: 'ACT_STATUS_COUNT: REQUEST_NO' ; 
+        STATUS: Integer  @title: 'STATUS: STATUS' ; 
 }
 
 
@@ -1446,6 +1451,7 @@ Entity VIEW_REQUEST_PM_APPR {
         CODE: Integer  @title: 'CODE: CODE' ; 
 key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
         PM_REQ_COUNT: Integer64  @title: 'PM_REQ_COUNT: REQUEST_NO' ; 
+        STATUS: Integer  @title: 'STATUS: STATUS' ; 
 }
 
 
@@ -1455,6 +1461,7 @@ Entity VIEW_REQUEST_REJECTED_STATUS {
         CODE: Integer  @title: 'CODE: CODE' ; 
 key     DESCRIPTION: String(50)  @title: 'DESCRIPTION: DESCRIPTION' ; 
         REJ_STATUS_COUNT: Integer64  @title: 'REJ_STATUS_COUNT: REQUEST_NO' ; 
+        STATUS: Integer  @title: 'STATUS: STATUS' ; 
 }
 
 @cds.persistence.exists 

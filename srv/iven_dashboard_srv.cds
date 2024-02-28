@@ -13,10 +13,10 @@ using {
   VIEW_SUPPLIER_TYPE_COUNT,
   VIEW_LG_SUPPL,
   VIEW_REG_APPROVE_PM,
-  VIEW_TURN_AROUND_TIME,
-  REQ_TURNAROUND,
+  // VIEW_TURN_AROUND_TIME,
+  // REQ_TURNAROUND,
   VIEW_REQUEST_ACTIVE_STATUS,
-  REQUEST_TAT
+  // REQUEST_TAT
 } from '../db/MASTER_TABLES';
 using {
     VENDOR_PORTAL.REQUEST_INFO,
@@ -502,12 +502,12 @@ service dashboardService {
   entity SupplierTypeCount        as projection on VIEW_SUPPLIER_TYPE_COUNT;
   entity LegacySuppliers          as projection on VIEW_LG_SUPPL;     
   entity PendingPMRegisterCount   as projection on VIEW_REG_APPROVE_PM;    
-  entity ReqTurnAroundTime        as projection on VIEW_TURN_AROUND_TIME;                  
-  entity AvgTurnAroundTime        as projection on REQ_TURNAROUND;                 
-  entity RequestAvgTurnAroundTime    as projection on REQUEST_TAT;      
+  // entity ReqTurnAroundTime        as projection on VIEW_TURN_AROUND_TIME;                  
+  // entity AvgTurnAroundTime        as projection on REQ_TURNAROUND;                 
+  // entity RequestAvgTurnAroundTime    as projection on REQUEST_TAT;      
 
   //Views
-
+           
   //Value Help
   define view Vendor_F4 as
     select from RequestInfo distinct {
@@ -524,5 +524,5 @@ service dashboardService {
     select from RequestInfo distinct {
         key BP_TYPE_CODE,    
          BP_TYPE_DESC           
-    } where BP_TYPE_CODE !='';                                    
+    } where BP_TYPE_CODE !='';                                       
 }

@@ -1201,9 +1201,10 @@ module.exports = cds.service.impl(function () {
                     throw "Invalid Payload";     
                 }    
 
+                reqHeader[0].REQUESTER_ID=reqHeader[0].REGISTERED_ID
                 reqHeader[0].VENDOR_CODE="SR";
-                reqHeader[0].SUPPL_TYPE_DESC= "COMMERCIAL VENDOR / SUPPLIER"
-                reqHeader[0].SUPPL_TYPE= "ZVND"
+                reqHeader[0].SUPPL_TYPE_DESC= reqHeader[0].SUPPL_TYPE_DESC
+                reqHeader[0].SUPPL_TYPE= reqHeader[0].SUPPL_TYPE   
                 reqHeader[0].BP_TYPE_CODE= reqHeader[0].BP_TYPE_CODE.trim() || ""
                 reqHeader[0].BP_TYPE_DESC= reqHeader[0].BP_TYPE_DESC.toUpperCase().trim() || ""
                 reqHeader[0].NEXT_APPROVER= null
@@ -1211,7 +1212,7 @@ module.exports = cds.service.impl(function () {
                 reqHeader[0].CREATION_TYPE= reqHeader[0].REQUEST_TYPE || 1;
                 reqHeader[0].COMMENT= "Self Registration by " + reqHeader[0].VENDOR_NAME1.toUpperCase().trim() || "";
                 reqHeader[0].CREATED_ON=new Date().toISOString();       
-                reqHeader[0].NDA_TYPE=reqHeader[0].BP_TYPE_CODE.trim() === "B" ? "LU" : "OU";     
+                reqHeader[0].NDA_TYPE=reqHeader[0].BP_TYPE_CODE.trim() === "B" ? "LU" : "OU";           
 
                 var oEventReqCrt = await getEventPayload(reqHeader, connection, 1);
                 var oEventReqApr = await getEventPayload(reqHeader, connection, 2);

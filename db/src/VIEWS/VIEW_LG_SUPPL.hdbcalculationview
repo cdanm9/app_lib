@@ -47,6 +47,11 @@
       <descriptions defaultDescription="VENDOR_CODE"/>
       <keyMapping columnObjectName="Join_1" columnName="VENDOR_CODE"/>
     </attribute>
+  
+    <attribute id="STATUS" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+    </attribute>
   </attributes>
   <calculatedAttributes>
     <calculatedAttribute id="VEN_DESC" order="1" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
@@ -60,13 +65,7 @@
       <descriptions defaultDescription="REQUEST_NO"/>
       <measureMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
       <exceptionAggregationMetadata/>
-    </measure>
-    <measure id="STATUS" order="5" aggregationType="max" measureType="simple">
-      <descriptions defaultDescription="STATUS"/>
-      <measureMapping columnObjectName="Join_1" columnName="STATUS"/>
-      <exceptionAggregationMetadata/>
-    </measure>
-  </baseMeasures>
+    </measure></baseMeasures>
   <calculatedMeasures/>
   <restrictedMeasures/>
   <localDimensions/>

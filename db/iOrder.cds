@@ -5,7 +5,7 @@ entity Header {
     key ORDER_NO      : Integer;
         CREATION_DATE : DateTime;
         CREATED_BY    : String(100);
-        CITY         : String(100);
+        CITY         : String(100);   
         PRIORITY     : String(20);
         NET_AMOUNT    : Decimal(16, 3);
         CURRENCY     : String(10);

@@ -18,6 +18,7 @@
       <viewAttribute id="CODE" aggregationType="sum"/>
       <viewAttribute id="DESCRIPTION"/>
       <viewAttribute id="REQUEST_NO" aggregationType="sum"/>
+      <viewAttribute id="STATUS" aggregationType="sum"/>
       <viewAttribute hidden="true" id="JOIN$CODE$STATUS"/>
     </viewAttributes>
     <calculatedViewAttributes/>
@@ -28,6 +29,7 @@
     </input>
     <input node="VENDOR_PORTAL_REQUEST_INFO">
       <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_NO" source="REQUEST_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODE$STATUS" source="STATUS"/>
     </input>
     <joinAttribute name="JOIN$CODE$STATUS"/>
@@ -36,18 +38,22 @@
 
 <logicalModel id="Join_1" filterExpressionLanguage="COLUMN_ENGINE">
   <attributes>
+    <attribute id="CODE" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CODE"/>
+      <keyMapping columnObjectName="Join_1" columnName="CODE"/>
+    </attribute>
     <attribute id="DESCRIPTION" order="2" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="DESCRIPTION"/>
       <keyMapping columnObjectName="Join_1" columnName="DESCRIPTION"/>
     </attribute>
+  
+    <attribute id="STATUS" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+    </attribute>
   </attributes>
   <calculatedAttributes/>
   <baseMeasures>
-    <measure id="CODE" order="1" aggregationType="max" measureType="simple">
-      <descriptions defaultDescription="CODE"/>
-      <measureMapping columnObjectName="Join_1" columnName="CODE"/>
-      <exceptionAggregationMetadata/>
-    </measure>
     <measure id="REJ_STATUS_COUNT" order="3" aggregationType="count" measureType="simple">
       <descriptions defaultDescription="REQUEST_NO"/>
       <measureMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>

@@ -18,6 +18,7 @@
       <viewAttribute id="BUKRS"/>
       <viewAttribute id="BUTXT"/>
       <viewAttribute id="REQUEST_NO" aggregationType="sum"/>
+      <viewAttribute id="ENTITY_CODE"/>
       <viewAttribute hidden="true" id="JOIN$BUKRS$ENTITY_CODE"/>
     </viewAttributes>
     <calculatedViewAttributes/>
@@ -28,6 +29,7 @@
     </input>
     <input node="VENDOR_PORTAL_REQUEST_INFO">
       <mapping xsi:type="Calculation:AttributeMapping" target="REQUEST_NO" source="REQUEST_NO"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="ENTITY_CODE" source="ENTITY_CODE"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$BUKRS$ENTITY_CODE" source="ENTITY_CODE"/>
     </input>
     <joinAttribute name="JOIN$BUKRS$ENTITY_CODE"/>
@@ -43,6 +45,11 @@
     <attribute id="BUTXT" order="2" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="BUTXT"/>
       <keyMapping columnObjectName="Join_1" columnName="BUTXT"/>
+    </attribute>
+  
+    <attribute id="ENTITY_CODE" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="ENTITY_CODE"/>
+      <keyMapping columnObjectName="Join_1" columnName="ENTITY_CODE"/>
     </attribute>
   </attributes>
   <calculatedAttributes/>

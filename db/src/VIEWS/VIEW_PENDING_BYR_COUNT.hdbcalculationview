@@ -40,6 +40,11 @@
       <descriptions defaultDescription="DESCRIPTION"/>
       <keyMapping columnObjectName="Join_1" columnName="DESCRIPTION"/>
     </attribute>
+  
+    <attribute id="STATUS" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+    </attribute>
   </attributes>
   <calculatedAttributes/>
   <baseMeasures>
@@ -47,13 +52,7 @@
       <descriptions defaultDescription="REQUEST_NO"/>
       <measureMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
       <exceptionAggregationMetadata/>
-    </measure>
-    <measure id="STATUS" order="3" aggregationType="max" measureType="simple">
-      <descriptions defaultDescription="STATUS"/>
-      <measureMapping columnObjectName="Join_1" columnName="STATUS"/>
-      <exceptionAggregationMetadata/>
-    </measure>
-  </baseMeasures>
+    </measure></baseMeasures>
   <calculatedMeasures/>
   <restrictedMeasures/>
   <localDimensions/>
