@@ -1200,7 +1200,7 @@ module.exports = cds.service.impl(function () {
                     (reqHeader[0].BP_TYPE_CODE === "B" && reqHeader[0].TRADE_LIC_NO === null)) {
                     throw "Invalid Payload";     
                 }    
-
+                            
                 reqHeader[0].REQUESTER_ID=reqHeader[0].REGISTERED_ID
                 reqHeader[0].VENDOR_CODE="SR";
                 reqHeader[0].SUPPL_TYPE_DESC= reqHeader[0].SUPPL_TYPE_DESC
