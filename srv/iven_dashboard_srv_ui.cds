@@ -115,18 +115,20 @@ annotate dashboardService.PendingPMRegisterCount with{
   REQUEST_NO @(title                   : 'Total Requests');     
 }
 
-// annotate dashboardService.RequestAvgTurnAroundTime with {       
-//         @Analytics.Dimension      : true
-//         STAGE @(title: 'Stage');                
-//         @Analytics.Measure        : true  
-//         AVG_TAT_SEC   @(title: 'Average Turn Around Time (Seconds)');         
-//         @Analytics.Measure        : true  
-//         AVG_TAT_MIN   @(title: 'Average Turn Around Time (Minutes)');         
-//         @Analytics.Measure        : true  
-//         AVG_TAT_HRS   @(title: 'Average Turn Around Time (Hours)');     
-//          @Analytics.Measure        : true  
-//         AVG_TAT_DAYS   @(title: 'Average Turn Around Time (Days)');          
-// }
+annotate dashboardService.RequestAvgTurnAroundTime with {       
+        @Analytics.Dimension      : true
+        STAGE @(title: 'Stage');       
+        @Analytics.Dimension      : true
+        PROGRESS @(title: 'Progress');                
+        @Analytics.Measure        : true  
+        AVG_TAT_SEC   @(title: 'Average Turn Around Time (Seconds)');         
+        @Analytics.Measure        : true  
+        AVG_TAT_MIN   @(title: 'Average Turn Around Time (Minutes)');             
+        @Analytics.Measure        : true  
+        AVG_TAT_HRS   @(title: 'Average Turn Around Time (Hours)');     
+         @Analytics.Measure        : true  
+        AVG_TAT_DAYS   @(title: 'Average Turn Around Time (Days)');          
+}
    
 
    

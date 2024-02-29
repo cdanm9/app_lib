@@ -5,7 +5,7 @@ using {
 } from '../db/MASTER_TABLES';
 
 service approvalMatrixService {
-
+              
        entity MasterCountry              as projection on VENDOR_PORTAL.MASTER_COUNTRY;
        // entity MasterCredential as projection on VENDOR_PORTAL.MASTER_CREDENTIAL;
        entity MasterCurrency             as projection on VENDOR_PORTAL.MASTER_CURRENCY;

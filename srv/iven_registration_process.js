@@ -162,18 +162,12 @@ module.exports = cds.service.impl(function () {
                     if (checkSupplier === null) {
                         var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
                         if (sPMId !== "") sPMId = sPMId[0].USER_ID;
-                        oEmailData.To_Email = sPMId;
-    
-                        if (sAction === "CREATE") {
-                            var status = 5;
-                        } else if (sAction === "RESEND") {
-                            var status = 9;
-                        }
+                        oEmailData.To_Email = sPMId;   
     
                         if (isEmailNotificationEnabled && sAction !== 'DRAFT' && sPMId !== null ) {
                             // var oEmaiContent = EMAIL_LIBRARY.getEmailData("SELFREG", "REGISTER", oEmailData, status);
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sPMId], null);
-                            var oEmaiContent = await lib_email_content.getEmailContent(connection, "SELFREG", "REGISTER", oEmailData, status);
+                            var oEmaiContent = await lib_email_content.getEmailContent(connection, "SELFREG", "REGISTER", oEmailData, null);  
                             var sCCEmail = await lib_email.setDynamicCC( null);
                             await  lib_email.sendivenEmail(sPMId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                             
@@ -577,6 +571,7 @@ module.exports = cds.service.impl(function () {
             var sChangeRequestNo = null;
             var iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
             var sCompareValue = "A";
+            var sVendorCode=inputData[0].VENDOR_CODE||null;
 
             if (action === "REJECT" || action === "SENDBACK") { //-----------------------------------------------------------------------------
                 try{
@@ -622,10 +617,12 @@ module.exports = cds.service.impl(function () {
                   
                         // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [sBuyerEmail], null);
-                        oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
-                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null, null)
-                        var sCCEmail = await lib_email.setDynamicCC( null);
-                        await  lib_email.sendivenEmail(sBuyerEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                        if(sVendorCode!="SR"){              
+                            oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
+                            // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerEmail], null, null)
+                            var sCCEmail = await lib_email.setDynamicCC( null);
+                            await  lib_email.sendivenEmail(sBuyerEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                        }
                   
                     }
 
@@ -875,7 +872,7 @@ module.exports = cds.service.impl(function () {
             req.error({ code: "500", message: error.message ? error.message : error });
         }
     })
-    this.on('MessengerService', async (req) => {
+    this.on('MessengerService', async (req) => {    
         var client = await dbClass.createConnectionFromEnv();
         let dbConn = new dbClass(client);
         try {
@@ -901,6 +898,12 @@ module.exports = cds.service.impl(function () {
             var sSupplerName = inputData[0].VENDOR_NAME1 || null;
             var sLoginId = messengerData.loginId;
             var sMailTo = messengerData.mailTo;
+            var sVCode=inputData[0].VENDOR_CODE||null;
+            // if(sVCode=='SR'){             
+            //     var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
+            //     if (sPMId !== "") sPMId = sPMId[0].USER_ID||"";      
+            //     sMailTo=sPMId;                                  
+            // }           
 
             // var sAction = inputData[0].ACTION;
             var aEventObj = await getEventObj(eventsData, action);
@@ -910,42 +913,49 @@ module.exports = cds.service.impl(function () {
             const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MESSENGER_SERVICE')
             Result = await dbConn.callProcedurePromisified(loadProc,
                 [iReqNo, sSupplierEmail, sMailTo, action, aEventObj]);
-
+                             
 
             if (Result.outputScalar.OUT_SUCCESS === null)
-                throw "Messenger failed to send message!";
+                throw "Messenger failed to send message!";    
 
             var responseObj = {
-                "Message": Result.outputScalar.OUT_SUCCESS
+                "Message": Result.outputScalar.OUT_SUCCESS     
             };
 
             if (Result.outputScalar.OUT_SUCCESS !== null) {
 
                 var oEmailData = {
-                    "ReqNo": iReqNo,
+                    "ReqNo": iReqNo,        
                     "SupplierName": sSupplerName,
                     "From_Email": sLoginId,
                     "To_Email": Result.outputScalar.OUT_EMAIL_TO,
                     "sMessage": aEventObj[0].COMMENT
                 };
                 var sAppName; 
-                var sPmId = "";
-                if (action === "VENDOR") {
+                var sPmId = "";                                
+                if (action === "VENDOR") {    
                     sPmId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
-                    if (sPmId !== "") sPmId = sPmId[0].USER_ID;
-                    sAppName="Vendor Registration Form"
-                }else{
-                    sAppName=await getAppName(iReqNo);
-                } 
+                    if (sPmId !== "") {
+                        sPmId = sPmId[0].USER_ID;
+                    }
+                    //Messenger Service Mail To PM
+                    // if(sVCode=='SR') {                
+                    //     oEmailData.To_Email=sPmId; 
 
-                if (isEmailNotificationEnabled) {
+                    // }                      
+                    sAppName="Vendor Registration Form"      
+                }else{        
+                    sAppName=await getAppName(iReqNo);                                 
+                }      
+                    
+                if (isEmailNotificationEnabled) {    
                     // var oEmaiContent = EMAIL_LIBRARY.getEmailData(sAction, "COMMUNCATION", oEmailData, null);
                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.To_Email], [sPmId]);
                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "COMMUNCATION", oEmailData, null)
                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.To_Email], [sPmId], null)
                     var sCCEmail = await lib_email.setDynamicCC(null);      
                     await  lib_email.sendivenEmail(oEmailData.To_Email,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
-                
+                                      
                 }
 
                 statusCode = 200;
@@ -1227,7 +1237,7 @@ module.exports = cds.service.impl(function () {
                 if(sRegIdCheck.length==0)
                     return "Please Generate Security Pin!";         
                 else if (sRegIdCheck[0].SEC_CODE !== sSecurityPin) {
-                    throw "Invalid Security Pin!";   
+                    throw "Invalid Security Pin!";        
                 }             
 
                 var sTL_NO=reqHeader[0].TRADE_LIC_NO || null;   
@@ -1241,49 +1251,28 @@ module.exports = cds.service.impl(function () {
                     [sEntity, null, sVendorName, sVendorEmail, sSupplierTypeCode, 1, iStatus, sTL_NO, sBuyerId, sSupplierCountry,
                         reqHeader,   
                         aEvents]
-                );    
-
+                );                          
+                var iRequestNum=sResponse.outputScalar.OUT_SUCCESS1||null              
                 var responseObj = {
-                    "requestNo":sResponse.outputScalar.OUT_SUCCESS1!=null?sResponse.outputScalar.OUT_SUCCESS1:"Request Submission Failed",
-                    "message":"Self Registration Form Created For Request: "+sResponse.outputScalar.OUT_SUCCESS1+"",
+                    "requestNo":iRequestNum!=null?iRequestNum:"Request Submission Failed",
+                    "message":"Self Registration Form Created For Request: "+iRequestNum+"",
                     "results": sResponse.results
-                };   
+                };         
 
-                req.reply(responseObj)        
+                req.reply(responseObj)  
+                // var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
+                // if (sPMId !== "") sPMId = sPMId[0].USER_ID;
+                var oEmailData={}
+                oEmailData.ReqNo = iRequestNum;   
 
-                
-                if(sResponse.outputScalar.OUT_SUCCESS1!=null){
-                    var oEmailData = {    
-                        "ReqType":reqHeader[0].REQUEST_TYPE||1,      
-                        "ReqNo": sResponse.outputScalar.OUT_SUCCESS1,
-                        "SupplierName": sVendorName     
-                    };
-                }   
-                var checkSupplier =await fnCheckSupplier(connection, oEmailData.ReqNo);
-                   
-                if (checkSupplier === null) {
-                    var sPMId = await lib_common.getApproverForEntity(connection, sEntity, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
-                    if (sPMId !== "") sPMId = sPMId[0].USER_ID || "";    
-
-                    if (action === "CREATE") {
-                        var status = 5;
-                    } else if (action === "RESEND") {
-                        var status = 9;
-                    } else if(action ==="SELF_REGISTER"){
-                        var status=5;      
-                    }   
-
-                    if (isEmailNotificationEnabled && sPMId !== null ) {
-                        // var oEmaiContent = EMAIL_LIBRARY.getEmailData("SELFREG", "REGISTER", oEmailData, status);
-                        // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sPMId], null);
-                        var oEmaiContent = await lib_email_content.getEmailContent(connection, "SELFREG", "REGISTER", oEmailData, status);
-                        var sCCEmail = await lib_email.setDynamicCC( null);   
-                        await  lib_email.sendivenEmail(reqHeader[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
-                           
-                    }
-                }   
-                
-                 
+                if (isEmailNotificationEnabled) {
+                    // var oEmaiContent = EMAIL_LIBRARY.getEmailData("SELFREG", "REGISTER", oEmailData, status);
+                    // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sPMId], null);
+                      
+                    var oEmaiContent = await lib_email_content.getEmailContent(connection, "SELFREG_SUPPLIER", "SUPPLIER_NOTIFICATION", oEmailData, iStatus);
+                    var sCCEmail = await lib_email.setDynamicCC( null);       
+                    await  lib_email.sendivenEmail(sVendorEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                }
             }   
         } catch (error) {
             var sType=error.code?"Procedure":"Node Js";    
@@ -1558,9 +1547,12 @@ module.exports = cds.service.impl(function () {
                 .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
                 .where({ REQUEST_NO: requestNo })
         );
-        if (aResult[0].REQUESTER_ID === null && aResult[0].VENDOR_CODE === "SR") {
+        // if (aResult[0].REQUESTER_ID === null && aResult[0].VENDOR_CODE === "SR") {
+        //     value = null;
+        // }
+        if (aResult[0].VENDOR_CODE === "SR") {
             value = null;
-        }
+        }   
         return value;
     }
 

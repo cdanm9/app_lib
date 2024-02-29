@@ -169,7 +169,7 @@ module.exports = {
 
 				if (req_Type === "1" || req_Type === "2" || req_Type === "3" || req_Type === "6") {
 					// let link = sLink_Portal_GuestAccess + "d6c42621-0dc7-4a69-a65c-3ee082ca5470.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome";
-					oEmailContent.subject = msg + "Invitation to register on TII Vendor Portal";
+					oEmailContent.subject = msg + "Invitation to register on IBSPL Vendor Portal";
 
 					var emailBody = "Upon successful approval, you may receive future invitations to participate in procurement processes conducted by " +
 						oEmailData.EntityDesc + "." + "<br>" + "<br>" +
@@ -372,7 +372,7 @@ module.exports = {
 					"Reason:" + "<br>" +
 					oEmailData.Reason + "<br><br>" +
 
-					"You can check the details for the request on the TII portal using this " +
+					"You can check the details for the request on the IBSPL portal using this " +
 					"<a href=" + sPortal_Link + ">link</a>" + "<br>" +
 
 					"<br>" +
@@ -581,7 +581,7 @@ module.exports = {
 
 					"Vendor's message:" + "<br>" +
 					oEmailData.sMessage + "<br>" +
-
+    
 					"<br>" +
 					"Thanks!" + "<br>" +
 					oEmailData.SupplierName + "<br>" +

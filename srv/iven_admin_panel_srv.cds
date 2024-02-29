@@ -13,8 +13,10 @@ service adminPanelService {
   entity MasteriVenAttachments as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
   entity MasterAttachmentTypes as projection on VENDOR_PORTAL.MASTER_ATTACHMENT_TYPES;
   entity MasterRequestType     as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
-  entity MasterIvenSettings    as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS;   
+  entity MasterIvenSettings    as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS; 
+  @cds.query.limit.max: 5000
   entity IvenErrorLog          as projection on VENDOR_PORTAL.IVEN_ERROR_LOG;
+ @cds.query.limit.max: 5000
   entity IvenEmailLog          as projection on VENDOR_PORTAL.IVEN_EMAIL_LOG;   
   entity RegFormFolderIds      as projection on VENDOR_PORTAL.REGFORM_FOLDER_IDS;
   entity MasterCountry         as projection on VENDOR_PORTAL.MASTER_COUNTRY;
