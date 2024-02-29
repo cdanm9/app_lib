@@ -1298,6 +1298,10 @@ context VENDOR_PORTAL {
             ACCESS_APPROVE  : String(1);
             ACCESS_SENDBACK : String(1);
             ACCESS_REJECT   : String(1);
+
+            //new change
+            TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
+                        on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
           
     }
 
@@ -1505,4 +1509,106 @@ key     PENDING_PM: String(25)  @title: 'PENDING_PM: PENDING_PM' ;
 Entity VIEW_REG_APPROVE_PM {   
         REQUEST_NO: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ; 
 key     PM_PENDING: String(25)  @title: 'PM_PENDING: PM_PENDING' ; 
+}
+
+
+@cds.persistence.exists 
+@cds.persistence.calcview      
+Entity VIEW_TURN_AROUND_TIME {
+key     REQUEST_NO: Integer64  @title: 'REQUEST_NO: REQUEST_NO' ; 
+        REQ_CREATE_EVENT_NO: Integer  @title: 'REQ_CREATE_EVENT_NO: REQ_CREATE_EVENT_NO' ; 
+        REQ_CREATE_EVENT_CODE: Integer  @title: 'REQ_CREATE_EVENT_CODE: REQ_CREATE_EVENT_CODE' ; 
+        REQ_CREATE_TIMESTAMP: Timestamp  @title: 'REQ_CREATE_TIMESTAMP: REQ_CREATE_TIMESTAMP' ; 
+        REQ_INV_EVENT_NO: Integer  @title: 'REQ_INV_EVENT_NO: REQ_INV_EVENT_NO' ; 
+        REQ_INV_EVENT_CODE: Integer  @title: 'REQ_INV_EVENT_CODE: REQ_INV_EVENT_CODE' ; 
+        REQ_INV_TIMESTAMP: Timestamp  @title: 'REQ_INV_TIMESTAMP: REQ_INV_TIMESTAMP' ; 
+        FORM_SUB_EVENT_NO: Integer  @title: 'FORM_SUB_EVENT_NO: FORM_SUB_EVENT_NO' ; 
+        FORM_SUB_EVENT_CODE: Integer  @title: 'FORM_SUB_EVENT_CODE: FORM_SUB_EVENT_CODE' ; 
+        FORM_SUB_TIMESTAMP: Timestamp  @title: 'FORM_SUB_TIMESTAMP: FORM_SUB_TIMESTAMP' ; 
+        FA_EVENT_NO: Integer  @title: 'FA_EVENT_NO: FA_EVENT_NO' ; 
+        FA_EVENT_CODE: Integer  @title: 'FA_EVENT_CODE: FA_EVENT_CODE' ; 
+        FA_TIMESTAMP: Timestamp  @title: 'FA_TIMESTAMP: FA_TIMESTAMP' ; 
+        CREATE_INV_TAT: Integer  @title: 'CREATE_INV_TAT: CREATE_INV_TAT' ; 
+        INV_FS_TAT: Integer  @title: 'INV_FS_TAT: INV_FS_TAT' ; 
+        FS_FA_TAT: Integer  @title: 'FS_FA_TAT: FS_FA_TAT' ; 
+        CREATE_INV_TAT_MIN: Integer  @title: 'CREATE_INV_TAT_MIN: CREATE_INV_TAT_MIN' ; 
+        INV_FS_TAT_MIN: Integer  @title: 'INV_FS_TAT_MIN: INV_FS_TAT_MIN' ; 
+        FS_FA_TAT_MIN: Integer  @title: 'FS_FA_TAT_MIN: FS_FA_TAT_MIN' ; 
+        CREATE_INV_TAT_HRS: Integer  @title: 'CREATE_INV_TAT_HRS: CREATE_INV_TAT_HRS' ; 
+        INV_FS_TAT_HRS: Integer  @title: 'INV_FS_TAT_HRS: INV_FS_TAT_HRS' ; 
+        FS_FA_TAT_HRS: Integer  @title: 'FS_FA_TAT_HRS: FS_FA_TAT_HRS' ; 
+        CREATE_INV_TAT_DAYS: Integer  @title: 'CREATE_INV_TAT_DAYS: CREATE_INV_TAT_DAYS' ; 
+        INV_FS_TAT_DAYS: Integer  @title: 'INV_FS_TAT_DAYS: INV_FS_TAT_DAYS' ; 
+        FS_FA_TAT_DAYS: Integer  @title: 'FS_FA_TAT_DAYS: FS_FA_TAT_DAYS' ; 
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity REQ_TURNAROUND {
+        CREATE_INV_TAT: Decimal(16)  @title: 'CREATE_INV_TAT: CREATE_INV_TAT' ; 
+        INV_FS_TAT: Decimal(16)  @title: 'INV_FS_TAT: INV_FS_TAT' ; 
+        FS_FA_TAT: Decimal(16)  @title: 'FS_FA_TAT: FS_FA_TAT' ; 
+key     UNIT: String(50)  @title: 'UNIT: UNIT' ; 
+        CREATE_INV_TAT_MIN: Decimal(16)  @title: 'CREATE_INV_TAT_MIN: CREATE_INV_TAT_MIN' ; 
+        INV_FS_TAT_MIN: Decimal(16)  @title: 'INV_FS_TAT_MIN: INV_FS_TAT_MIN' ; 
+        FS_FA_TAT_MIN: Decimal(16)  @title: 'FS_FA_TAT_MIN: FS_FA_TAT_MIN' ; 
+        CREATE_INV_TAT_HRS: Decimal(16)  @title: 'CREATE_INV_TAT_HRS: CREATE_INV_TAT_HRS' ; 
+        INV_FS_TAT_HRS: Decimal(16)  @title: 'INV_FS_TAT_HRS: INV_FS_TAT_HRS' ; 
+        FS_FA_TAT_HRS: Decimal(16)  @title: 'FS_FA_TAT_HRS: FS_FA_TAT_HRS' ; 
+        CREATE_INV_TAT_DAYS: Decimal(16)  @title: 'CREATE_INV_TAT_DAYS: CREATE_INV_TAT_DAYS' ; 
+        INV_FS_TAT_DAYS: Decimal(16)  @title: 'INV_FS_TAT_DAYS: INV_FS_TAT_DAYS' ; 
+        FS_FA_TAT_DAYS: Decimal(16)  @title: 'FS_FA_TAT_DAYS: FS_FA_TAT_DAYS' ; 
+}
+
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity REQUEST_TAT {    
+key     CREATE_INV_TAT: Decimal(16)  @title: 'CREATE_INV_TAT: CREATE_INV_TAT' ; 
+        INV_FS_TAT: Decimal(16)  @title: 'INV_FS_TAT: INV_FS_TAT' ; 
+        FS_FA_TAT: Decimal(16)  @title: 'FS_FA_TAT: FS_FA_TAT' ; 
+        UNIT: String(50)  @title: 'UNIT: UNIT' ; 
+        CREATE_INV_TAT_MIN: Decimal(16)  @title: 'CREATE_INV_TAT_MIN: CREATE_INV_TAT_MIN' ; 
+        INV_FS_TAT_MIN: Decimal(16)  @title: 'INV_FS_TAT_MIN: INV_FS_TAT_MIN' ; 
+        FS_FA_TAT_MIN: Decimal(16)  @title: 'FS_FA_TAT_MIN: FS_FA_TAT_MIN' ; 
+        CREATE_INV_TAT_HRS: Decimal(16)  @title: 'CREATE_INV_TAT_HRS: CREATE_INV_TAT_HRS' ; 
+        INV_FS_TAT_HRS: Decimal(16)  @title: 'INV_FS_TAT_HRS: INV_FS_TAT_HRS' ; 
+        FS_FA_TAT_HRS: Decimal(16)  @title: 'FS_FA_TAT_HRS: FS_FA_TAT_HRS' ; 
+        CREATE_INV_TAT_DAYS: Decimal(16)  @title: 'CREATE_INV_TAT_DAYS: CREATE_INV_TAT_DAYS' ; 
+        INV_FS_TAT_DAYS: Decimal(16)  @title: 'INV_FS_TAT_DAYS: INV_FS_TAT_DAYS' ; 
+        FS_FA_TAT_DAYS: Decimal(16)  @title: 'FS_FA_TAT_DAYS: FS_FA_TAT_DAYS' ; 
+        STAGE: String(50)  @title: 'STAGE: STAGE' ; 
+        CREATE_INV_TAT_1: Decimal(16)  @title: 'CREATE_INV_TAT_1: CREATE_INV_TAT' ; 
+        INV_FS_TAT_1: Decimal(16)  @title: 'INV_FS_TAT_1: INV_FS_TAT' ; 
+        FS_FA_TAT_1: Decimal(16)  @title: 'FS_FA_TAT_1: FS_FA_TAT' ; 
+        UNIT_1: String(50)  @title: 'UNIT_1: UNIT' ; 
+        CREATE_INV_TAT_MIN_1: Decimal(16)  @title: 'CREATE_INV_TAT_MIN_1: CREATE_INV_TAT_MIN' ; 
+        INV_FS_TAT_MIN_1: Decimal(16)  @title: 'INV_FS_TAT_MIN_1: INV_FS_TAT_MIN' ; 
+        FS_FA_TAT_MIN_1: Decimal(16)  @title: 'FS_FA_TAT_MIN_1: FS_FA_TAT_MIN' ; 
+        CREATE_INV_TAT_HRS_1: Decimal(16)  @title: 'CREATE_INV_TAT_HRS_1: CREATE_INV_TAT_HRS' ; 
+        INV_FS_TAT_HRS_1: Decimal(16)  @title: 'INV_FS_TAT_HRS_1: INV_FS_TAT_HRS' ; 
+        FS_FA_TAT_HRS_1: Decimal(16)  @title: 'FS_FA_TAT_HRS_1: FS_FA_TAT_HRS' ; 
+        CREATE_INV_TAT_DAYS_1: Decimal(16)  @title: 'CREATE_INV_TAT_DAYS_1: CREATE_INV_TAT_DAYS' ; 
+        INV_FS_TAT_DAYS_1: Decimal(16)  @title: 'INV_FS_TAT_DAYS_1: INV_FS_TAT_DAYS' ; 
+        FS_FA_TAT_DAYS_1: Decimal(16)  @title: 'FS_FA_TAT_DAYS_1: FS_FA_TAT_DAYS' ; 
+        STAGE_1: String(50)  @title: 'STAGE_1: STAGE_1' ; 
+        CREATE_INV_TAT_2: Decimal(16)  @title: 'CREATE_INV_TAT_2: CREATE_INV_TAT' ; 
+        INV_FS_TAT_2: Decimal(16)  @title: 'INV_FS_TAT_2: INV_FS_TAT' ; 
+        FS_FA_TAT_2: Decimal(16)  @title: 'FS_FA_TAT_2: FS_FA_TAT' ; 
+        UNIT_2: String(50)  @title: 'UNIT_2: UNIT' ; 
+        CREATE_INV_TAT_MIN_2: Decimal(16)  @title: 'CREATE_INV_TAT_MIN_2: CREATE_INV_TAT_MIN' ; 
+        INV_FS_TAT_MIN_2: Decimal(16)  @title: 'INV_FS_TAT_MIN_2: INV_FS_TAT_MIN' ; 
+        FS_FA_TAT_MIN_2: Decimal(16)  @title: 'FS_FA_TAT_MIN_2: FS_FA_TAT_MIN' ; 
+        CREATE_INV_TAT_HRS_2: Decimal(16)  @title: 'CREATE_INV_TAT_HRS_2: CREATE_INV_TAT_HRS' ; 
+        INV_FS_TAT_HRS_2: Decimal(16)  @title: 'INV_FS_TAT_HRS_2: INV_FS_TAT_HRS' ; 
+        FS_FA_TAT_HRS_2: Decimal(16)  @title: 'FS_FA_TAT_HRS_2: FS_FA_TAT_HRS' ; 
+        CREATE_INV_TAT_DAYS_2: Decimal(16)  @title: 'CREATE_INV_TAT_DAYS_2: CREATE_INV_TAT_DAYS' ; 
+        INV_FS_TAT_DAYS_2: Decimal(16)  @title: 'INV_FS_TAT_DAYS_2: INV_FS_TAT_DAYS' ; 
+        FS_FA_TAT_DAYS_2: Decimal(16)  @title: 'FS_FA_TAT_DAYS_2: FS_FA_TAT_DAYS' ; 
+        STAGE_2: String(50)  @title: 'STAGE_2: STAGE_2' ; 
+        AVG_TAT_SEC: Decimal(13)  @title: 'AVG_TAT_SEC: AVG_TAT_SEC' ; 
+        PROGRESS: String(50)  @title: 'PROGRESS: PROGRESS' ; 
+        AVG_TAT_MIN: Decimal(13)  @title: 'AVG_TAT_MIN: AVG_TAT_MIN' ; 
+        AVG_TAT_HRS: Decimal(13)  @title: 'AVG_TAT_HRS: AVG_TAT_HRS' ; 
+        AVG_TAT_DAYS: Decimal(13)  @title: 'AVG_TAT_DAYS: AVG_TAT_DAYS' ; 
 }
