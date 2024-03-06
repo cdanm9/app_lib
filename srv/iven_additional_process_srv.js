@@ -6,7 +6,7 @@ const lib_common = require('./LIB/iven_library')
 const lib_email = require('./LIB/iven_library_email')
 const lib_email_content = require('./LIB/iven_library_email_content')
 // const lib = require('./LIB/EMPLOYEE_LIB')
-
+      
 module.exports = cds.service.impl(function () {
   this.on('VendorInternalRequest', async (req) => {
     // get connection
@@ -928,7 +928,7 @@ async function getDMLimit(connection){
         array[j].SR_NO = count;
         delete(array[j].SAP_VENDOR_CODE);
         contactData.push(array[j]);
-      }
+      }    
     }
     return contactData;
   }

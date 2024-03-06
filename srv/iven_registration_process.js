@@ -167,9 +167,9 @@ module.exports = cds.service.impl(function () {
                         if (isEmailNotificationEnabled && sAction !== 'DRAFT' && sPMId !== null ) {
                             // var oEmaiContent = EMAIL_LIBRARY.getEmailData("SELFREG", "REGISTER", oEmailData, status);
                             // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sPMId], null);
-                            var oEmaiContent = await lib_email_content.getEmailContent(connection, "SELFREG", "REGISTER", oEmailData, null);  
-                            var sCCEmail = await lib_email.setDynamicCC( null);
-                            await  lib_email.sendivenEmail(sPMId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                            var oEmaiContent = await lib_email_content.getEmailContent(connection, "SELFREG", "REGISTER", oEmailData, iStatus);  
+                            var sCCEmail = await lib_email.setDynamicCC( null);       
+                            await  lib_email.sendivenEmail(sPMId,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)   
                             
                         }
                     } else {
@@ -381,6 +381,7 @@ module.exports = cds.service.impl(function () {
 //             console.log(encryptedPin);
 
 // })
+
     this.on('GetDraftData', async (req) => {
         try {
             //local Variables   
@@ -898,12 +899,7 @@ module.exports = cds.service.impl(function () {
             var sSupplerName = inputData[0].VENDOR_NAME1 || null;
             var sLoginId = messengerData.loginId;
             var sMailTo = messengerData.mailTo;
-            var sVCode=inputData[0].VENDOR_CODE||null;
-            // if(sVCode=='SR'){             
-            //     var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
-            //     if (sPMId !== "") sPMId = sPMId[0].USER_ID||"";      
-            //     sMailTo=sPMId;                                  
-            // }           
+            var sVCode=inputData[0].VENDOR_CODE||null;    
 
             // var sAction = inputData[0].ACTION;
             var aEventObj = await getEventObj(eventsData, action);
@@ -937,12 +933,7 @@ module.exports = cds.service.impl(function () {
                     sPmId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
                     if (sPmId !== "") {
                         sPmId = sPmId[0].USER_ID;
-                    }
-                    //Messenger Service Mail To PM
-                    // if(sVCode=='SR') {                
-                    //     oEmailData.To_Email=sPmId; 
-
-                    // }                      
+                    }                   
                     sAppName="Vendor Registration Form"      
                 }else{        
                     sAppName=await getAppName(iReqNo);                                 
@@ -1222,7 +1213,7 @@ module.exports = cds.service.impl(function () {
                 reqHeader[0].CREATION_TYPE= reqHeader[0].REQUEST_TYPE || 1;
                 reqHeader[0].COMMENT= "Self Registration by " + reqHeader[0].VENDOR_NAME1.toUpperCase().trim() || "";
                 reqHeader[0].CREATED_ON=new Date().toISOString();       
-                reqHeader[0].NDA_TYPE=reqHeader[0].BP_TYPE_CODE.trim() === "B" ? "LU" : "OU";           
+                reqHeader[0].NDA_TYPE=null;         
 
                 var oEventReqCrt = await getEventPayload(reqHeader, connection, 1);
                 var oEventReqApr = await getEventPayload(reqHeader, connection, 2);
@@ -1255,8 +1246,8 @@ module.exports = cds.service.impl(function () {
                 var iRequestNum=sResponse.outputScalar.OUT_SUCCESS1||null              
                 var responseObj = {
                     "requestNo":iRequestNum!=null?iRequestNum:"Request Submission Failed",
-                    "message":"Self Registration Form Created For Request: "+iRequestNum+"",
-                    "results": sResponse.results
+                    "message":"Self Registration Request Created : "+iRequestNum+"",
+                    "results": sResponse.results  
                 };         
 
                 req.reply(responseObj)  
@@ -1287,6 +1278,129 @@ module.exports = cds.service.impl(function () {
         }
     })
 
+    this.on('RegFormVendorEdit', async (req) => {
+        var client = await dbClass.createConnectionFromEnv();
+           var dbConn = new dbClass(client); 
+        try {    
+            var isEmailNotificationEnabled = false; 
+
+            const loadProcedure = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_EDIT_VENDOR');     
+            var {action,reqHeader,eventsData,userDetails}=req.data
+            var connection=await cds.connect.to('db');   
+            var responseObj={};
+            var sUserId=userDetails.USER_ID||"";
+            var sUserRole=userDetails.USER_ROLE||"";
+            var iReqNo = reqHeader[0].REQUEST_NO||null;
+            var sReponse,sAction;
+            var iIvenCode = reqHeader[0].IVEN_VENDOR_CODE||null;
+            var sSAPCode = reqHeader[0].SAP_VENDOR_CODE||null;
+            var sVendorEmail = reqHeader[0].REGISTERED_ID||null;
+            var sVendorName = reqHeader[0].VENDOR_NAME1||null;
+            var sEntityCode = reqHeader[0].ENTITY_CODE||null;
+            var iReqType = reqHeader[0].REQUEST_TYPE||null;                            
+            var iCreateType = reqHeader[0].CREATION_TYPE||null;       
+            var aSupplType=reqHeader[0].SUPPL_TYPE||null;   
+            var iStatus=reqHeader[0].STATUS||null;      
+            var aEvents= await getEventObjects() || [];    
+            
+            var iCurrentStatus =await getCurrentRequestStatus(connection, iReqNo) || "";
+
+            isEmailNotificationEnabled = await lib_common.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
+
+            if (iCurrentStatus !== iStatus) {    
+				responseObj = {
+					"message": "Status of current Request No:" + iReqNo + " doesn't match with our data.",
+					"status": "Warning"
+				};
+			} else if (iCurrentStatus === 11) {
+
+				var oActiveData =await getActiveData(connection,reqHeader) || null;
+
+                if (oActiveData !== null) {
+                    var iActiveReqNo = oActiveData.REQUEST_NO_ACTIVE;
+
+                    if (iReqNo !== iActiveReqNo) {
+                        iReqNo = iActiveReqNo;    
+                    }
+                }
+
+				sResponse = await dbConn.callProcedurePromisified(loadProcedure,
+                    [iReqNo, iIvenCode, sSAPCode, sEntityCode, sVendorEmail, sVendorName, iCreateType,aEvents]
+                );    
+
+                var iRequestNum=sResponse.outputScalar.OUT_SUCCESS||null;                       
+                responseObj = {
+                    "requestNo":iRequestNum!=null?iRequestNum:"Registration Form Edit Failed",
+                    "message":"Update Request Generated For Request Number : "+iRequestNum+"",
+                    "results": sResponse.results,   
+                    "status": iRequestNum !== null ? "Success" : "Error"    
+                }; 
+                    
+			} else {
+				responseObj = {
+					"message": "Form cannot be edited as current Request No:" + iReqNo + " is in-process.",
+					"status": "Warning"
+				};
+			}               
+            req.reply(responseObj)  
+            var oEmailData={}   
+                oEmailData.ReqNo = iRequestNum;   
+                oEmailData.ReqType = 5;      
+                oEmailData.SupplierName=sVendorName;    
+
+                if (isEmailNotificationEnabled) {
+                    // var oEmaiContent = EMAIL_LIBRARY.getEmailData("SELFREG", "REGISTER", oEmailData, status);
+                    // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sPMId], null);
+                                  
+                    var oEmaiContent = await lib_email_content.getEmailContent(connection,"UPDATE","REQUEST",oEmailData, null);
+                    var sCCEmail = await lib_email.setDynamicCC( null);                  
+                    await  lib_email.sendivenEmail(sVendorEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                }
+    
+        }catch(error){
+            var sType=error.code?"Procedure":"Node Js";    
+          var iErrorCode=error.code??500;     
+          // let Result2 = {
+          //   OUT_SUCCESS: error.message || ""
+          // };
+          let Result = {
+              OUT_ERROR_CODE: iErrorCode,
+              OUT_ERROR_MESSAGE:  error.message ? error.message : error
+          }
+          lib_common.postErrorLog(Result,iReqNo,sUserId,sUserRole,"Registration Form",sType,dbConn,hdbext);
+          console.error(error)     
+          // return error.messsage     
+          req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
+        }
+    });
+    
+    async function getActiveData(connection, data) {
+        try {
+            var oActiveObj = null;
+            let aResult = await connection.run(
+                SELECT
+                    .from`${connection.entities['VIEW_REQUEST_ACTIVE_STATUS']}`
+                    .where({ SAP_VENDOR_CODE: data[0].SAP_VENDOR_CODE,ACTIVE: "A", STATUS: 11 })
+                   );
+                //   
+            // var sQuery = 'SELECT * FROM \"_SYS_BIC\".\"VENDOR_PORTAL.View/VIEW_REQUEST_ACTIVE_STATUS\"';
+            // sQuery += 'WHERE SAP_VENDOR_CODE=? AND ACTIVE=? AND STATUS=?';
+            // var aResult = con.executeQuery(sQuery, data[0].SAP_VENDOR_CODE, 'A', 11);
+
+            if (aResult.length > 0) {
+                oActiveObj = {
+                    "REQUEST_NO_ACTIVE": aResult[0].REQUEST_NO,
+                    "REQUEST_TYPE": aResult[0].REQUEST_TYPE,
+                    "CREATION_TYPE": aResult[0].CREATION_TYPE,
+                    "STATUS": aResult[0].STATUS
+                };
+            }
+            return oActiveObj;
+        }
+        catch (error) { throw error; }
+
+    }
+
     async function getLogsCount(conn, oPayloadValue) {
         try {
             var iCount = 0;
@@ -1314,6 +1428,7 @@ module.exports = cds.service.impl(function () {
             throw error;
         }
     }
+
     // async function getUpdatedFieldsDataForEdit(iReqNo, aUpdatedFieldsIDs, connection) {
     //     try {
 
@@ -2173,6 +2288,46 @@ module.exports = cds.service.impl(function () {
             }
         }
         catch (error) { throw error; }
+    }
+
+    async function getEventObjects() {   
+        var oEventObj = [{
+                "REQUEST_NO": 1,
+                "EVENT_NO": 1,
+                "EVENT_CODE": 1,
+                "EVENT_TYPE": "REG",
+                "USER_ID": "",
+                "USER_NAME": "",
+                "REMARK": "Update Request Created",
+                "COMMENT": "Update Request is auto-generated for Vendor Edit request",    
+                "CREATED_ON": null
+            },
+            {
+                "REQUEST_NO": 2,
+                "EVENT_NO": 2,
+                "EVENT_CODE": 2,
+                "EVENT_TYPE": "REG",
+                "USER_ID": "",
+                "USER_NAME": "",
+                "REMARK": "Update Request Approved",
+                "COMMENT": "Update Request is auto-approved for Vendor Edit request",
+                "CREATED_ON": null
+            }
+    
+        ];
+    
+        return oEventObj;
+    }
+
+    async function getCurrentRequestStatus(conn, iRequestNo) {
+        var iCount = 0;
+        var aResult = await SELECT .from('VENDOR_PORTAL_REQUEST_INFO') .where({REQUEST_NO:iRequestNo});
+    
+        if (aResult.length > 0) {       
+            iCount = aResult[0].STATUS;    
+        }
+    
+        return iCount;
     }
 
 })

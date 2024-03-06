@@ -132,6 +132,8 @@ service registrationProcessService {
                            addressData : many RegFormAddress,
                            eventsData : many RegEventsLog,
                            securityPin:String,
-                           userDetails : User_Details) returns many String;
+                           userDetails : User_Details) returns many String;  
+                                                               
+  action RegFormVendorEdit(action:String,reqHeader: many RequestInfo,eventsData:many RegEventsLog,userDetails : User_Details) returns many String;   
 
 }

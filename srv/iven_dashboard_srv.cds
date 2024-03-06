@@ -60,7 +60,21 @@ service dashboardService {
     REQUEST_NO as REQUEST_NUM: String,                                                   
     'Request No : '|| REQUEST_NO as REQUEST_HEADER: String,                         
     'Request Type : '|| TO_REQUEST_TYPE.DESCRIPTION as REQUEST_TYPE_HEADER: String,        
-     TO_EVENTS: Association to many VENDOR_PORTAL.REQUEST_EVENTS_LOG on TO_EVENTS.REQUEST_NO=REQUEST_NO         
+     TO_EVENTS: Association to many VENDOR_PORTAL.REQUEST_EVENTS_LOG on TO_EVENTS.REQUEST_NO=REQUEST_NO,
+     case when TO_ADDRESS.COUNTRY='IN' then false 
+      else true end as BCURRCOUNTRY:Boolean,               
+         case when VENDOR_CODE = 'IR' then 'Internal Request'         
+        when VENDOR_CODE = 'SR' then 'Self Registration' 
+        when VENDOR_CODE = 'BTP' then 'Cockpit Request'
+        when VENDOR_CODE = 'DM' then 'Legacy (DM)' 
+        when VENDOR_CODE = 'BR' then 'Buyer Request' 
+        when VENDOR_CODE = 'NR' then 'Normal Registration' 
+        when VENDOR_CODE = 'QR' then 'Quick Registration'
+        when VENDOR_CODE = 'LG' then 'Legacy Supplier' 
+        when VENDOR_CODE = 'SE' then 'Vendor Self Edit'      
+        else ''                               
+         end as VENDOR_DESC:String,         
+
   };                     
   entity MasterAttachmentTypes     as projection on VENDOR_PORTAL.MASTER_ATTACHMENT_TYPES;
   entity MasterEntityCode          as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
@@ -77,7 +91,7 @@ service dashboardService {
     case when CODE = 1 then 1 
         when CODE = 2 then 3 
         when CODE = 3 then 1
-        when CODE = 4 then 3 
+        when CODE = 4 then 5 
         when CODE = 5 then 5 
         when CODE = 6 then 5 
         when CODE = 7 then 0 
@@ -511,8 +525,9 @@ service dashboardService {
   //Value Help
   define view Vendor_F4 as
     select from RequestInfo distinct {
-        key VENDOR_CODE
-    }where VENDOR_CODE !='';        
+         VENDOR_CODE,
+       key VENDOR_DESC   
+    }where VENDOR_CODE !='' and VENDOR_DESC!='';                  
 
   define view SupplierType_F4 as
     select from RequestInfo distinct {
@@ -522,7 +537,6 @@ service dashboardService {
 
   define view VendoSubType_F4 as
     select from RequestInfo distinct {
-        key BP_TYPE_CODE,    
-         BP_TYPE_DESC           
-    } where BP_TYPE_CODE !='';                                       
+        key BP_TYPE_DESC               
+    } where BP_TYPE_DESC !='';                                                              
 }

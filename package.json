@@ -18,7 +18,7 @@
     "crypto": "^1.0.1",
     "express": "^4",
     "nodemailer": "^6.9.7",
-    "npm": "^10.2.5",
+    "npm": "^10.2.5",        
     "passport": "^0.6.0",
     "sap-cf-axios": "^0.4.10",
     "sap-hdbext-promisfied": "2.202307.1"

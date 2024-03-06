@@ -11,7 +11,7 @@
 					"relational",
 					"mta-resource-name:VENDOR_PORTAL-db",
 					"endpoint:https://api.cf.us10.hana.ondemand.com",
-					"org:ibs-portal-dev",
+					"org:ibs-portal-dev",  
 					"space:IBS_PORTAL_DEV"
 				],
 				"plan": "hdi-shared",
@@ -55,8 +55,9 @@
 		{
 			"name":"BTP_DMS_Token",
 			"url":"https://ibs-portal-dev.authentication.us10.hana.ondemand.com",
-			"username": "sb-d8bb56ea-1a50-4a7e-9f6b-ab06cdf76e1e!b84678|sdm-di-DocumentManagement-sdm_integration!b6332",
-			"password": "v8OiCbVfHqlK6RWY2PZ2GwPKksc="
+			"username": "sb-03193acc-238c-46ee-8d3f-9bf2cc964376!b84678|sdm-di-DocumentManagement-sdm_integration!b6332",
+			"password": "EQgY8HXmdq9US2gF91CDKnUuCbI="
+			
 		},
 		{
 			"name":"BTP_DMS_Dest",

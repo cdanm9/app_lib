@@ -8,7 +8,7 @@ const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display
 const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster/";
 
 module.exports = {
-
+						
 	getLongDate: function (dateValue) {
 		// var sLongDate = "";
 		var daysInWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -27,7 +27,7 @@ module.exports = {
 		var mailid, Emailbody, Emailbody1, subject, msg;
 
 		var oEmailContent = {
-			"subject": null,
+			"subject": null,         
 			"emailBody": null
 		};
 
@@ -88,14 +88,44 @@ module.exports = {
 
 				oEmailContent.emailBody = "<p style=" + "font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black>" + Emailbody + oEmailContent.emailBody + "</p>";
 				// 		subject = req + "Request created for supplier " + data[0].SupplierName;
-				oEmailContent.subject = "Vendor request created";
+				oEmailContent.subject = "Vendor request created.";
 
-			} else if (sAction === "APPROVE") {
+			}else if(sAction ==="UPDATE"){
+				var req_Type = oEmailData.ReqType.toString();
+				if (req_Type === "1" || req_Type === "2" || req_Type === "3" || req_Type === "6") {
+					var req = "";
+				} else {
+					var req = " Update ";
+				}   
+
+				Emailbody = "Dear Vendor," + "<br><br>";
+				// var link = "Vendor_Request_Approval-Approve&/VendorInviteList/" + parseInt(oEmailData.ReqNo, 10);
+				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
+					" has been created." + "<br>" + "<br>" +
+					"<br>" + "<br>" +
+					// 			"<a href=" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "#" + link + ">" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "</a>" + "<br>" +
+					// 			"<a href=" + "https://flpnwc-ww4hph2jbz.dispatcher.ae1.hana.ondemand.com/sites/iven#Home-show" +
+					// 			">https://flpnwc-ww4hph2jbz.dispatcher.ae1.hana.ondemand.com/sites/iven#Home-show</a>" + "<br>" +
+					"<br>" +
+					"Should you have any questions, please do not hesitate to reach out to us via email at <a href=" + sClientContactEmail + ">" +
+					sClientContactEmail +    
+					"</a>" + "<br>" +    
+					"<br>" +
+					"Regards," + "<br>" +
+					"Vendor Management Team" +
+					"<br><br>";          
+
+				oEmailContent.emailBody = "<p style=" + "font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black>" + Emailbody + oEmailContent.emailBody + "</p>";
+				// 		subject = req + "Request created for supplier " + data[0].SupplierName;
+				oEmailContent.subject = "Vendor Request Created.";   
+			} 
+			else if (sAction === "APPROVE") {
 
 				var req_Type = oEmailData.ReqType.toString();
 
 				if (req_Type === "1" || req_Type === "2" || req_Type === "3" || req_Type === "6") {
-					oEmailContent.subject = "Vendor Registration request approved";
+					oEmailContent.subject = "Vendor Registration request approved.";
 
 					oEmailContent.emailBody = "Request No. " + oEmailData.ReqNo + " for vendor " + oEmailData.SupplierName +
 						" has been approved." + "<br>" + "<br>" +
@@ -169,7 +199,7 @@ module.exports = {
 
 				if (req_Type === "1" || req_Type === "2" || req_Type === "3" || req_Type === "6") {
 					// let link = sLink_Portal_GuestAccess + "d6c42621-0dc7-4a69-a65c-3ee082ca5470.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome";
-					oEmailContent.subject = msg + "Invitation to register on IBSPL Vendor Portal";
+					oEmailContent.subject = msg + "Invitation to register on "+ sClientShortName +" Vendor Portal.";
 
 					var emailBody = "Upon successful approval, you may receive future invitations to participate in procurement processes conducted by " +
 						oEmailData.EntityDesc + "." + "<br>" + "<br>" +
@@ -199,7 +229,7 @@ module.exports = {
 
 				} else {
 
-					oEmailContent.subject = msg + "Invitation to update your company details on  " + oEmailData.EntityDesc + " Vendor Portal";
+					oEmailContent.subject = msg + "Invitation to update your company details on  " + oEmailData.EntityDesc + " Vendor Portal.";
 
 					var emailBody = "Once approved, you may be invited to future procurement processes by " + oEmailData.EntityDesc +
 						". Your approved registration does not entitle you to be invited to any/all procurement processes. " + oEmailData.EntityDesc +
@@ -263,7 +293,8 @@ module.exports = {
 					// sActionTypeText = '';
 					greetingsTo = 'Dear Approver,'
 					linkcontent = "Please click " + "<a href=" + sLink_Portal_LoginAccess + sLink_Registraion_Approval + parseInt(oEmailData.ReqNo, 10) +
-						">here</a>"
+						">here</a>" 
+						+ " to login to " + sClientShortName + " Portal and approve.";                  
 				} else if (sAction === "QUICK_REG") {
 					sRequestTypeText = "Quick ";
 				}
@@ -291,16 +322,18 @@ module.exports = {
 					sActionTypeText = "submitted";
 				} else if (iStatus === 9) {
 					sActionTypeText = "re-submitted";
-				}
+				} else if(iStatus===4)
+					sActionTypeText="submitted";      
 
 				var sRequestTypeText = "";
 				if (oEmailData.ReqType === 5) {
-					sRequestTypeText = "updated ";
-				}
+					sRequestTypeText = "updated ";    
+				}   
 
-				oEmailContent.subject = "Vendor " + sRequestTypeText + "self registration form " + sActionTypeText + " for " + oEmailData.SupplierName;
+				oEmailContent.subject = "Vendor " + sRequestTypeText + "self registration form " + sActionTypeText + " for " + oEmailData.SupplierName+".";
 
-				oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
+				// oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
+				oEmailContent.emailBody = "Dear Approver," + "<br><br>" +
 					"Request No. " + oEmailData.ReqNo + " for " + sRequestTypeText +
 					"Vendor self Registration as <span style=\"text-transform:uppercase\">" +
 					oEmailData.SupplierName + "</span>";
@@ -360,7 +393,7 @@ module.exports = {
 				}
 
 				// 			oEmailContent.subject = "Supplier " + sRequestTypeText + "registration form sent back  for " + oEmailData.SupplierName; 
-				oEmailContent.subject = "Vendor " + sRequestTypeText + "registration form returned.";
+				oEmailContent.subject = "Vendor " + sRequestTypeText + "registration form returned.";    
 
 				oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
 
@@ -372,7 +405,7 @@ module.exports = {
 					"Reason:" + "<br>" +
 					oEmailData.Reason + "<br><br>" +
 
-					"You can check the details for the request on the IBSPL portal using this " +
+					"You can check the details for the request on the "+ sClientShortName + " portal using this " +
 					"<a href=" + sPortal_Link + ">link</a>" + "<br>" +
 
 					"<br>" +
@@ -381,7 +414,7 @@ module.exports = {
 					"<br>" +
 					"Regards," + "<br>" +
 					"Vendor Management Team";
-
+					    
 			}
 		} else if (sAppType === "BUYER_NOTIFICATION") {
 			// Buyer notifications only
@@ -396,7 +429,7 @@ module.exports = {
 					req = 'update ';
 				}
 
-				oEmailContent.subject = "Vendor " + sRequestTypeText + " " + sActionTypeText;
+				oEmailContent.subject = "Vendor " + sRequestTypeText + " " + sActionTypeText+".";
 
 				oEmailContent.emailBody = "Dear User," + "<br><br>" +
 					"Your " + req + "Request No. " + oEmailData.ReqNo + " for" + sRequestTypeText +
@@ -473,7 +506,7 @@ module.exports = {
 
 			} else if (sAction === "SELFREG_BUYER") {
 
-				oEmailContent.subject = "New vendor self registration request No: " + oEmailData.ReqNo + " has been assigned to you";
+				oEmailContent.subject = "New vendor self registration request No: " + oEmailData.ReqNo + " has been assigned to you.";
 				// 			oEmailContent.subject = "Self Registration Request No: " + oEmailData.ReqNo + " created for " + oEmailData.SupplierName;
 
 				oEmailContent.emailBody = "Dear Valued Recipient," + "<br><br>" +
@@ -546,7 +579,7 @@ module.exports = {
 
 			} else if (sAction === "SELFREG_SUPPLIER") {
 
-				oEmailContent.subject = "Request No: " + oEmailData.ReqNo + " created with " + sClientName + " for registration as vendor";
+				oEmailContent.subject = "Request No: " + oEmailData.ReqNo + " created with " + sClientName + " for registration as vendor.";
 
 				oEmailContent.emailBody = "Dear Valued Recipient," + "<br><br>" +
 
@@ -587,7 +620,7 @@ module.exports = {
 					oEmailData.SupplierName + "<br>" +
 					"" + oEmailData.From_Email + "";
 
-				oEmailContent.subject = "Message from Vendor: " + oEmailData.SupplierName;
+				oEmailContent.subject = "Message from Vendor: " + oEmailData.SupplierName+".";
 
 			} else if (sAction === "BUYER") {
 
@@ -603,7 +636,7 @@ module.exports = {
 					"Vendor Registration Team" + "<br>" +
 					"" + sClientShortName + "";
 
-				oEmailContent.subject = "Message from Procurement Team";
+				oEmailContent.subject = "Message from Procurement Team.";
 
 			} else if (sAction === "APPROVER") {
 				oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
@@ -618,9 +651,9 @@ module.exports = {
 					"Vendor Registration Team" + "<br>" +
 					"" + sClientShortName + "";
 
-				oEmailContent.subject = "Message from Registration Approver";
+				oEmailContent.subject = "Message from Registration Approver"+".";
 
-			}
+			}     
 
 		} else if (sAppType === "PENDING_NOTIFICATION") {
 			if (iStatus === 5 || iStatus === 6) {
@@ -706,7 +739,7 @@ module.exports = {
 			} else if (sAction === "AFTER_7Days") {
 				deadline.setDate(deadline.getDate() + 23);
 
-				oEmailContent.subject = "" + sClientShortName + " registration form attachments expiring in 20days";
+				oEmailContent.subject = "" + sClientShortName + " registration form attachments expiring in 20days.";
 
 				oEmailContent.emailBody +=
 					"Some of your attachments (documents/certificates) uploaded in Vendor Registration as <span style=\"text-transform:uppercase\">" +
@@ -843,7 +876,7 @@ module.exports = {
 				sType = "Sub -Type";
 			}
 
-			oEmailContent.subject = "Request No: " + parseInt(oEmailData.ReqNo, 10) + " - Vendor Request Type/Sub Type changed";
+			oEmailContent.subject = "Request No: " + parseInt(oEmailData.ReqNo, 10) + " - Vendor Request Type/Sub Type changed.";
 
 			oEmailContent.emailBody = "Dear Approver," + "<br><br>" +
 			"Request No. " + oEmailData.ReqNo + " for vendor as   <span style=\"text-transform:uppercase\">" +
@@ -892,7 +925,7 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 				linkStatement = "Please login to the following " + sClientShortName + " portal using the link " +
 				"<a href=" + sLink + ">here</a><br><br>";
 
-			oEmailContent.subject = "Registered Email ID changed for - " + oEmailData.SupplierName;
+			oEmailContent.subject = "Registered Email ID changed for - " + oEmailData.SupplierName+".";
 
 			oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
 				"Vendor Registred Email ID for <span style=\"text-transform:uppercase\">" +
@@ -918,7 +951,7 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 				sReqType = 'register';
 			}
 
-			oEmailContent.subject = "" + sClientShortName + " vendor registration invite: Reminder-" + oEmailData.Count;
+			oEmailContent.subject = "" + sClientShortName + " vendor registration invite: Reminder-" + oEmailData.Count+".";
 			oEmailContent.emailBody = "Dear Vendor," + "<br><br>" +
 				/*oEmailContent.emailBody = */
 				"Your company, " + oEmailData.SupplierName + " is re-invited to " + sReqType + " with " + oEmailData.EntityDesc +
@@ -959,7 +992,7 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 			// }
 			var sLink_Portal_LoginAccess = sLink_Registation_Form;
 
-			oEmailContent.subject = "Invitation to update registration on the " + oEmailData.EntityDesc + " supplier database";
+			oEmailContent.subject = "Invitation to update registration on the " + oEmailData.EntityDesc + " supplier database.";
 			var EmailBody = "Dear Valued Recipient," + "<br><br>";
 			var emailBodyCheck = "Once approved, you may be invited to future procurement processes by " +  oEmailData.EntityDesc +
 			". Your approved registration does not entitle you to be invited to any/all procurement processes. " +  oEmailData.EntityDesc +
@@ -969,7 +1002,7 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 		"In order to perform any business with us, you need to complete this registration in full " +
 		"using the link " +
 		"<a href=" + sLink_Portal_LoginAccess +
-		">here</a>" + "<br>" +
+		">here</a>" + "<br>" +    
 		"<br>" +
 		"Upon submission, your registration request will be reviewed by relevant teams. We may seek additional information as part of this process." +
 		"<br>" + "<br>" +
