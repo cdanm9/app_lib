@@ -1,4 +1,5 @@
 // namespace VENDOR_PORTAL;
+using {cuid} from '@sap/cds/common';
 
 context VENDOR_PORTAL {
     entity MASTER_COUNTRY {
@@ -1302,14 +1303,42 @@ context VENDOR_PORTAL {
             //new change
             TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
                         on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
+            
           
-    }
+    }   
 
     entity MASTER_APPROVAL_MATRIX {
         key HIERARCHY_ID : String(10);
         key TYPE         : String(10);
-            USER_IDS     : String(1000);
-    }
+            USER_IDS     : String(1000);     
+    }      
+
+    //New Temporary Changes for hierarchy START
+
+    // entity MASTER_APPROVAL_HIERARCHY_FE:cuid {
+    //         APPR_TYPE       : String(10);
+    //         ENTITY_CODE     : String(10);
+    //         LEVEL           : Integer;
+    //         ROLE_CODE       : String(10);
+    //         ACCESS_EDIT     : Boolean;
+    //         ACCESS_APPROVE  : Boolean;
+    //         ACCESS_SENDBACK : Boolean;
+    //         ACCESS_REJECT   : Boolean;   
+    //         TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
+    //                     on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;   
+    //         TO_ROLE: Association to one MASTER_USER_ROLE on TO_ROLE.CODE=ROLE_CODE;
+    //         TO_ENTITY_TYPE: Association to MASTER_ENTITY_TYPE_FE;
+          
+    // }  
+
+    // entity MASTER_ENTITY_TYPE_FE:cuid{
+    //     APPR_TYPE : String(10);
+    //     APPR_DESC: String(100);      
+    //     ENTITY_CODE : String(10);       
+    //     TO_HIERARCHY: Composition of many MASTER_APPROVAL_HIERARCHY_FE on TO_HIERARCHY.TO_ENTITY_TYPE=$self;
+    // }
+
+    //new temporary changes for hierarchy END   
 
 }
 

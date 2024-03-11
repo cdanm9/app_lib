@@ -15,7 +15,7 @@ modules:
     path: gen/srv
     parameters:
       buildpack: nodejs_buildpack
-      memory: 500M
+      memory: 750M   
     build-parameters:
       builder: npm
     provides:
@@ -31,7 +31,7 @@ modules:
     path: gen/db
     parameters:
       buildpack: nodejs_buildpack
-      memory: 256M
+      memory: 500M
     requires:
       - name: VENDOR_PORTAL-db
 resources:
