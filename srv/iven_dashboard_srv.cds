@@ -523,11 +523,13 @@ service dashboardService {
   //Views
            
   //Value Help
+  define view Approver_F4 as
+    select from MasterIvenUsers where ACTIVE !='';         
   define view Vendor_F4 as
     select from RequestInfo distinct {
          VENDOR_CODE,
        key VENDOR_DESC   
-    }where VENDOR_CODE !='' and VENDOR_DESC!='';                  
+    }where VENDOR_CODE !='' and VENDOR_DESC!='';                     
 
   define view SupplierType_F4 as
     select from RequestInfo distinct {

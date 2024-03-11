@@ -1315,28 +1315,37 @@ context VENDOR_PORTAL {
 
     //New Temporary Changes for hierarchy START
 
-    // entity MASTER_APPROVAL_HIERARCHY_FE:cuid {
-    //         APPR_TYPE       : String(10);
-    //         ENTITY_CODE     : String(10);
-    //         LEVEL           : Integer;
-    //         ROLE_CODE       : String(10);
-    //         ACCESS_EDIT     : Boolean;
-    //         ACCESS_APPROVE  : Boolean;
-    //         ACCESS_SENDBACK : Boolean;
-    //         ACCESS_REJECT   : Boolean;   
-    //         TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
-    //                     on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;   
-    //         TO_ROLE: Association to one MASTER_USER_ROLE on TO_ROLE.CODE=ROLE_CODE;
-    //         TO_ENTITY_TYPE: Association to MASTER_ENTITY_TYPE_FE;
-          
-    // }  
-
-    // entity MASTER_ENTITY_TYPE_FE:cuid{
-    //     APPR_TYPE : String(10);
-    //     APPR_DESC: String(100);      
-    //     ENTITY_CODE : String(10);       
-    //     TO_HIERARCHY: Composition of many MASTER_APPROVAL_HIERARCHY_FE on TO_HIERARCHY.TO_ENTITY_TYPE=$self;
-    // }
+    entity MASTER_APPROVAL_HIERARCHY_FE:cuid {
+            // @readonly     
+            APPR_TYPE       : String(10);         
+            // @readonly 
+            ENTITY_CODE     : String(10);
+            @mandatory USER_ID         : String(1000)  @Communication.IsEmailAddress;   
+            @mandatory LEVEL           : Integer  @assert.range: [1,1000];   
+            @mandatory ROLE_CODE       : String(10);
+            ACCESS_EDIT     : Boolean default false;   
+            ACCESS_APPROVE  : Boolean default false;
+            ACCESS_SENDBACK : Boolean default false;
+            ACCESS_REJECT   : Boolean default false;          
+            TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
+                        on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;   
+            TO_ROLE: Association to one MASTER_USER_ROLE on TO_ROLE.CODE=ROLE_CODE;
+            TO_ENTITY_TYPE: Association to MASTER_ENTITY_TYPE_FE;  
+            TO_APPR_TYPE: Association to one MASTER_APPROVAL_TYPE on TO_APPR_TYPE.CODE=APPR_TYPE; 
+    }             
+    entity MASTER_APPROVAL_TYPE{
+        key CODE:String(10);
+        DESC:String(50);                    
+    }            
+     
+    entity MASTER_ENTITY_TYPE_FE:cuid{
+        APPR_TYPE : String(10);     
+        ENTITY_CODE : String(10);     
+        TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
+                        on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;   
+        TO_HIERARCHY: Composition of many MASTER_APPROVAL_HIERARCHY_FE on TO_HIERARCHY.TO_ENTITY_TYPE=$self;
+        TO_APPR_TYPE: Association to one MASTER_APPROVAL_TYPE on TO_APPR_TYPE.CODE=APPR_TYPE;
+    }    
 
     //new temporary changes for hierarchy END   
 

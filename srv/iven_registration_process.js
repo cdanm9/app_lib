@@ -773,7 +773,7 @@ module.exports = cds.service.impl(function () {
                                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
                                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null, null)
                                     var sCCEmail = await lib_email.setDynamicCC( null);
-                                    var sToEmail = [oEmailData.Buyer, oEmailData.Approver_Email].toString();
+                                    var sToEmail = [oEmailData.Buyer, oEmailData.SupplerEmail].toString();    
                                     await  lib_email.sendivenEmail(sToEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                                 }
                                 //Post to IAS for Create Normal Request
