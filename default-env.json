@@ -55,9 +55,8 @@
 		{
 			"name":"BTP_DMS_Token",
 			"url":"https://ibs-portal-dev.authentication.us10.hana.ondemand.com",
-			"username": "sb-03193acc-238c-46ee-8d3f-9bf2cc964376!b84678|sdm-di-DocumentManagement-sdm_integration!b6332",
-			"password": "EQgY8HXmdq9US2gF91CDKnUuCbI="
-			
+			"username": "sb-5f4860f9-4799-48eb-99af-32c335f39b78!b84678|sdm-di-DocumentManagement-sdm_integration!b6332",
+			"password": "9s1/rnCX9U8hlBVFOt16496Rpn4="
 		},
 		{
 			"name":"BTP_DMS_Dest",
