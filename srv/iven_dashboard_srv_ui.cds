@@ -129,6 +129,13 @@ annotate dashboardService.RequestAvgTurnAroundTime with {
          @Analytics.Measure        : true  
         AVG_TAT_DAYS   @(title: 'Average Turn Around Time (Days)');          
 }
+
+annotate dashboardService.PendingApprovals with {       
+        @Analytics.Dimension      : true
+        APPR_PENDING @(title: 'Approval Pending');                
+        @Analytics.Measure        : true  
+        REQUEST_NO   @(title: 'No. of Pending Requests');                        
+}
    
 
    

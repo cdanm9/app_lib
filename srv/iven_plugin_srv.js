@@ -71,15 +71,21 @@ module.exports = cds.service.impl(function () {
         // var sQuery = 'SELECT * FROM \"_SYS_BIC\".\"VENDOR_PORTAL.View/REGISTATION_REQUEST_DETAILS_V2\"';
         //     sQuery += 'WHERE STATUS_INV != ? AND STATUS_INV != ? AND STATUS_INV != ? AND STATUS_INV != ? AND  NEXT_APPROVER = ?'; 
         // var aResult = conn.executeQuery(sQuery, 3, 8, 10, 11, sLoginEmail); 
+        var sNextApprover='';
+        // let aResult = await connection.run(
+        //     SELECT
+        //         .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
+        //         .where`STATUS NOT IN (3,8,10,11,14) AND NEXT_APPROVER = ${sLoginEmail}`);
+
         let aResult = await connection.run(
             SELECT
                 .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                .where`STATUS NOT IN (3,8,10,11,14) AND NEXT_APPROVER = ${sLoginEmail}`);
+                .where`STATUS NOT IN (3,8,10,11,14) AND NEXT_APPROVER != ${sNextApprover}`);    
         
         // var aDataObjects = Object.keys(aResult).map(function(key) {
         //     return aResult[key];
         // });
-    
+           
         return aResult;
     } 
     catch (error) { throw error; }

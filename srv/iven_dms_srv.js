@@ -1,5 +1,9 @@
 // get libraries/modules
+const { Readable, PassThrough } = require("stream");
 const cds = require('@sap/cds')
+const { OpenApiRequestBuilder } = require('@sap-cloud-sdk/openapi');
+const axios = require("axios");
+const FormData = require("form-data");
 const dbClass = require("sap-hdbext-promisfied")
 const hdbext = require("@sap/hdbext")
 const lib_ias = require('./LIB/iven_library_ias')
@@ -43,7 +47,7 @@ module.exports = cds.service.impl(function () {
             //      var RepoID = 'iVEN';
             //     let a = await lib_dms._getSubFolderItems(RepoID, fname);
             let response = await lib_dms._getSubFolderItems(externalId, folderName);
-            req.reply(response);
+            req.reply(response);   
         } catch (error) {
 
             var sType = error.code ? "Procedure" : "Node Js";
@@ -278,18 +282,24 @@ module.exports = cds.service.impl(function () {
 
             var sExternalId = fileDetails.externalId || null;
             var sObjectId = fileDetails.objectId || null;
-            if (action == 'Download') {
+            var sMimeType = fileDetails.contentStreamMimeType || null;
+            var sFileName = fileDetails.fname || null;
+            if (action == 'Download'||action == 'View') {   
                 response = await lib_dms._DownloadFile(sObjectId, sExternalId);
             } else if (action == 'Upload') {
                 // response = await lib_dms._DeleteFile(sObjectId, sExternalId);
             }     
-            
-            req._.res.set('Content-disposition', 'attachment; filename=Quick_Time_Entry.pdf');
-            req._.res.set('Content-type', 'application/pdf');
-            var base64DataUri = 'data:application/pdf;base64,' + response;            
-            req._.res.send(base64DataUri);
-            req._.res.end();
-            req.reply(response);         
+
+            req._.res.set('Content-disposition', 'attachment; filename='+sFileName+'');         
+            // req._.res.set('Content-disposition', 'form-data; attachment; filename='+sFileName+'');    
+            req._.res.set('Content-type',sMimeType);     
+            var base64content=response.toString("base64")      
+            var base64DataUri = 'data:'+sMimeType+';base64,' + base64content;   
+            if(action=="View")       
+                req._.res.send(response);           
+            else   
+                req._.res.send(base64DataUri);                                                                             
+            req._.res.end();                             
         } catch (error) {
 
             var sType = error.code ? "Procedure" : "Node Js";
@@ -298,12 +308,63 @@ module.exports = cds.service.impl(function () {
                 OUT_ERROR_CODE: iErrorCode,
                 OUT_ERROR_MESSAGE: error.message ? error.message : error
             }
-            lib_common.postErrorLog(Result, null, sUserId, sUserRole, "Delete DMS Repository", sType, dbConn, hdbext);
+            lib_common.postErrorLog(Result, null, sUserId, sUserRole, "Download DMS Repository", sType, dbConn, hdbext);
             // console.error(error)     
             // return error.messsage            
             req.error({ code: iErrorCode, message: error.message ? error.message : error });
         }
     })
+          
+
+    this.on('FileUpload', async (req) => {   
+        try {     
+            var { action,fileDetails, userDetails } = req.data;
+            var sUserId = userDetails.USER_ID || null;
+            var sUserRole = userDetails.USER_ROLE || null;
+            var client = await dbClass.createConnectionFromEnv();
+            var dbConn = new dbClass(client);                        
+            var response;    
+
+            var sExternalId = fileDetails.externalId || null;
+            var sObjectId = fileDetails.objectId || null;
+            var sFileName = fileDetails.fname || null;
+            var fileContent = fileDetails.fileContent || null;    
+            var sFileMimeType = fileDetails.contentStreamMimeType || null;          
+            if (action == 'Download') {
+                response = await lib_dms._DownloadFile(sObjectId, sExternalId);
+            } else if (action == 'Upload') {   
+                response = await lib_dms._UploadFile(sExternalId,sObjectId,sFileName,sFileMimeType,fileContent);     
+            }  
+
+            if(response||response.properties){                       
+                response.properties.statusText="File "+sFileName+" uploaded successfully"
+                response.properties.status=200;        
+            }    
+                    
+            
+            // req._.res.set('Content-disposition', 'attachment; filename=Quick_Time_Entry.pdf');
+            // req._.res.set('Content-type', 'application/pdf');
+            // var base64DataUri = 'data:application/pdf;base64,' + response;            
+            // req._.res.send(base64DataUri);
+            // req._.res.end();
+            req.reply(response);             
+        } catch (error) {
+
+            var sType = error.code ? "Procedure" : "Node Js";  
+            var iErrorCode = error.code ??(error.status??500);
+            var iErrorMessage = error.message ??(error.statusText??error);    
+            let Result = {
+                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_MESSAGE: iErrorMessage      
+            }
+            lib_common.postErrorLog(Result, null, sUserId, sUserRole, "Upload DMS Repository", sType, dbConn, hdbext);
+            // console.error(error)     
+            // return error.messsage            
+            req.error({ code: iErrorCode, message: iErrorMessage });    
+        }
+    })
+
+
     // this.on('DeleteFile', async (req) => {
 
     // try {

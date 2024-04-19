@@ -187,7 +187,7 @@ module.exports = cds.service.impl(function () {
 			}
 
 			var aLogsTable =await getLogsCount(connection, supplierLogData);
-			var onbEvents =await getEventObj(supplierLogData, comment);
+			var onbEvents =await getEventObj(supplierLogData, comment);  
 
 			// var iNDAAttach = oPayload.VALUE.NDA_ATTACH;
       var iNDAAttach = attachmentData;
@@ -221,7 +221,7 @@ module.exports = cds.service.impl(function () {
         	aPaymentObj, aFinanceObj, aOwnerObj,
         	aProdServbj, aCapacityObj, aCustomerObj, aOEMObj,
         	aDiscFieldsObj, aRelativeObj, aQaCertiObj,
-        	aAttachFieldsObj, aAttachmentsObj,
+        	aAttachFieldsObj, aAttachmentsObj,    
         	aUpdatedFieldsObj, onbEvents, aLogsTable, srNo, attachCode]
         );
 			responseObj = {
@@ -589,10 +589,14 @@ this.on('triggerEmailBulk',async(req)=>{
           UPDATED_ON:new Date().toISOString(),
           REMINDER_COUNT:0
         }
+      
+        await UPDATE('VENDOR_PORTAL_REQUEST_INFO').set({ LAST_UPDATED_ON:aInviteLogData.UPDATED_ON,    
+          REMINDER_COUNT:0 }).where({ REQUEST_NO: aInviteLogData.REQUEST_NO });
+             
         await INSERT([aInviteLogData]).into('VENDOR_PORTAL_VENDOR_INVITATION_LOG');     
 
         if (emailCount % 50 === 0 && emailCount !== 0) {
-          await sleep(30000);
+          await sleep(30000);    
         }
       }
     }
@@ -852,7 +856,7 @@ async function getDMLimit(connection){
     if (oPayloadValue !== null) {
       eventArr = [{
         "REQUEST_NO": 0,
-        "EVENT_NO": 3,
+        "EVENT_NO": 4,   
         "EVENT_CODE": 4,
         "USER_ID": oPayloadValue[0].USER_ID,
         "USER_NAME": oPayloadValue[0].USER_NAME,
@@ -861,7 +865,7 @@ async function getDMLimit(connection){
         "CREATED_ON": null,
         "EVENT_TYPE": "ONB"
       }];
-  
+                                                                                 
     } else {
       throw "Incorrect Data format for posting";
     }

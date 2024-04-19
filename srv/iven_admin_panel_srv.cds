@@ -10,7 +10,12 @@ using {
 service adminPanelService {
 
   entity MasterTableNames      as projection on VENDOR_PORTAL.MASTER_TABLENAMES;
-  entity MasteriVenAttachments as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
+  entity MasteriVenAttachments as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS{
+    *,    
+    FILE_NAME as FILE_NAME_FE: String,            
+    @Core.IsMediaType: true FILE_MIMETYPE as FILE_MIMETYPE_FE :String,            
+    @Core.MediaType:FILE_MIMETYPE_FE FILE_CONTENT as FILE_CONTENT_FE: LargeBinary @Core.ContentDisposition.Filename: FILE_NAME_FE  @Core.ContentDisposition.Type: 'attachment'   
+  };
   entity MasterAttachmentTypes as projection on VENDOR_PORTAL.MASTER_ATTACHMENT_TYPES;
   entity MasterRequestType     as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
   entity MasterIvenSettings    as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS; 

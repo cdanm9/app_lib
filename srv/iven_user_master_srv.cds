@@ -9,10 +9,13 @@ service userMasterService {
   entity MasterIvenUsers      as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;
   entity MasterEntityCode     as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
   entity MasterUserRole       as projection on VENDOR_PORTAL.MASTER_USER_ROLE;
-  entity MasterIvenUserEntity as projection on VENDOR_PORTAL.MASTER_USER_ENTITY_CODES;
+  entity MasterIvenUserEntity as projection on VENDOR_PORTAL.MASTER_USER_ENTITY_CODES{
+    *,
+    TO_ROLE:Association to one MasterUserRole on TO_ROLE.CODE=USER_ROLE       
+  };
   entity RequestInfo          as projection on VENDOR_PORTAL.REQUEST_INFO;            
    
-  //CRUD Payload
+  //CRUD Payload     
   type UserMasterPayload {
     ACTION         : String;
     // SR_NO          : Integer;

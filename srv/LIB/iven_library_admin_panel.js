@@ -35,7 +35,9 @@ module.exports = {
     try {
 
       // let connection = await cds.connect.to('db');
-      let queryResult = await connection.run(SELECT`TABLE_NAME`.from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES']}`
+      let queryResult = await connection.run(
+        SELECT`TABLE_NAME`
+        .from`${connection.entities['VENDOR_PORTAL.MASTER_TABLENAMES']}`
         .where`TABLE_CODE = ${sTableCode}`);
       return queryResult[0].TABLE_NAME;
     }
@@ -430,7 +432,7 @@ module.exports = {
       // let connection = await cds.connect.to('db');
       let aResult = await connection.run(
         SELECT
-          .from`${connection.entities['VENDOR_PORTAL.' + sTable]}`
+          .from`${connection.entities['VENDOR_PORTAL.' + sTable]}`   
       );
 
       return aResult;

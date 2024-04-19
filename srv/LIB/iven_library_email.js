@@ -252,9 +252,9 @@ module.exports = {
                 "TO_EMAIL": ToEmails,
                 "CC_EMAIL": CCEmail,
                 "SUBJECT": subject,
-                "BODY": body,
-                "TYPE": type
-            };
+                "BODY": body, 
+                "TYPE": type       
+            };   
             output.records.push(logdata);
             var client = await dbClass.createConnectionFromEnv();
             let dbConn = new dbClass(client);

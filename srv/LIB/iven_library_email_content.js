@@ -67,11 +67,11 @@ module.exports = {
 					var req = " Update ";
 				}
 
-				Emailbody = "Dear Approver," + "<br><br>";
+				Emailbody = "Dear Approver," + "<br><br>";   
 				// var link = "Vendor_Request_Approval-Approve&/VendorInviteList/" + parseInt(oEmailData.ReqNo, 10);
 				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
 				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
-					" has been created and is currently pending your approval." + "<br>" + "<br>" +
+					" has been created and is currently pending for your approval." + "<br>" + "<br>" +
 					"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +
 					"<br>" + "<br>" +
 					// 			"<a href=" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "#" + link + ">" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "</a>" + "<br>" +
@@ -101,6 +101,7 @@ module.exports = {
 				Emailbody = "Dear Vendor," + "<br><br>";
 				// var link = "Vendor_Request_Approval-Approve&/VendorInviteList/" + parseInt(oEmailData.ReqNo, 10);
 				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+				// var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
 				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
 					" has been created." + "<br>" + "<br>" +
 					"<br>" + "<br>" +
@@ -119,8 +120,48 @@ module.exports = {
 				oEmailContent.emailBody = "<p style=" + "font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black>" + Emailbody + oEmailContent.emailBody + "</p>";
 				// 		subject = req + "Request created for supplier " + data[0].SupplierName;
 				oEmailContent.subject = "Vendor Request Created.";   
+			}else if(sAction ==="MID_APPROVE"){
+				var req_Type = oEmailData.ReqType.toString();
+				             
+				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);    
+
+				if (req_Type === "1" || req_Type === "2" || req_Type === "3" || req_Type === "6") {
+					oEmailContent.subject = "Vendor Registration request approved.";
+
+					oEmailContent.emailBody = "Request No. " + oEmailData.ReqNo + " for vendor " + oEmailData.SupplierName +
+						" has been approved and is pending for your approval." + "<br>" + "<br>" +
+						"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +
+						"<br>" + "<br>" + "<br>"+
+						"Should you have any questions, please do not hesitate to reach out to us via email at <a href=" + sClientContactEmail + ">" +
+						sClientContactEmail +
+						"</a>" + "<br>" +
+						"<br>" +
+						"Regards," + "<br>" +
+						"Vendor Management Team" +
+						"<br><br>";
+
+				} else {
+					var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+					oEmailContent.subject = "Vendor update request approved.";
+					// 			subject = msg + "Invitation to update registration on the " + data[0].ENTITY_DESC + " supplier database";
+					oEmailContent.emailBody = "Request No. " + oEmailData.ReqNo + " for vendor " + oEmailData.SupplierName +
+						" has been approved and is pending for your approval." + "<br>" + "<br>" +    
+						"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +
+						"<br>" + "<br>" + "<br>"+   
+						"Should you have any questions, please do not hesitate to reach out to us via email at <a href=" + sClientContactEmail + ">" +
+						sClientContactEmail +
+						"</a>" + "<br>" +
+						"<br>" +
+						"Regards," + "<br>" +
+						"Vendor Management Team" +
+						"<br><br>";                   
+				}
+                      
+				Emailbody = "Dear Approver," + "<br><br>";
+				oEmailContent.emailBody = "<p style=" + "font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black>" + Emailbody +
+					oEmailContent.emailBody + "</p>";	
 			} 
-			else if (sAction === "APPROVE") {
+			else if (sAction === "APPROVE") {    
 
 				var req_Type = oEmailData.ReqType.toString();
 
@@ -305,7 +346,7 @@ module.exports = {
 					"Request No. " + oEmailData.ReqNo + " for " + sRequestTypeText + "Vendor Registration of <span style=\"text-transform:uppercase\">" +
 					oEmailData.SupplierName + "</span>";
 
-				oEmailContent.emailBody += " has been " + sActionTypeText + " and is currently pending your approval.<br>" + "<br>" +
+				oEmailContent.emailBody += " has been " + sActionTypeText + " and is currently pending for your approval.<br>" + "<br>" +
 					linkcontent +
 					"<br>" + "<br>" +
 					"Should you have any questions, please do not hesitate to reach out to us via email at " +
@@ -444,7 +485,7 @@ module.exports = {
 					"<strong><a href=" + sClientContactEmail + ">" + sClientContactEmail + "</a></strong> " + "<br>" +
 					"<br>" +
 					"Regards," + "<br>" +
-					"Vendor Management Team";
+					"Vendor Management Team";    
 
 			} else if (sAction === "REJECT") {
 				var sRequestTypeText = "";
@@ -1017,7 +1058,7 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 
 		oEmailContent.emailBody = "<p style=" + "font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black>" + EmailBody + Emailbody1 + "</p>";
 
-		}
+		}   
 
 		oEmailContent.emailBody = oEmailContent.emailBody + "<br><br>" +
 			"<p style=" +

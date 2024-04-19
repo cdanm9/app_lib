@@ -16,7 +16,8 @@ using {
   VIEW_TURN_AROUND_TIME,
   REQ_TURNAROUND,
   VIEW_REQUEST_ACTIVE_STATUS,
-  REQUEST_TAT
+  REQUEST_TAT,
+  APPROVAL_PENDING
 } from '../db/MASTER_TABLES';
 using {
     VENDOR_PORTAL.REQUEST_INFO,
@@ -100,7 +101,8 @@ service dashboardService {
         when CODE = 10 then 5 
         when CODE = 11 then 3   
         when CODE = 14 then 1
-        else 2                      
+        when CODE = 15 then 5      
+        else 2                         
          end as CRITICALITY:Integer,     
   };
   entity MasterClientInfo          as projection on VENDOR_PORTAL.MASTER_EMAIL_CONTACT_ID;
@@ -431,6 +433,7 @@ service dashboardService {
            case when S7G1D4     = 'X' then false else true end as BS7G1D4:Boolean // Validation of information submitted         
   };
   entity MasterFormFieldsUpdated   as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_UPDATED;
+  entity MasterUserRole            as projection on VENDOR_PORTAL.MASTER_USER_ROLE;                   
   entity RegFormDiscInfo           as projection on VENDOR_PORTAL.REGFORM_DISCLOSURE_FIELDS;
   entity MasterRequestType         as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
   entity MasterIvenUsers           as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;
@@ -444,7 +447,7 @@ service dashboardService {
   };                      
   entity RegFormCMS                as projection on VENDOR_PORTAL.REGFORM_ATTACHMENTS_CMS{
     *,    
-    FILE_NAME as FILE_NAME_FE: String,
+    FILE_NAME as FILE_NAME_FE: String,       
     @Core.IsMediaType: true FILE_MIMETYPE as FILE_MIMETYPE_FE :String,
     @Core.MediaType:FILE_MIMETYPE_FE FILE_CONTENT as FILE_CONTENT_FE: LargeBinary @Core.ContentDisposition.Filename: FILE_NAME_FE  @Core.ContentDisposition.Type: 'attachment'       
   };        
@@ -514,17 +517,20 @@ service dashboardService {
   entity PendingPMReqCount        as projection on VIEW_REQUEST_PM_APPR;
   entity RequestRejStatusCount    as projection on VIEW_REQUEST_REJECTED_STATUS;
   entity SupplierTypeCount        as projection on VIEW_SUPPLIER_TYPE_COUNT;
-  entity LegacySuppliers          as projection on VIEW_LG_SUPPL;     
+  entity LegacySuppliers          as projection on VIEW_LG_SUPPL;               
   entity PendingPMRegisterCount   as projection on VIEW_REG_APPROVE_PM;    
   entity ReqTurnAroundTime        as projection on VIEW_TURN_AROUND_TIME;                  
   entity AvgTurnAroundTime        as projection on REQ_TURNAROUND;                 
-  entity RequestAvgTurnAroundTime    as projection on REQUEST_TAT;      
+  entity RequestAvgTurnAroundTime    as projection on REQUEST_TAT;  
+  entity PendingApprovals as projection on APPROVAL_PENDING;    
 
   //Views
+
+  // define view 
            
   //Value Help
   define view Approver_F4 as
-    select from MasterIvenUsers where ACTIVE !='';         
+    select from MasterIvenUsers where ACTIVE !='';             
   define view Vendor_F4 as
     select from RequestInfo distinct {
          VENDOR_CODE,

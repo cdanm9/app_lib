@@ -20,6 +20,7 @@ module.exports = cds.service.impl(function () {
             var aInputData = inputData || [];
             var aEvents = eventsData || [];
             var isEmailNotificationEnabled = false;
+            var iLevel = inputData[0].APPROVER_LEVEL || null;
 
             // var oReqData = JSON.parse(req.data.input);
             // var sAction = oReqData.ACTION || null;
@@ -32,7 +33,7 @@ module.exports = cds.service.impl(function () {
             var sEntityCode = aInputData[0].ENTITY_CODE || null;
 
             //intialize connection to database
-            let connection = await cds.connect.to('db');
+            let connection = await cds.connect.to('db');     
 
             //capturing and deleting EntityDesc from InputData
             // var sEntityDesc = aInputData[0].ENTITY_DESC || null; //commented by Siddhesh 10th Sep 23
@@ -54,14 +55,15 @@ module.exports = cds.service.impl(function () {
                 try{
                 //----------------------------------------------------------------------------------
                 //Check If Approver details exist against the entity code
-                var checkApprover = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REQUEST_APPR');
+                // var checkApprover = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REQUEST_APPR');
+                var checkApprover = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode, 'MASTER_APPROVAL_HIERARCHY_FE',1,'REQ');                
                 if (checkApprover === null || (checkApprover[0].USER_ID === null || checkApprover[0].USER_ID === ""))
                 throw {"message":"Approver missing in approval matrix. Please contact Admin team."};
               
                 // try {
                 // var inviteReq = aInputData[0].INVITEREQ;
                 var type = parseInt(aInputData[0].REQUEST_TYPE);
-                var vendor_No = aInputData[0].IVEN_VENDOR_CODE;
+                var vendor_No = aInputData[0].IVEN_VENDOR_CODE||null;
 
                 if (aInputData[0].SAP_VENDOR_CODE !== null) {
                     aInputData[0].SAP_VENDOR_CODE = parseInt(aInputData[0].SAP_VENDOR_CODE, 10).toString();
@@ -83,9 +85,12 @@ module.exports = cds.service.impl(function () {
                         // Result = execProcedure(inviteReq[0].ENTITY_CODE, vendor_No, inviteReq, events);
                         // load procedure
                         const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REQUEST_PROCESS_CREATION')
+                        // sResponse = await dbConn.callProcedurePromisified(loadProc,
+                        //     [aInputData[0].ENTITY_CODE, vendor_No, aInputData, aEvents, checkApprover[0].USER_ID, checkApprover[0].APPROVER_LEVEL, checkApprover[0].USER_ROLE]
+                        // );
                         sResponse = await dbConn.callProcedurePromisified(loadProc,
-                            [aInputData[0].ENTITY_CODE, vendor_No, aInputData, aEvents, checkApprover[0].USER_ID, checkApprover[0].APPROVER_LEVEL, checkApprover[0].USER_ROLE]
-                        );
+                            [aInputData[0].ENTITY_CODE, vendor_No, aInputData, aEvents, checkApprover[0].USER_ID, checkApprover[0].APPROVER_LEVEL, checkApprover[0].USER_ROLE]      
+                        );        
                     } else if (type === 7) {
                         // Quick registration
                         // var sEntityCode = aInputData[0].ENTITY_CODE;
@@ -146,9 +151,10 @@ module.exports = cds.service.impl(function () {
                             }
                         } else {
                             // iVen_Content.postErrorLog(conn, Result, iREQUEST_NO, sUserID, "Supplier Request Creation", "PROCEDURE",dbConn,hdbext);
-                            if (isEmailNotificationEnabled) {
+                            if (isEmailNotificationEnabled) {    
                                 //fetch Approver details
-                                var email = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REQUEST_APPR');
+                                // var email = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REQUEST_APPR');
+                                var email = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode, 'MASTER_APPROVAL_HIERARCHY_FE',1,'REQ');   
                                 // var sQuery =
                                 //     'SELECT USER_ID as email FROM \"VENDOR_PORTAL\".\"VENDOR_PORTAL.Table::SUPPLIER_REQUEST_MATRIX\" WHERE ENTITY_CODE = ? AND USER_ROLE = ?';
                                 // var aResult = connection.executeQuery(sQuery, inviteReq[0].ENTITY_CODE, 'PM');
@@ -228,6 +234,22 @@ module.exports = cds.service.impl(function () {
                 var sUserID = aEvents[0].USER_ID || null;
 
                 var oActiveObj = type === 5 ? await getActiveData(connection, aInputData) : null;
+                // var iMaxLevelCount = await lib_common.getMaxApproverCount(connection, sEntityCode);
+                var iMaxLevelCount = await lib_common.getMaxHierarchyApproverCount(connection, sEntityCode,'REQ');  
+
+                var iLevel = Number(inputData[0].APPROVER_LEVEL) || null;
+
+                if(iLevel<iMaxLevelCount)   
+                    sAction="MID_APPROVE"
+
+                // {
+                //     var addLevel = iLevel + 1;
+                //     sAction = "MID_APPROVE";
+                //     var checkApprover = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode, 'PM', 'MASTER_APPROVAL_HIERARCHY_FE',addLevel,'REQ');  
+                //     if (checkApprover === null || (checkApprover[0].USER_ID === null || checkApprover[0].USER_ID === ""))
+                //     throw {"message":"Approver missing in approval hierarchy. Please contact Admin team."};
+                // }
+                                                                 
                 if (oActiveObj !== null && type === 5) {
                     // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::VENDOR_INVITE_APP_REJ');
                     // Result = execProcedure(sAction, inviteReq[0].SUPPL_TYPE, type, inviteReq[0].REGISTERED_ID, reqNo, events, iVenCode, sapCode,
@@ -258,7 +280,10 @@ module.exports = cds.service.impl(function () {
                             "ReqNo": reqNo,
                             "ReqType": aInputData[0].REQUEST_TYPE,
                             "SupplierName": aInputData[0].VENDOR_NAME1,
-                            "EntityDesc": sEntityDesc
+                            "EntityDesc": sEntityDesc,
+                            "NextApprover":sResponse.outputScalar.OUT_NEXT_APPROVER||null,  
+                            "ApproverLevel":sResponse.outputScalar.OUT_APPROVER_LEVEL||null,
+                            "ApproverRole":sResponse.outputScalar.OUT_APPROVER_ROLE||null
                         }
 
                         // oEmaiContent = EMAIL_LIBRARY.getEmailData("APPROVE", "REQUEST", oEmailData, null);
@@ -268,15 +293,19 @@ module.exports = cds.service.impl(function () {
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent1.emailBody, oEmaiContent1.subject, [aInputData[0].REGISTERED_ID], null);
 
                          // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REQUESTER_ID], null, null)
-                        oEmaiContent = await lib_email_content.getEmailContent(connection, "APPROVE", "REQUEST", oEmailData, null)
-                        var sCCEmail = await lib_email.setDynamicCC(null);
-                        await  lib_email.sendivenEmail(aInputData[0].REQUESTER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
-                
-                        
+                         var sCCEmail = await lib_email.setDynamicCC(null);
+                         if(sAction=="APPROVE"){
+                            oEmaiContent = await lib_email_content.getEmailContent(connection, sAction, "REQUEST", oEmailData, null)
+                            await  lib_email.sendivenEmail(aInputData[0].REQUESTER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                            // FINAL APPROVAL STAGE THEN INVITATION
                         // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null)
-                        oEmaiContent = await lib_email_content.getEmailContent(connection, "INVITE", "REQUEST", oEmailData, null)
-                        var sCCEmail = await lib_email.setDynamicCC(null);
-                        await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                            oEmaiContent = await lib_email_content.getEmailContent(connection, "INVITE", "REQUEST", oEmailData, null)
+                            await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                        }else if(sAction=="MID_APPROVE"){       
+                            oEmaiContent = await lib_email_content.getEmailContent(connection, sAction, "REQUEST", oEmailData, null)    
+                            await  lib_email.sendivenEmail(oEmailData.NextApprover,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)     
+                        }
+
                 
                        
                     }
@@ -294,7 +323,7 @@ module.exports = cds.service.impl(function () {
                     // throw {"message":"Supplier Request Approval failed. Please contact admin."}
                     // iVen_Content.responseInfo(JSON.stringify(Result2), "application/json", parseInt(Result.OUT_ERROR_CODE, 10));
                     throw {"message":sResponse.outputScalar.OUT_ERROR_MESSAGE}
-                }
+                }             
                 } catch (error) {
                     // conn.rollback();
 
@@ -315,7 +344,7 @@ module.exports = cds.service.impl(function () {
                     // req.error({ code: "500", message: "Vendor Request Approval failed. Please contact admin." });
 
                 }
-
+                           
             }
             else if (sAction === "REJECT" || sAction === "DELETE") { //----------------------------------------------------------------------------
                 try{
@@ -615,7 +644,7 @@ module.exports = cds.service.impl(function () {
                         // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [sBuyerId], null);
                     }
 
-                    statusCode = 200;
+                    statusCode = 200;     
                 } else {
                     statusCode = 400;
                 }
@@ -1076,7 +1105,7 @@ module.exports = cds.service.impl(function () {
         }
         catch (error) { throw error; }
     }
-    function getEventObj(oPayloadValue) {
+    function getEventObj(oPayloadValue) {   
 
         var eventArr = [];
 
@@ -1137,27 +1166,27 @@ module.exports = cds.service.impl(function () {
         }
         catch (error) { throw error; }
     }
-    async function getRequestCreator(connection, iRequestNo) {
-        try {
-            var sCreatedById = "";
+    // async function getRequestCreator(connection, iRequestNo) {
+    //     try {
+    //         var sCreatedById = "";
 
-            if (iRequestNo !== "" || iRequestNo !== null) {
-                // var sQuery =
-                //     'SELECT "REQUESTER_ID" AS REQUESTER_ID FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
-                // var aResult = conn.executeQuery(sQuery, iRequestNo);
-                let aResult = await connection.run(
-                    SELECT`REQUESTER_ID`
-                        .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                        .where`REQUEST_NO=${iRequestNo}`);
-                if (aResult.length > 0) {
-                    sCreatedById = aResult[0].REQUESTER_ID;
-                }
-            }
+    //         if (iRequestNo !== "" || iRequestNo !== null) {
+    //             // var sQuery =
+    //             //     'SELECT "REQUESTER_ID" AS REQUESTER_ID FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
+    //             // var aResult = conn.executeQuery(sQuery, iRequestNo);
+    //             let aResult = await connection.run(
+    //                 SELECT`REQUESTER_ID`
+    //                     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
+    //                     .where`REQUEST_NO=${iRequestNo}`);
+    //             if (aResult.length > 0) {
+    //                 sCreatedById = aResult[0].REQUESTER_ID;
+    //             }
+    //         }
 
-            return sCreatedById;
-        }
-        catch (error) { throw error; }
-    }
+    //         return sCreatedById;
+    //     }
+    //     catch (error) { throw error; }
+    // }
 
     async function getSupplierFromRequestNo(connection, iRequestNo) {
         try {
@@ -1414,26 +1443,26 @@ module.exports = cds.service.impl(function () {
         }
         catch (error) { throw error; }
     }
-    async function getRequestCreator(connection, iRequestNo) {
-        try {
-            var sCreatedById = "";
-            if (iRequestNo !== "" || iRequestNo !== null) {
-                // var sQuery =
-                //     'SELECT "REQUESTER_ID" AS REQUESTER_ID FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
-                // var aResult = conn.executeQuery(sQuery, iRequestNo);
-                let aResult = await connection.run(
-                    SELECT`REQUESTER_ID`
-                        .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                        .where`REQUEST_NO=${iRequestNo}`);
+    // async function getRequestCreator(connection, iRequestNo) {
+    //     try {
+    //         var sCreatedById = "";
+    //         if (iRequestNo !== "" || iRequestNo !== null) {
+    //             // var sQuery =
+    //             //     'SELECT "REQUESTER_ID" AS REQUESTER_ID FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
+    //             // var aResult = conn.executeQuery(sQuery, iRequestNo);
+    //             let aResult = await connection.run(
+    //                 SELECT`REQUESTER_ID`
+    //                     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
+    //                     .where`REQUEST_NO=${iRequestNo}`);
 
-                if (aResult.length > 0) {
-                    sCreatedById = aResult[0].REQUESTER_ID;
-                }
-            }
-            return sCreatedById;
-        }
-        catch (error) { throw error; }
-    }
+    //             if (aResult.length > 0) {
+    //                 sCreatedById = aResult[0].REQUESTER_ID;
+    //             }
+    //         }
+    //         return sCreatedById;
+    //     }
+    //     catch (error) { throw error; }
+    // }
     function getEventObj(oPayloadValue) {
 
         var eventArr = [];
@@ -1495,27 +1524,27 @@ module.exports = cds.service.impl(function () {
         }
         catch (error) { throw error; }
     }
-    async function getRequestCreator(connection, iRequestNo) {
-        try {
-            var sCreatedById = "";
+    // async function getRequestCreator(connection, iRequestNo) {
+    //     try {
+    //         var sCreatedById = "";
 
-            if (iRequestNo !== "" || iRequestNo !== null) {
-                // var sQuery =
-                //     'SELECT "REQUESTER_ID" AS REQUESTER_ID FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
-                // var aResult = conn.executeQuery(sQuery, iRequestNo);
-                let aResult = await connection.run(
-                    SELECT`REQUESTER_ID`
-                        .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                        .where`REQUEST_NO=${iRequestNo}`);
-                if (aResult.length > 0) {
-                    sCreatedById = aResult[0].REQUESTER_ID;
-                }
-            }
+    //         if (iRequestNo !== "" || iRequestNo !== null) {
+    //             // var sQuery =
+    //             //     'SELECT "REQUESTER_ID" AS REQUESTER_ID FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
+    //             // var aResult = conn.executeQuery(sQuery, iRequestNo);
+    //             let aResult = await connection.run(
+    //                 SELECT`REQUESTER_ID`
+    //                     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
+    //                     .where`REQUEST_NO=${iRequestNo}`);
+    //             if (aResult.length > 0) {
+    //                 sCreatedById = aResult[0].REQUESTER_ID;
+    //             }
+    //         }
 
-            return sCreatedById;
-        }
-        catch (error) { throw error; }
-    }
+    //         return sCreatedById;
+    //     }
+    //     catch (error) { throw error; }
+    // }
 
     async function getSupplierFromRequestNo(connection, iRequestNo) {
         try {

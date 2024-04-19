@@ -29,15 +29,16 @@ module.exports = cds.service.impl(function () {
     // get connection
     var client = await dbClass.createConnectionFromEnv()
     let dbConn = new dbClass(client)
-      //Changes By Chandan M 21/11/23 End
+      //Changes By Chandan M 21/11/23 End   
     try {
       // local variables
-      // var oReqData = req.data.input;
+      // var oReqData = req.data.input;            
 
       var {action,userMaster,entityData,userDetails}=req.data
       var sUserId=userDetails.USER_ID || null;
       var sUserRole=userDetails.USER_ROLE || null;
-      var bIsDuplicateUser = null;          
+      var bIsDuplicateUser = null;   
+      var aRoleCode=userMaster[0].USER_ROLE.split(',');      
          
       if (action === "CREATE") {
         // Check Duplicate User
@@ -50,12 +51,17 @@ module.exports = cds.service.impl(function () {
         // load procedure
         const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'MASTER_IVEN_USERS')
         // console.log(oReqData)
+                                     
+        // to fetch all descriptions                 
+        var aRoles=await SELECT  .from('VENDOR_PORTAL_MASTER_USER_ROLE') .where({'CODE':{'IN':aRoleCode}}); 
+
+        const sRolesDesc = aRoles.map(item => item.DESCRIPTION).join(', ').replace(/,([^,]*)$/, ' and$1');    
 
         // excute procedure
         const result = await dbConn.callProcedurePromisified(loadProc,
-          [action, userMaster, entityData]);
-
-        return result;
+          [action, userMaster, entityData,sRolesDesc]);                           
+                      
+        return result;       
       }   
       else {
         return "This user already exist.";        

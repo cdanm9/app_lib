@@ -1,4 +1,5 @@
 const cds = require("@sap/cds");
+const { OpenApiRequestBuilder } = require('@sap-cloud-sdk/openapi');
 
 
 module.exports = {
@@ -83,8 +84,14 @@ module.exports = {
                                 });
                             }    
                         } else {
-                            item.storage_metrics = StorageDataRepoList.metrics;
-                            item.storage_usage = StorageDataRepoList.usage;
+                            //Changes By Chandan 4/4/24
+                            item.storage_metrics = StorageDataRepoList?.metrics;
+                            item.storage_usage = StorageDataRepoList?.usage;
+                            //Changes By Chandan 4/4/24
+
+                            //Previous
+                            // item.storage_metrics = StorageDataRepoList.metrics;  
+                            // item.storage_usage = StorageDataRepoList.usage;
                         }                  
                         output.push(item);   
                     });
@@ -108,8 +115,10 @@ module.exports = {
                             });
                         }
                     } else {
-                        item.storage_metrics = StorageDataRepoList.metrics;
-                        item.storage_usage = StorageDataRepoList.usage;
+                        // item.storage_metrics = StorageDataRepoList.metrics;
+                        // item.storage_usage = StorageDataRepoList.usage;
+                        item.storage_metrics = StorageDataRepoList.metrics||null;
+                        item.storage_usage = StorageDataRepoList.usage||null;   
                     }
                     output.push(item);
                 }
@@ -148,7 +157,7 @@ module.exports = {
             var path = 'browser/' + RepoID + '/root';
             var JToken = 'Bearer ' + lv_JWToken;
 
-            const data =
+            const data =     
                 `objectId=${rootFolderId}` +
                 `&cmisaction=createFolder` +
                 `&propertyId[0]=cmis:name` +
@@ -196,6 +205,17 @@ module.exports = {
                 } else {
                     item.contentStreamId = '';
                 }
+
+                //CONTENT FILE NAME
+
+                if (dlistvalue.object.properties.hasOwnProperty('cmis:contentStreamFileName')) {
+                    item.contentStreamFileName = dlistvalue.object.properties["cmis:contentStreamFileName"].value;
+                } else {
+                    item.contentStreamFileName = '';    
+                }
+
+                //CONTENT FILE NAME  
+
                 item.objectTypeId = dlistvalue.object.properties["cmis:objectTypeId"].value;
                 if (dlistvalue.object.properties.hasOwnProperty('cmis:contentStreamMimeType')) {
                     item.contentStreamMimeType = dlistvalue.object.properties["cmis:contentStreamMimeType"].value;
@@ -284,7 +304,7 @@ module.exports = {
                 `objectId=${ObjectId}` +
                 `&cmisaction=update` +
                 `&propertyId[0]=cmis:name` +
-                `&propertyValue[0]=${NewforlderName}`;
+                `&propertyValue[0]=${NewforlderName}`;   
             const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
             const Resp = await ConDMS.send("POST", path, data, headers);
             var restxt = {};
@@ -322,7 +342,7 @@ module.exports = {
             restxt.status = error.reason.response.status;
             restxt.statusText = error.reason.response.body.message;
             return restxt;
-        }
+        }        
     },
     _DeleteFile: async function (ObjectId, RepoID) {
         try {
@@ -348,14 +368,21 @@ module.exports = {
             return restxt;
         }
     },
+    
     _DownloadFile: async function (ObjectID, RepoID) {
         const lv_JWToken = await this._fetchJwtToken();
         try {
           let ConDMS = await cds.connect.to('BTP_DMS_Dest');
           var JToken = 'Bearer ' + lv_JWToken;
-          var path = 'browser/' + RepoID + '/root?objectId='+ ObjectID +'&=attachment';
-          const Resp = await ConDMS.send('GET', path  , '', { 'Authorization': JToken }) ;
-          return Resp; 
+        //   var path = 'browser/' + RepoID + '/root?objectId='+ ObjectID +'&=attachment';     
+          var path = 'browser/' + RepoID + '/root?objectId='+ ObjectID +'&download=attachment';                        
+        //   const Resp = await ConDMS.send('GET', path  , '', {'responseType': 'arraybuffer','Authorization': JToken }) ;         
+        //   const fileBuffer = await new OpenApiRequestBuilder('GET', path,'',{'Authorization': JToken })
+          const fileBuffer = await new OpenApiRequestBuilder('GET', path).addCustomHeaders({'Authorization': JToken})   
+            .addCustomRequestConfiguration({ responseType: 'arraybuffer'})            
+            .execute({ destinationName: 'BTP_DMS_Dest' });       
+        //   return Resp;            
+          return fileBuffer;              
           
         } catch (error) {
           var restxt = {};
@@ -363,5 +390,101 @@ module.exports = {
           restxt.statusText = error.reason.response.body.message;
           throw restxt;
         }
-      }
+    },
+    _UploadFile: async function (RepoID,folderId,fileName,fileMimeType,fileContent) {       
+        const lv_JWToken = await this._fetchJwtToken();
+        try {
+          let ConDMS = await cds.connect.to('BTP_DMS_Dest');
+          var JToken = 'Bearer ' + lv_JWToken;
+          var path = 'browser/' + RepoID + '/root'; 
+          var fileConversion=atob(fileContent);
+          var fileBase64=fileConversion.split(',')[1]        
+          var bufferFileContent=Buffer.from(fileBase64,"base64");                             
+        //   var bufferFileContent=Buffer.from(fileContent,"base64");         
+          const blobContent = new Blob([bufferFileContent], { type: fileMimeType });  
+          const fileOpt={
+            filename:fileName,     
+            contentType:fileMimeType   
+          }                        
+          var form = new FormData();    
+          form.append("objectId",folderId);                
+        //   form.append("succinct", "true");       
+          form.append("cmisaction", "createDocument");
+          form.append("propertyId[0]", "cmis:objectTypeId");
+          form.append("propertyValue[0]", "cmis:document");
+          form.append("propertyId[1]", "cmis:name");
+          form.append("propertyValue[1]",fileName);   
+          form.append("includeAllowableActions", "true"); 
+          form.append("_charset_", "UTF-8");                 
+          form.append("filename", blobContent, fileOpt);                        
+          form.append("media","binary");                                  
+          const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };           
+        //   const Resp = await ConDMS.send('POST',path, form,headers) ;                  
+          const Resp = await ConDMS.send('POST',path, form,headers) ;                            
+          return Resp;                                 
+          
+        } catch (error) {
+          var restxt = {};
+          restxt.status = error.reason.response.status;
+          restxt.statusText = error.reason.response.body.message;
+          throw restxt;
+        }
+    },
+    // _DownloadFile: async function (ObjectID, RepoID) {
+    //     const lv_JWToken = await this._fetchJwtToken();
+    //     try {
+    //       let ConDMS = await cds.connect.to('BTP_DMS_Dest');
+    //       var JToken = 'Bearer ' + lv_JWToken;
+    //     //   var path = 'browser/' + RepoID + '/root?objectId='+ ObjectID +'&=attachment';
+    //       var path = 'browser/' + RepoID + '/root?objectId='+ ObjectID +'&=attachment';
+    //       const Resp = await ConDMS.send('GET', path  , '', { 'Authorization': JToken }) ;
+    //       return Resp; 
+          
+    //     } catch (error) {
+    //       var restxt = {};
+    //       restxt.status = error.reason.response.status;
+    //       restxt.statusText = error.reason.response.body.message;
+    //       throw restxt;
+    //     }
+    // },
+
+    //   _UploadFile: async function (RepoID,folderId,fileName,fileContent) {       
+    //     const lv_JWToken = await this._fetchJwtToken();
+    //     try {
+    //       let ConDMS = await cds.connect.to('BTP_DMS_Dest');
+    //       var JToken = 'Bearer ' + lv_JWToken;
+    //       var path = 'browser/' + RepoID + '/root';    
+            
+    //      var atobFileContent=atob(fileContent);    
+    //      var bufferFileContent=Buffer.from(atobFileContent);             
+    //      var oFile={
+    //         'value':bufferFileContent,
+    //         'options':{
+    //             'filename':'SCHEMES.pdf',
+    //             'contentType':'application/pdf'     
+    //         }
+    //      }  
+    //       const data =         
+    //             `objectId=${folderId}` +
+    //             `&cmisaction=createDocument` +        
+    //             `&propertyId[0]=cmis:name` +   
+    //             `&propertyValue[0]=${fileName}` +
+    //             `&propertyId[1]=cmis:objectTypeId` +
+    //             `&propertyValue[1]=cmis:document` +
+    //             `&media=binary` +        
+    //             // `&filename=${bufferFileContent}` +           
+    //             `&filename=${oFile}` +           
+    //             `&succinct='true'`;
+    //         const headers = { "Content-Type": "application/x-www-form-urlencoded", "Authorization": JToken };
+                       
+    //       const Resp = await ConDMS.send('POST',path, data,headers) ;          
+    //       return Resp;                 
+          
+    //     } catch (error) {
+    //       var restxt = {};
+    //       restxt.status = error.reason.response.status;
+    //       restxt.statusText = error.reason.response.body.message;
+    //       throw restxt;
+    //     }
+    //   }
 }

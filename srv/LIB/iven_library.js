@@ -204,6 +204,35 @@ module.exports = {
 		catch (error) { throw error; }
 
 	},
+	getHierarchyApproverForEntity: async function (connection, sEntityCode, sTableName,iLevel,sApprType) {
+		try {          
+			// let sApprover = null;            
+			let sTableFullName = 'VENDOR_PORTAL.' + sTableName;
+			let aResult = await connection.run(
+				SELECT
+					.from`${connection.entities[sTableFullName]}`
+					.where({ ENTITY_CODE: sEntityCode,APPROVER_LEVEL: iLevel,APPR_TYPE:sApprType}));      
+			if (aResult.length > 0) return aResult;            
+			else return null;          
+			// sApprover = aResult[0].USER_ID;           
+		}              
+		catch (error) { throw error; }
+
+	},
+	getMaxHierarchyApproverCount:async function (connection, iEntityCode,sApprType) {
+        try {
+            var iCount = 0;
+            let aResult = await connection.run(
+                SELECT`MAX(APPROVER_LEVEL) AS COUNT`
+                    .from`${connection.entities['VENDOR_PORTAL.MASTER_APPROVAL_HIERARCHY_FE']}`   
+                    .where({ ENTITY_CODE: iEntityCode,APPR_TYPE:sApprType }));
+
+            if (aResult.length > 0) {
+                iCount = aResult[0].COUNT;
+            }
+            return iCount;
+        } catch (error) { throw error; }
+    },
 	// #TabName : Form Fields
 	getTemplateColumns: async function (conn) {
 		try {
@@ -213,7 +242,7 @@ module.exports = {
 				SELECT
 					.from`${conn.entities['VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY']}`
 					.where`CCODE = 'TEMPLATE' AND TYPE = 1`
-			);
+			);      
 			return aResult;
 		}
 		catch (error) {

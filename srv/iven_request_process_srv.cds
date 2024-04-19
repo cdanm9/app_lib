@@ -64,9 +64,9 @@ service requestProcessService {
     USER_ID: String(50);
   }
 
-
+    
   action RequestProcess(action : String, inputData : many RequestInfo, eventsData : many RegEventsLog,userDetails:User_Details) returns many String;
-          
+               
   action RequestEditProcess(action:String,inputData : String,userDetails:User_Details) returns many String;    
 
 }

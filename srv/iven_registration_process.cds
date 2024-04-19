@@ -26,8 +26,9 @@ using {
 } from '../db/TRANSACTION_TABLES';
 
 
-service registrationProcessService {
+service registrationProcessService {       
 
+  entity MasterApprovalHierarchy    as projection on VENDOR_PORTAL.MASTER_APPROVAL_HIERARCHY_FE;    
   entity MasterAttachmentTypes     as projection on VENDOR_PORTAL.MASTER_ATTACHMENT_TYPES;
   entity MasterEntityCode          as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
   entity MasterTelecode            as projection on VENDOR_PORTAL.MASTER_TELECODE;
@@ -67,6 +68,7 @@ service registrationProcessService {
   entity VendorMasterS4Hana        as projection on VENDOR_PORTAL.VENDOR_MASTER_S4_HANA;
   entity RequestActiveStatus       as projection on VENDOR_PORTAL.REQUEST_ACTIVE_STATUS;
   entity ViewRequestActiveStatus   as projection on VIEW_REQUEST_ACTIVE_STATUS;
+  
 
   type securityPinResponse {
     
@@ -78,7 +80,7 @@ service registrationProcessService {
   type User_Details : {
     USER_ROLE : String(50);
     USER_ID   : String(50);
-  }
+  }          
 
   // Functions
   // function GetDraftData(requestNo : Integer, entityCode : String, creationType : Integer, userId : String, userRole : String)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            returns many String;
@@ -98,8 +100,8 @@ service registrationProcessService {
                            editLog : many RegSupplierLog,
                            userDetails : User_Details)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   returns many String;
 
-  //Action for Approval
-  action   RegFormDataApproval(action : String,
+  //Action for Approval   
+  action   RegFormDataApproval(action : String,       
                                inputData : many RequestInfo,
                                addressData : many RegFormAddress,
                                contactsData : many RegFormContacts,

@@ -15,7 +15,7 @@ module.exports = cds.service.impl(function () {
         //Changes By Chandan M 23/11/23 Start
         var client = await dbClass.createConnectionFromEnv();
         var dbConn = new dbClass(client);
-        //Changes By Chandan M 23/11/23 End
+        //Changes By Chandan M 23/11/23 End     
         try {
             var {
                 action,
@@ -159,8 +159,10 @@ module.exports = cds.service.impl(function () {
                         "To_Email": Result.OUT_EMAIL_TO // Approver
                     };
                     var checkSupplier =await fnCheckSupplier(connection, oEmailData.ReqNo);
-                    if (checkSupplier === null) {
-                        var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
+                    if (checkSupplier === null) {    
+                        var sPMId = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode,'MASTER_APPROVAL_HIERARCHY_FE',1,'REG');               
+                        // var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
+                               
                         if (sPMId !== "") sPMId = sPMId[0].USER_ID;
                         oEmailData.To_Email = sPMId;   
     
@@ -380,7 +382,7 @@ module.exports = cds.service.impl(function () {
 //             var encryptedPin = await lib_common.getEncryptedSecurityPin(pin);
 //             console.log(encryptedPin);
 
-// })
+// })    
 
     this.on('GetDraftData', async (req) => {
         try {
@@ -543,8 +545,6 @@ module.exports = cds.service.impl(function () {
     //Registration Approval Process
     this.on('RegFormDataApproval', async (req) => {
         try {
-
-
             var { action, inputData,addressData,contactsData,bankData, eventsData,userDetails } = req.data;
 
             var isEmailNotificationEnabled = false;
@@ -565,12 +565,12 @@ module.exports = cds.service.impl(function () {
             var iRequestType = inputData[0].REQUEST_TYPE || null;
             var sSupplierEmail = inputData[0].REGISTERED_ID || null;
             var sUserId = eventsData[0].USER_ID || null;
-            var iLevel = inputData[0].APPROVER_LEVEL || null;
+            var iLevel = inputData[0].APPROVER_LEVEL || 0;   
             var sBuyerEmail = inputData[0].REQUESTER_ID || null;
             var sIvenNo = inputData[0].IVEN_VENDOR_CODE || null;
             var sSupplerName = inputData[0].VENDOR_NAME1 || null;
             var sChangeRequestNo = null;
-            var iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
+            var iVenVendorCode = inputData[0].IVEN_VENDOR_CODE||null;   
             var sCompareValue = "A";
             var sVendorCode=inputData[0].VENDOR_CODE||null;
 
@@ -594,7 +594,7 @@ module.exports = cds.service.impl(function () {
                     "Message": Result.outputScalar.OUT_SUCCESS !== null ? Result.outputScalar.OUT_SUCCESS : lowerCaseAction + " failed!"
 
                 };
-
+                  
                 if (Result.outputScalar.OUT_SUCCESS !== null) {
 
                     var oEmailData = {
@@ -660,9 +660,10 @@ module.exports = cds.service.impl(function () {
                     // isEmailNotificationEnabled = 0;
                     ///////////////
                     
-                    var sSapVendorCode = null;
+                    var sSapVendorCode = null;      
                     // ------------- MDG Posting Start------------------
-                    var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
+                    // var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
+                    var iMaxLevelCount = await lib_common.getMaxHierarchyApproverCount(connection, sEntityCode,'REG');  
 
                     var iVenVendorCode = null;
                     var oMDGResponse = null;
@@ -675,11 +676,11 @@ module.exports = cds.service.impl(function () {
                     var bNoChange = false;
                     var oDataStatus = null;
                     var ODataResponse = null;
-                    var sCompareValue = 'A';
+                    var sCompareValue = 'A';         
 
                     if (iLevel === iMaxLevelCount) {
                         oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
-                        iVenVendorCode = inputData[0].IVEN_VENDOR_CODE;
+                        iVenVendorCode = inputData[0].IVEN_VENDOR_CODE || null;
                         // sSapVendorCode = parseInt(oMDGPayload.Lifnr, 10) || "";
 
                         // ------------------------START: Direct MDG Call for testing-------------------------
@@ -724,11 +725,10 @@ module.exports = cds.service.impl(function () {
                             "ODataResponse": oMDGResponse,
                             "bMDGComparison": bMDGComparison,
                             "bAttachmentComparison": bAttachmentComparison,
-                            "CurrAttachment": CurrAttachment,
+                            "CurrAttachment": CurrAttachment,            
                             "sChangeRequestNo": sChangeRequestNo,
-                            "sChangeRequestNo1": sChangeRequestNo
-                            // "MDG_Response":oMDGResponse
-
+                            "sChangeRequestNo1": sChangeRequestNo       
+                            // "MDG_Response":oMDGResponse    
                         };
 
                         if (Result.outputScalar.OUT_SUCCESS !== null) {
@@ -741,14 +741,14 @@ module.exports = cds.service.impl(function () {
                                 "Approver_Email": sUserId,
                                 "Approver_Level": iLevel,
                                 "Next_Approver": Result.outputScalar.OUT_EMAIL_TO, // Proc Manager
-                                "Buyer": sBuyerEmail
-                            };   
+                                "Buyer": sBuyerEmail    
+                            };        
 
                             action = Result.outputScalar.OUT_MAX_LEVEL == iLevel ? "FINAL_APPROVAL" : "APPROVE";
 
                             if (action === "APPROVE") {
                                 // pending for approval - notification to Proc Manager
-                                if (isEmailNotificationEnabled) {
+                                if (isEmailNotificationEnabled) {       
                                     // var oEmaiContent = EMAIL_LIBRARY.getEmailData(action, "REGISTER", oEmailData, null);
                                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Next_Approver], null);
                                     oEmaiContent = await lib_email_content.getEmailContent(connection, action, "REGISTER", oEmailData, null)
@@ -758,10 +758,10 @@ module.exports = cds.service.impl(function () {
                                     // Approval done - notification to Buyer
                                     // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
                                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer], null);
-                                    oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
+                                    // oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
                                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer], null, null)
-                                    var sCCEmail = await lib_email.setDynamicCC( null);
-                                    await  lib_email.sendivenEmail(oEmailData.Buyer,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                                    // var sCCEmail = await lib_email.setDynamicCC( null);
+                                    // await  lib_email.sendivenEmail(oEmailData.Buyer,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                                 }
 
                             } else if (action === "FINAL_APPROVAL") {
@@ -782,9 +782,7 @@ module.exports = cds.service.impl(function () {
                                 var aIASSetting=await SELECT .from('VENDOR_PORTAL_MASTER_IVEN_SETTINGS') .where({CODE:'REGAPPR_IAS_ENABLE'});
                                 if(aIASSetting[0].SETTING=='X')
                                     await lib_ias.CreateVendorIdIAS(sSapVendorCode,sSupplerName,null,sSupplierEmail);    
-                                
 
-                                    
                             }
 
                             statusCode = 200;
@@ -798,7 +796,7 @@ module.exports = cds.service.impl(function () {
 
                         // iVen_Content.responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
                         return responseObj;
-                    } else {
+                    } else {        
                         throw "Max level reached";
                             // responseObj = {
                             //     "Message": "MDG posting failed!",
@@ -934,9 +932,9 @@ module.exports = cds.service.impl(function () {
                     if (sPmId !== "") {
                         sPmId = sPmId[0].USER_ID;
                     }                   
-                    sAppName="Vendor Registration Form"      
+                    sAppName="Vendor Registration Form"              
                 }else{        
-                    sAppName=await getAppName(iReqNo);                                 
+                    sAppName=await getAppName(iReqNo);                                     
                 }      
                     
                 if (isEmailNotificationEnabled) {    
@@ -1047,7 +1045,7 @@ module.exports = cds.service.impl(function () {
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_EDIT_APPROVER')
                 Result = await dbConn.callProcedurePromisified(loadProc,
                     [iReqNo,stepNo, sUserId,null, reqHeader, aAddressObj, aContactObj, [], [], [], [],
-                        [], [], [], [], [], [], [], [], [], aUpdatedFieldsObj, aLogsTable]);
+                        [], [], [], [], [], [], [], [], [], aUpdatedFieldsObj, aLogsTable]);        
 
                 if (Result.outputScalar.OUT_SUCCESS === null) {
 
@@ -1063,7 +1061,7 @@ module.exports = cds.service.impl(function () {
                     "Edit_Success": 'X',
                     "REQUEST_NO": Result.outputScalar.OUT_SUCCESS,
                     "Message": "Edit saved successfully"
-                };
+                };    
 
                 // responseInfo(JSON.stringify(responseObj), "text/plain", 200);
                 req.reply(responseObj);
@@ -1163,7 +1161,7 @@ module.exports = cds.service.impl(function () {
         }
     })
 
-    this.on('RegFormSR', async (req) => {
+    this.on('RegFormSR', async (req) => {    
         var client = await dbClass.createConnectionFromEnv();
         var dbConn = new dbClass(client); 
         var sResponse;
@@ -2215,8 +2213,8 @@ module.exports = cds.service.impl(function () {
 
     async function getAppName(iReqNo){
         var aReqInfo=await SELECT .from('VENDOR_PORTAL_REQUEST_INFO') .where({REQUEST_NO:iReqNo});   
-        return aReqInfo[0].STATUS==1?"Vendor Request Approval":"Vendor Registration Approval";
-    }    
+        return (aReqInfo[0].STATUS==1||aReqInfo[0].STATUS==15)?"Vendor Request Approval":"Vendor Registration Approval";
+    }          
 
     async function getEventPayload(reqHeader, connection, sType) {
         var sRemark = null;
