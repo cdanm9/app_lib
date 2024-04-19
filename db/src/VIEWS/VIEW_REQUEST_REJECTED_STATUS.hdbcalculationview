@@ -49,7 +49,9 @@
   
     <attribute id="STATUS" order="4" displayAttribute="false" attributeHierarchyActive="false">
       <descriptions defaultDescription="STATUS"/>
+  
       <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+  
     </attribute>
   </attributes>
   <calculatedAttributes/>

@@ -337,7 +337,7 @@
 <layout>
   <shapes>
     <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
-      <upperLeftCorner x="422" y="112"/>
+      <upperLeftCorner x="422" y="105"/>
     
       <rectangleSize width="160"/>
     </shape>

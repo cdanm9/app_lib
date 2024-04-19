@@ -13,18 +13,22 @@
 </dataSources>
 <snapshotProcedures/>
 <calculationViews>
-  <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="CN_N" joinType="inner">
+  <calculationView xsi:type="Calculation:JoinView" id="Join_1" cardinality="CN_N" joinType="inner" filterExpressionLanguage="COLUMN_ENGINE">
     <viewAttributes>
       <viewAttribute id="CODE" aggregationType="sum"/>
-      <viewAttribute id="DESCRIPTION"/>
+      <viewAttribute id="DESC"/>
       <viewAttribute id="REQUEST_NO" aggregationType="sum"/>
       <viewAttribute id="STATUS"/>
       <viewAttribute hidden="true" id="JOIN$CODE$STATUS"/>
     </viewAttributes>
-    <calculatedViewAttributes/>
+    <calculatedViewAttributes>
+      <calculatedViewAttribute id="DESCRIPTION" datatype="NVARCHAR" length="50" expressionLanguage="COLUMN_ENGINE">
+        <formula>case(&quot;STATUS&quot;,5,'In Reg Approval - BYR',6,'In Reg Approval',9,'In Reg Approval Resubmit', &quot;DESC&quot;)   </formula>
+      </calculatedViewAttribute>
+    </calculatedViewAttributes>
     <input node="VENDOR_PORTAL_MASTER_STATUS">
       <mapping xsi:type="Calculation:AttributeMapping" target="CODE" source="CODE"/>
-      <mapping xsi:type="Calculation:AttributeMapping" target="DESCRIPTION" source="DESCRIPTION"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="DESC" source="DESCRIPTION"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODE$STATUS" source="CODE"/>
     </input>
     <input node="VENDOR_PORTAL_REQUEST_INFO">
@@ -32,20 +36,26 @@
       <mapping xsi:type="Calculation:AttributeMapping" target="STATUS" source="STATUS"/>
       <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CODE$STATUS" source="STATUS"/>
     </input>
+    <filter>int(&quot;CODE&quot;)=1 or int(&quot;CODE&quot;)=2 or int(&quot;CODE&quot;)=4 or int(&quot;CODE&quot;)=5 or int(&quot;CODE&quot;)=6 or int(&quot;CODE&quot;)=9 or int(&quot;CODE&quot;)=10 or int(&quot;CODE&quot;)=11 or int(&quot;CODE&quot;)=15  </filter>
     <joinAttribute name="JOIN$CODE$STATUS"/>
   </calculationView>
 </calculationViews>
 
 <logicalModel id="Join_1" filterExpressionLanguage="COLUMN_ENGINE">
   <attributes>
-    <attribute id="DESCRIPTION" order="2" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="DESCRIPTION"/>
-      <keyMapping columnObjectName="Join_1" columnName="DESCRIPTION"/>
+  
+    <attribute id="STATUS" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="STATUS"/>
+  
+      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+  
     </attribute>
   
-    <attribute id="STATUS" order="4" displayAttribute="false" attributeHierarchyActive="false">
-      <descriptions defaultDescription="STATUS"/>
-      <keyMapping columnObjectName="Join_1" columnName="STATUS"/>
+    <attribute id="DESCRIPTION" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="DESCRIPTION"/>
+  
+      <keyMapping columnObjectName="Join_1" columnName="DESCRIPTION"/>
+  
     </attribute>
   </attributes>
   <calculatedAttributes/>
@@ -55,7 +65,7 @@
       <measureMapping columnObjectName="Join_1" columnName="CODE"/>
       <exceptionAggregationMetadata/>
     </measure>
-    <measure id="ACT_STATUS_COUNT" order="3" aggregationType="count" measureType="simple">
+    <measure id="ACT_STATUS_COUNT" order="2" aggregationType="count" measureType="simple">
       <descriptions defaultDescription="REQUEST_NO"/>
       <measureMapping columnObjectName="Join_1" columnName="REQUEST_NO"/>
       <exceptionAggregationMetadata/>
@@ -69,12 +79,7 @@
     <sortAttribute id="CODE" direction="ASC"/>
 
   </sortAttributes>
-  <localDimensions/>
-
-
-  <filter>int(&quot;CODE&quot;)=1 or int(&quot;CODE&quot;)=2 or int(&quot;CODE&quot;)=4 or int(&quot;CODE&quot;)=5 or int(&quot;CODE&quot;)=6 or int(&quot;CODE&quot;)=10 or int(&quot;CODE&quot;)=11</filter>
-
-</logicalModel>
+  <localDimensions/></logicalModel>
 <layout>
   <shapes>
     <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
@@ -83,7 +88,7 @@
     
   
     <shape expanded="true" modelObjectName="Join_1" modelObjectNameSpace="CalculationView">
-      <upperLeftCorner x="100" y="192"/>
+      <upperLeftCorner x="101" y="227"/>
       <rectangleSize height="30" width="160"/>
     </shape>
     <shape modelObjectName="VENDOR_PORTAL_MASTER_STATUS" modelObjectNameSpace="Join_1" modelObjectType="JoinNodeInput">

@@ -214,12 +214,12 @@ context VENDOR_PORTAL {
                                    on TO_USER_ENTITIES.USER_ID = USER_ID;
     }
 
-    entity MASTER_USER_ENTITY_CODES {
+    entity MASTER_USER_ENTITY_CODES {       
         key USER_ID     : String(50);
         key USER_ROLE   : String(50);
         key ENTITY_CODE : String(50);
-            EMAIL       : String(150);
-            ENTITY_DESC : String(100);
+            EMAIL       : String(150);        
+            ENTITY_DESC : String(100);   
     }
 
     entity MASTER_USER_ROLE {
@@ -235,17 +235,17 @@ context VENDOR_PORTAL {
             GROUP1            : String(10);
             GROUP2            : String(10); // Table group
     }
-
-    entity MASTER_IVEN_ATTACHMENTS {
+   
+    entity MASTER_IVEN_ATTACHMENTS {   
         key SR_NO            : Integer;
         key ENTITY_CODE      : String(10);
         key ATTACH_CODE      : Integer;
             ATTACH_GROUP     : String(30);
             ATTACH_DESC      : String(100);
             FILE_NAME        : String(100);
-            FILE_TYPE        : String(100);
-            FILE_MIMETYPE    : String(100);
-            FILE_CONTENT     : LargeBinary;
+            FILE_TYPE        : String(100);    
+            FILE_MIMETYPE    : String(100) ;           
+            FILE_CONTENT     : LargeBinary ;    
             UPLOADED_ON      : Timestamp;
             ATTACH_TYPE_CODE : String(10);
             ATTACH_TYPE_DESC : String(100);
@@ -1313,41 +1313,62 @@ context VENDOR_PORTAL {
             USER_IDS     : String(1000);     
     }      
 
-    //New Temporary Changes for hierarchy START
+    //Hierarchy Implementation Start
 
-    entity MASTER_APPROVAL_HIERARCHY_FE:cuid {
-            // @readonly     
-            APPR_TYPE       : String(10);         
+    entity MASTER_APPROVAL_HIERARCHY_FE:cuid {    
+            // @readonly                   
+            @readonly @mandatory APPR_TYPE       : String(10);         
             // @readonly 
-            ENTITY_CODE     : String(10);
+            @mandatory @readonly ENTITY_CODE     : String(10);
             @mandatory USER_ID         : String(1000)  @Communication.IsEmailAddress;   
-            @mandatory LEVEL           : Integer  @assert.range: [1,1000];   
-            @mandatory ROLE_CODE       : String(10);
+            @readonly @mandatory APPROVER_LEVEL           : Integer  @assert.range: [1,1000];   
+            @mandatory USER_ROLE       : String(10);       
             ACCESS_EDIT     : Boolean default false;   
             ACCESS_APPROVE  : Boolean default false;
             ACCESS_SENDBACK : Boolean default false;
             ACCESS_REJECT   : Boolean default false;          
             TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
                         on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;   
-            TO_ROLE: Association to one MASTER_USER_ROLE on TO_ROLE.CODE=ROLE_CODE;
+            TO_ROLE: Association to one MASTER_USER_ROLE on TO_ROLE.CODE=USER_ROLE;    
             TO_ENTITY_TYPE: Association to MASTER_ENTITY_TYPE_FE;  
             TO_APPR_TYPE: Association to one MASTER_APPROVAL_TYPE on TO_APPR_TYPE.CODE=APPR_TYPE; 
     }             
     entity MASTER_APPROVAL_TYPE{
         key CODE:String(10);
-        DESC:String(50);                    
+        DESC:String(50);                           
     }            
      
-    entity MASTER_ENTITY_TYPE_FE:cuid{
-        APPR_TYPE : String(10);     
-        ENTITY_CODE : String(10);     
+    @assert.unique.name:[APPR_TYPE, ENTITY_CODE]
+    // @assert.unique:[APPR_TYPE, ENTITY_CODE]    
+    entity MASTER_ENTITY_TYPE_FE:cuid{    
+        @mandatory APPR_TYPE : String(10);     
+        @mandatory ENTITY_CODE : String(10);        
         TO_ENTITY_CODE : Association to one MASTER_ENTITY_CODE
                         on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;   
         TO_HIERARCHY: Composition of many MASTER_APPROVAL_HIERARCHY_FE on TO_HIERARCHY.TO_ENTITY_TYPE=$self;
         TO_APPR_TYPE: Association to one MASTER_APPROVAL_TYPE on TO_APPR_TYPE.CODE=APPR_TYPE;
     }    
+      
+    //Hierarchy Implementation End
 
-    //new temporary changes for hierarchy END   
+    //MDK Attachment Start
+
+     entity MASTER_IVEN_MDK_ATTACHMENTS {                 
+        key SR_NO            : Integer;
+        key ENTITY_CODE      : String(10);
+        key ATTACH_CODE      : Integer;         
+            ATTACH_GROUP     : String(30);   
+            ATTACH_DESC      : String(100);
+            FILE_NAME        : String(100);
+            FILE_TYPE        : String(100);
+         @Core.IsMediaType: true  FILE_MIMETYPE    : String(100) ;           
+            FILE_CONTENT     : LargeBinary @Core.MediaType:FILE_MIMETYPE @Core.ContentDisposition.Filename: FILE_NAME @Core.ContentDisposition.Type: 'attachment';
+            UPLOADED_ON      : Timestamp;
+            ATTACH_TYPE_CODE : String(10);
+            ATTACH_TYPE_DESC : String(100);
+    }  
+
+    //MDK Attachment End
 
 }
 
@@ -1649,4 +1670,12 @@ key     CREATE_INV_TAT: Decimal(16)  @title: 'CREATE_INV_TAT: CREATE_INV_TAT' ;
         AVG_TAT_MIN: Decimal(13)  @title: 'AVG_TAT_MIN: AVG_TAT_MIN' ; 
         AVG_TAT_HRS: Decimal(13)  @title: 'AVG_TAT_HRS: AVG_TAT_HRS' ; 
         AVG_TAT_DAYS: Decimal(13)  @title: 'AVG_TAT_DAYS: AVG_TAT_DAYS' ; 
+}
+
+@cds.persistence.exists 
+@cds.persistence.calcview 
+Entity APPROVAL_PENDING {
+        REQUEST_NO: Integer64  @title: 'Number Of Requests' ;        
+        STATUS: Integer  @title: 'STATUS: STATUS' ;     
+key     APPR_PENDING: String(50)  @title: 'APPR_PENDING: APPR_PENDING' ; 
 }

@@ -2,7 +2,8 @@ PROCEDURE "MASTER_IVEN_USERS" (
     IN IN_ACTION String,
     -- IN IN_SR_NO INTEGER,
 	IN ST_MASTER_IVEN_USERS "ST_MASTER_IVEN_USERS",
-	IN ST_ENTITY_CODES "ST_MASTER_USER_ENTITY_CODES",
+	IN ST_ENTITY_CODES "ST_MASTER_USER_ENTITY_CODES",   
+    IN IN_ROLES_DESC NVARCHAR(500),
 	OUT OUT_SUCCESS VARCHAR(100)
 )
 LANGUAGE SQLSCRIPT
@@ -20,7 +21,7 @@ BEGIN
 
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     RESIGNAL SET MESSAGE_TEXT = ::SQL_ERROR_MESSAGE;        
-    
+                 
 
     SELECT CURRENT_TIMESTAMP INTO LV_CURR_TIMESTAMP FROM DUMMY;
 
@@ -28,9 +29,9 @@ BEGIN
     INTO LV_SR_NO,LV_USER_ID,LV_EMAIL,LV_USER_ROLE 
     FROM :ST_MASTER_IVEN_USERS;
 
-    SELECT 	"DESCRIPTION" INTO LV_USER_ROLE_DESC
-	FROM "VENDOR_PORTAL_MASTER_USER_ROLE"
-    WHERE "CODE" = :LV_USER_ROLE;           
+    -- SELECT 	"DESCRIPTION" INTO LV_USER_ROLE_DESC
+	-- FROM "VENDOR_PORTAL_MASTER_USER_ROLE"
+    -- WHERE "CODE" = :LV_USER_ROLE;           
             
 	    IF :IN_ACTION = 'CREATE' THEN
 
@@ -53,7 +54,7 @@ BEGIN
     		FROM :ST_ENTITY_CODES;
 
             COMMIT;
-            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' added as ' || :LV_USER_ROLE_DESC || ' in User master';
+            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' added as ' || :IN_ROLES_DESC || ' in User master';  
     		
     	ELSEIF :IN_ACTION = 'UPDATE' THEN
     	
@@ -75,20 +76,20 @@ BEGIN
     		FROM :ST_ENTITY_CODES;
 
             COMMIT;
-            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' updated as ' || :LV_USER_ROLE_DESC || ' in User master';
+            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' updated as ' || :IN_ROLES_DESC || ' in User master';
     	
     	ELSEIF :IN_ACTION = 'DELETE' THEN
     	
             UPDATE "VENDOR_PORTAL_MASTER_IVEN_USERS"
-            SET  "ACTIVE" = null
+            SET  "ACTIVE" = null       
 	        WHERE "EMAIL" = :LV_EMAIL AND "SR_NO" = :LV_SR_NO;
             
             DELETE FROM "VENDOR_PORTAL_MASTER_USER_ENTITY_CODES"
             WHERE "USER_ID" = :LV_USER_ID;
-
-            COMMIT;
-            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' deleted as ' || :LV_USER_ROLE_DESC || ' in User master';
+                                              
+            COMMIT;    
+            OUT_SUCCESS := 'User: ' ||  :LV_EMAIL || ' deleted as ' || :IN_ROLES_DESC || ' in User master';
     	
-    	END IF;
+    	END IF;         
     
 END

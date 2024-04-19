@@ -14,9 +14,9 @@ BEGIN
    /*************************************
        Write your procedure logic 
    *************************************/
-   -- Local Variables:
-	DECLARE LV_CURR_TIMESTAMP TIMESTAMP;
-   -- Event Values
+   -- Local Variables:   
+	DECLARE LV_CURR_TIMESTAMP TIMESTAMP;  
+   -- Event Values                       
 	DECLARE LV_EVENT_COUNT INTEGER;
 	DECLARE LV_EVENT_NO INTEGER;
 	DECLARE LV_EVENT_CODE INTEGER;

@@ -28,7 +28,7 @@
       <keyCalculation datatype="NVARCHAR" expressionLanguage="COLUMN_ENGINE" length="25">
         <formula>'Pending By PM'</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
   </calculatedAttributes>
   <baseMeasures>
     <measure id="REQUEST_NO" order="1" aggregationType="count" measureType="simple">

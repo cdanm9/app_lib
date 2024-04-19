@@ -9,6 +9,7 @@ using {
     VENDOR_PORTAL.MASTER_REQUEST_TYPE,
     VENDOR_PORTAL.MASTER_ENTITY_CODE
 } from '../db/MASTER_TABLES';
+   
 using {cuid} from '@sap/cds/common';
 
 namespace VENDOR_PORTAL;
@@ -261,7 +262,7 @@ entity REGFORM_CONTACTS {
         CONTACT_NO       : String(30);
         MOBILE_NO        : String(30);
         CONTACT_TYPE     : String(10);
-        CONTACT_TELECODE : String(4);
+        CONTACT_TELECODE : String(4);    
         MOBILE_TELECODE  : String(4);
         BP_ID            : String(10);
         TO_COUNTRY       : Association to one MASTER_COUNTRY
@@ -1032,7 +1033,7 @@ entity REQUEST_INFO {
         TO_ENTITY_CODE           : Association to one VENDOR_PORTAL.MASTER_ENTITY_CODE
                                        on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
         TO_REQUEST_ACTIVE_STATUS : Association to one VENDOR_PORTAL.REQUEST_ACTIVE_STATUS
-                                       on TO_REQUEST_ACTIVE_STATUS.REQUEST_NO = REQUEST_NO;
+                                       on TO_REQUEST_ACTIVE_STATUS.REQUEST_NO = REQUEST_NO;    
 }
 
 entity REQUEST_INFO_TEMP {

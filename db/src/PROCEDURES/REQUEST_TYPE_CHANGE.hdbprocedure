@@ -33,9 +33,6 @@ BEGIN
 	
 	LV_EVENT_CODE := null;
     OUT_SUCCESS := null;
-
-    -- SELECT * FROM "VENDOR_PORTAL_REQUEST_EVENTS_LOG"    
-	-- WHERE "REQUEST_NO" = 'HELLO'; 
        
    IF :IN_CHANGE_TYPE = 'RT' -- RT - Request Type change
    THEN

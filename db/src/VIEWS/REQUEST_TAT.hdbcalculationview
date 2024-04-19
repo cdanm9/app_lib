@@ -429,27 +429,27 @@
       <keyCalculation datatype="DECIMAL" expressionLanguage="COLUMN_ENGINE" length="16" scale="6">
         <formula>if(isnull(&quot;CREATE_INV_TAT&quot;),if(isnull(&quot;INV_FS_TAT_1&quot;),if(isnull(&quot;FS_FA_TAT_2&quot;),0,&quot;FS_FA_TAT_2&quot;),&quot;INV_FS_TAT_1&quot;),&quot;CREATE_INV_TAT&quot;)</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="PROGRESS" order="44" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <keyCalculation datatype="NVARCHAR" expressionLanguage="COLUMN_ENGINE" length="50">
         <formula>if(isNull(&quot;STAGE_2&quot;),if(isNull(&quot;STAGE_1&quot;),if(isNull(&quot;STAGE&quot;),'NA',&quot;STAGE&quot;),&quot;STAGE_1&quot;),&quot;STAGE_2&quot;)</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="AVG_TAT_MIN" order="45" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <keyCalculation datatype="DECIMAL" expressionLanguage="COLUMN_ENGINE" length="16" scale="6">
         <formula>if(isnull(&quot;CREATE_INV_TAT_MIN&quot;),if(isnull(&quot;INV_FS_TAT_MIN_1&quot;),if(isnull(&quot;FS_FA_TAT_MIN_2&quot;),0,&quot;FS_FA_TAT_MIN_2&quot;),&quot;INV_FS_TAT_MIN_1&quot;),&quot;CREATE_INV_TAT_MIN&quot;)</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="AVG_TAT_HRS" order="46" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <keyCalculation datatype="DECIMAL" expressionLanguage="COLUMN_ENGINE" length="16" scale="6">
         <formula>if(isnull(&quot;CREATE_INV_TAT_HRS&quot;),if(isnull(&quot;INV_FS_TAT_HRS_1&quot;),if(isnull(&quot;FS_FA_TAT_HRS_2&quot;),0,&quot;FS_FA_TAT_HRS_2&quot;),&quot;INV_FS_TAT_HRS_1&quot;),&quot;CREATE_INV_TAT_HRS&quot;)</formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
     <calculatedAttribute id="AVG_TAT_DAYS" order="47" semanticType="empty" displayAttribute="false" attributeHierarchyActive="false">
       <keyCalculation datatype="DECIMAL" expressionLanguage="COLUMN_ENGINE" length="16" scale="6">
         <formula>if(isnull(&quot;CREATE_INV_TAT_DAYS&quot;),if(isnull(&quot;INV_FS_TAT_DAYS_1&quot;),if(isnull(&quot;FS_FA_TAT_DAYS_2&quot;),0,&quot;FS_FA_TAT_DAYS_2&quot;),&quot;INV_FS_TAT_DAYS_1&quot;),&quot;CREATE_INV_TAT_DAYS&quot;)  </formula>
       </keyCalculation>
-      </calculatedAttribute>
+    </calculatedAttribute>
   </calculatedAttributes>
   <baseMeasures/>
   <calculatedMeasures/>
