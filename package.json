@@ -81,6 +81,16 @@
           "path": "/sap/opu/odata/sap/ZMDG_VENDOR_REG_SRV"
         }
       },
+      "ZIBS_BFPOC_SRV": {
+        "kind": "rest",
+        "model": "srv/external/ZIBS_BFPOC_SRV",
+        "csrf": true,
+        "csrfInBatch": true,
+        "credentials": {
+          "destination": "ERP",
+          "path": "/sap/opu/odata/sap/ZIBS_BFPOC_SRV"
+        }
+      },
       "BTP_DMS_Token": {
         "kind": "rest",
         "credentials": {
@@ -95,10 +105,25 @@
           "path": ""
         }
       },
+      "BPA_TOKEN": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BPA_TOKEN",    
+          "path": "/oauth/token"
+        }
+      },
+      "BPA_DEST": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BPA_DEST",     
+          "path": "https://spa-api-gateway-bpi-us-prod.cfapps.us10.hana.ondemand.com"
+        }
+      },
       "auth": {
         "kind": "mocked"
       },
-      "connectivity": true
+      "connectivity": true,
+      "destinations": true
     },
     "hana": {
       "deploy-format": "hdbtable"

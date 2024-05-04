@@ -61,6 +61,16 @@
 		{
 			"name":"BTP_DMS_Dest",
 			"url":"https://api-sdm-di.cfapps.us10.hana.ondemand.com"
+		},
+		{
+			"name":"BPA_TOKEN",
+			"url":"https://ibs-portal-dev.authentication.us10.hana.ondemand.com",
+			"username": "sb-539c55bb-c989-4699-95b0-93cb6fd25922!b84678|xsuaa!b49390",
+			"password": "ca3aa96f-df1c-4f47-842b-68f26c219d66$niyNtvpjYw8V5ZL5ODigqLKPTVtVmiiHbPRrU3taDKY="
+		},
+		{        
+			"name":"BPA_DEST",
+			"url":"https://spa-api-gateway-bpi-us-prod.cfapps.us10.hana.ondemand.com"    
 		}
 	]
 }
