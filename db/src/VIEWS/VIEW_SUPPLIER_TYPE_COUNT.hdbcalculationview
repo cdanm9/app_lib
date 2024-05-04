@@ -25,7 +25,6 @@
       <viewAttribute id="VENDOR_CODE"/>
       <viewAttribute id="APPROVER_LEVEL"/>
       <viewAttribute id="APPROVER_ROLE"/>
-      <viewAttribute id="NEXT_APPROVER"/>
       <viewAttribute id="REQUESTER_ID"/>
       <viewAttribute id="SUPPL_TYPE"/>
       <viewAttribute id="SUPPL_TYPE_DESC"/>

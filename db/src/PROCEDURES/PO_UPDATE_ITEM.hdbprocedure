@@ -1,0 +1,113 @@
+PROCEDURE "PO_UPDATE_ITEM" ( 
+    IN DESCRIPTION NVARCHAR(2000),
+    IN NETAMOUNT DECIMAL,
+    IN QUANTITY DECIMAL,
+    IN UNITOFMEASURE NVARCHAR(100),
+    IN UNITPRICE DECIMAL,
+    IN HEADERID INTEGER,
+    IN ITEMID INTEGER,
+    IN GL_ACCOUNT NVARCHAR(100),
+    IN COST_CENTER NVARCHAR(100),    
+    OUT SUCCESS NVARCHAR(100)
+    )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER   
+--   READS SQL DATA 
+   AS
+BEGIN
+   /*************************************
+       Write your procedure logic 
+   *************************************/
+   
+    Declare lv_DESCRIPTION NVARCHAR(2000);
+    Declare lv_NETAMOUNT decimal;
+    Declare lv_QUANTITY decimal;
+    Declare lv_UNITOFMEASURE NVARCHAR(100);
+    Declare lv_GL_ACCOUNT NVARCHAR(100);
+    Declare lv_COST_CENTER NVARCHAR(100);
+    Declare lv_UNITPRICE DECIMAL;
+    Declare lv_HEADERID integer;
+    Declare lv_ITEMID integer;
+    
+    declare lv_item integer;
+    declare lv_lineitem integer;
+    declare lv_check integer;
+    
+    lv_DESCRIPTION := DESCRIPTION;
+    lv_NETAMOUNT := NETAMOUNT;
+    lv_QUANTITY := QUANTITY;
+    lv_UNITOFMEASURE := UNITOFMEASURE;
+    lv_UNITPRICE := UNITPRICE;
+    lv_HEADERID := HEADERID;
+    lv_ITEMID := ITEMID;
+    lv_GL_ACCOUNT := GL_ACCOUNT;
+    lv_COST_CENTER := COST_CENTER;
+
+ SELECT count(*) into lv_item FROM "DOC_INFO_EXT_DOC_LINEITEMS"
+ where "HEADERID" = lv_HEADERID;
+
+IF ( lv_item = 0 ) THEN
+
+    lv_ITEMID = 1;
+
+    INSERT INTO "DOC_INFO_EXT_DOC_LINEITEMS" VALUES
+            (
+                :lv_HEADERID,
+                :lv_ITEMID,
+                :lv_DESCRIPTION,
+                :lv_NETAMOUNT,
+                :lv_QUANTITY,
+                :lv_UNITOFMEASURE,
+                :lv_UNITPRICE,
+                :lv_GL_ACCOUNT,
+                :lv_COST_CENTER
+            );
+            
+                COMMIT;
+
+
+    -- SUCCESS :='Newly Inserted'; 
+    SUCCESS :=lv_HEADERID; 
+ELSE
+	
+	
+    SELECT count(*) into lv_check FROM "DOC_INFO_EXT_DOC_LINEITEMS" 
+    where "DESCRIPTION" = lv_DESCRIPTION and "HEADERID" = lv_HEADERID;
+    
+    IF (lv_check = 0) THEN
+    	
+         lv_ITEMID = lv_ITEM + 1;
+    
+    
+        INSERT INTO "DOC_INFO_EXT_DOC_LINEITEMS" VALUES
+            (
+                :lv_HEADERID,
+                :lv_ITEMID,
+                :lv_DESCRIPTION,
+                :lv_NETAMOUNT,
+                :lv_QUANTITY,
+                :lv_UNITOFMEASURE,
+                :lv_UNITPRICE,
+                :lv_GL_ACCOUNT,
+                :lv_COST_CENTER
+            );
+        COMMIT;
+        SUCCESS :='Updated Sucessfully'; 
+	
+	else
+        SELECT ITEMID  into lv_lineitem FROM "DOC_INFO_EXT_DOC_LINEITEMS" 
+        where "DESCRIPTION" = lv_DESCRIPTION and "HEADERID" = lv_HEADERID;
+	
+
+        UPDATE "DOC_INFO_EXT_DOC_LINEITEMS"
+        SET DESCRIPTION = lv_DESCRIPTION , NETAMOUNT = lv_NETAMOUNT , QUANTITY = lv_QUANTITY , UNITOFMEASURE = lv_UNITOFMEASURE,
+            UNITPRICE = lv_UNITPRICE,GL_ACCOUNT=lv_GL_ACCOUNT,COST_CENTER=lv_COST_CENTER         
+            WHERE HEADERID = lv_HEADERID and ITEMID = lv_lineitem;
+        COMMIT;
+    
+        SUCCESS :='Updated Sucessfully'; 
+     
+    end if;     
+END IF;
+
+END

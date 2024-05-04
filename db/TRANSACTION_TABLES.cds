@@ -938,7 +938,7 @@ entity REQUEST_INFO {
         VENDOR_CODE              : String(50);
         APPROVER_LEVEL           : Integer;
         APPROVER_ROLE            : String(50);
-        NEXT_APPROVER            : String(100);
+        // NEXT_APPROVER            : String(100);
         REQUESTER_ID             : String(100); // Request creator i.e. Buyer Email ID
         SUPPL_TYPE               : String(50);
         SUPPL_TYPE_DESC          : String(50);
@@ -990,6 +990,7 @@ entity REQUEST_INFO {
         CREATED_ON               : Timestamp;
         COMMENT                  : String(1000);
         LEGACY_ID                : String(10);
+        PROCESS_LEVEL                :  String(10);                  
         TO_STATUS                : Association to one VENDOR_PORTAL.MASTER_STATUS
                                        on TO_STATUS.CODE = STATUS;
         TO_ADDRESS               : Association to many VENDOR_PORTAL.REGFORM_ADDRESS
@@ -1030,10 +1031,12 @@ entity REQUEST_INFO {
                                        on TO_ATTACHMENTS.REQUEST_NO = REQUEST_NO;
         TO_REQUEST_TYPE          : Association to one VENDOR_PORTAL.MASTER_REQUEST_TYPE
                                        on TO_REQUEST_TYPE.CODE = REQUEST_TYPE;
-        TO_ENTITY_CODE           : Association to one VENDOR_PORTAL.MASTER_ENTITY_CODE
+        TO_ENTITY_CODE           : Association to one VENDOR_PORTAL.MASTER_ENTITY_CODE   
                                        on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;
         TO_REQUEST_ACTIVE_STATUS : Association to one VENDOR_PORTAL.REQUEST_ACTIVE_STATUS
-                                       on TO_REQUEST_ACTIVE_STATUS.REQUEST_NO = REQUEST_NO;    
+                                       on TO_REQUEST_ACTIVE_STATUS.REQUEST_NO = REQUEST_NO; 
+        TO_HIERARCHY: Association to one VENDOR_PORTAL.MASTER_APPROVAL_HIERARCHY_FE on TO_HIERARCHY.APPR_TYPE=PROCESS_LEVEL
+        and TO_HIERARCHY.ENTITY_CODE=ENTITY_CODE and TO_HIERARCHY.APPROVER_LEVEL=APPROVER_LEVEL;          
 }
 
 entity REQUEST_INFO_TEMP {
@@ -1051,7 +1054,7 @@ entity REQUEST_INFO_TEMP {
         VENDOR_CODE           : String(50);
         APPROVER_LEVEL        : Integer;
         APPROVER_ROLE         : String(50);
-        NEXT_APPROVER         : String(100);
+        // NEXT_APPROVER         : String(100);
         REQUESTER_ID          : String(100); // Request creator i.e. Buyer Email ID
         SUPPL_TYPE            : String(50);
         SUPPL_TYPE_DESC       : String(50);
@@ -1103,6 +1106,7 @@ entity REQUEST_INFO_TEMP {
         CREATED_ON            : Timestamp;
         COMMENT               : String(1000);
         LEGACY_ID             : String(10);
+        PROCESS_LEVEL             : String(10);       
         TO_STATUS             : Association to one VENDOR_PORTAL.MASTER_STATUS
                                     on TO_STATUS.CODE = STATUS;
 }

@@ -1,0 +1,87 @@
+PROCEDURE "PO_UPDATE_HEADER" ( 
+    IN STATUS NVARCHAR(100),
+    IN FILE_ID VARCHAR(100),
+    IN CR_DATE DATE,
+    IN PURCHASE_ORDER_NUMBER NVARCHAR(100),
+    IN DOCUMENT_NO NVARCHAR(100),
+    IN CURRENCY NVARCHAR(100),
+    IN GROSS_VALUE DECIMAL,
+    OUT SUCCESS NVARCHAR(100)
+    )
+   LANGUAGE SQLSCRIPT
+   SQL SECURITY INVOKER
+--   READS SQL DATA 
+   AS
+BEGIN
+   /*************************************
+       Write your procedure logic 
+   *************************************/
+   
+--   Status,FILE_ID,documentDate,purchaseOrderNumber,documentNumber,currencyCode,gross_value
+    Declare lv_FILE_ID VARCHAR(100);
+    Declare lv_STATUS NVARCHAR(100);
+    Declare lv_DATE NVARCHAR(100);
+    Declare lv_PURCHASE_ORDER_NUMBER NVARCHAR(100);
+    Declare lv_DOCUMENT_NO NVARCHAR(100);
+    Declare lv_CURRENCY NVARCHAR(100);
+    Declare lv_GROSS_VALUE DECIMAL;
+    
+    declare lv_header String;
+    declare lv_headerID integer;
+    declare lv_headercount integer;
+
+    lv_FILE_ID := FILE_ID;
+    lv_STATUS := STATUS;
+    lv_DATE := CR_DATE;
+    lv_PURCHASE_ORDER_NUMBER := PURCHASE_ORDER_NUMBER;
+    lv_DOCUMENT_NO := DOCUMENT_NO;
+    lv_CURRENCY := CURRENCY;
+    lv_GROSS_VALUE := GROSS_VALUE;
+
+
+    SELECT count(*) into lv_headercount FROM "DOC_INFO_EXT_DOC_HEADER"
+    where "FILE_ID" = lv_FILE_ID; 
+
+    IF ( lv_headercount = 0 ) THEN
+
+        SELECT  max(HEADERID) into lv_headerID FROM "DOC_INFO_EXT_DOC_HEADER";
+ 
+        if lv_headerID is null THEN
+            lv_headerID = 1000000001;
+        Else
+            lv_headerID = lv_headerID + 1;
+        end if;
+
+        INSERT INTO "DOC_INFO_EXT_DOC_HEADER" VALUES
+            (
+                :lv_headerID,
+                :lv_FILE_ID,
+                :lv_GROSS_VALUE,
+                :lv_CURRENCY,
+                :lv_DATE,
+                :lv_DOCUMENT_NO,
+                :lv_PURCHASE_ORDER_NUMBER,
+                :lv_STATUS
+            );
+            
+        COMMIT;
+
+        SUCCESS := lv_headerID; 
+	ELSE
+   
+        UPDATE "DOC_INFO_EXT_DOC_HEADER"
+        SET STATUS = lv_STATUS , DOCUMENTDATE = lv_DATE , PURCHASEORDERNUMBER = lv_PURCHASE_ORDER_NUMBER , DOCUMENTNUMBER = lv_DOCUMENT_NO,
+            CURRENCYCODE = lv_CURRENCY , GROSSAMOUNT = lv_GROSS_VALUE
+        WHERE FILE_ID = lv_FILE_ID;
+        COMMIT;
+    
+        SELECT HEADERID into lv_header FROM "DOC_INFO_EXT_DOC_HEADER"
+        where "FILE_ID" = lv_FILE_ID; 
+ 
+        SUCCESS := lv_header; 
+     
+    END IF;
+    
+  
+  
+END

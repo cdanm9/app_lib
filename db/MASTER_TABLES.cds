@@ -1313,7 +1313,7 @@ context VENDOR_PORTAL {
             USER_IDS     : String(1000);     
     }      
 
-    //Hierarchy Implementation Start
+    //Hierarchy Implementation Start      
 
     entity MASTER_APPROVAL_HIERARCHY_FE:cuid {    
             // @readonly                   
@@ -1331,7 +1331,7 @@ context VENDOR_PORTAL {
                         on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;   
             TO_ROLE: Association to one MASTER_USER_ROLE on TO_ROLE.CODE=USER_ROLE;    
             TO_ENTITY_TYPE: Association to MASTER_ENTITY_TYPE_FE;  
-            TO_APPR_TYPE: Association to one MASTER_APPROVAL_TYPE on TO_APPR_TYPE.CODE=APPR_TYPE; 
+            TO_APPR_TYPE: Association to one MASTER_APPROVAL_TYPE on TO_APPR_TYPE.CODE=APPR_TYPE;         
     }             
     entity MASTER_APPROVAL_TYPE{
         key CODE:String(10);
@@ -1355,14 +1355,14 @@ context VENDOR_PORTAL {
 
      entity MASTER_IVEN_MDK_ATTACHMENTS {                 
         key SR_NO            : Integer;
-        key ENTITY_CODE      : String(10);
+        key ENTITY_CODE      : String(10);      
         key ATTACH_CODE      : Integer;         
             ATTACH_GROUP     : String(30);   
             ATTACH_DESC      : String(100);
             FILE_NAME        : String(100);
             FILE_TYPE        : String(100);
-         @Core.IsMediaType: true  FILE_MIMETYPE    : String(100) ;           
-            FILE_CONTENT     : LargeBinary @Core.MediaType:FILE_MIMETYPE @Core.ContentDisposition.Filename: FILE_NAME @Core.ContentDisposition.Type: 'attachment';
+            FILE_MIMETYPE    : String(100);           
+            FILE_CONTENT     : LargeBinary;
             UPLOADED_ON      : Timestamp;
             ATTACH_TYPE_CODE : String(10);
             ATTACH_TYPE_DESC : String(100);
