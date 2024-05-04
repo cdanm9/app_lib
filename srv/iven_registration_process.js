@@ -50,7 +50,8 @@ module.exports = cds.service.impl(function () {
 //  var dbConn = new dbClass(client);
  var isEmailNotificationEnabled = false;
  var sUserIdentity=userDetails.USER_ID || null;
-  var sUserRole=userDetails.USER_ROLE || null;    
+  var sUserRole=userDetails.USER_ROLE || null;  
+  var statusCode; 
    //Check if email notification is enabled
    isEmailNotificationEnabled = await lib_common.isiVenSettingEnabled(connection, "VM_EMAIL_NOTIFICATION");
 
@@ -62,8 +63,9 @@ module.exports = cds.service.impl(function () {
                 var iReqType = reqHeader[0].REQUEST_TYPE;
                 var iStep = stepNo;
                 
+                
                 // --Section 2--
-                var aMainObj = reqHeader;
+                var aMainObj = reqHeader,checkApprover=[];
                 if (aMainObj.length > 0) {
                     reqHeader[0].REQUEST_NO = 0;
                 } else {
@@ -128,7 +130,7 @@ module.exports = cds.service.impl(function () {
                 //     aAttachFieldsObj, aAttachmentsObj);
                 // iVen_Content.postErrorLog(conn, Result, iReqNo, aMainObj[0].REGISTERED_ID, APP_NAME, "PROCEDURE");
 
-                // get connection
+                // get connection      
              
 
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_DRAFT_SUBMIT');
@@ -147,23 +149,148 @@ module.exports = cds.service.impl(function () {
                 var Message =null;
                 if(Result.OUT_SUCCESS !== null){
                 if(sAction === "DRAFT")
-                    Message = "Draft saved successfully";
-                else if(sAction === "CREATE")
-                    Message = "Registration Form Submitted for Request: "+ iReqNo +". Your form will be forwarded to Procurement Team for verification.";
+                    Message = "Draft saved successfully";    
+                else if(sAction === "CREATE"){
+                    var bApproveWithoutMatrix=false;
+                    Message = "Registration Form Submitted for Request: "+ iReqNo +". Your form will be forwarded for verification.";    
+                    checkApprover = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode,'MASTER_APPROVAL_HIERARCHY_FE',1,'REG')||[];  
+
+                    var aRegisterCheck=await SELECT`SETTING`
+                    .from('VENDOR_PORTAL_MASTER_IVEN_SETTINGS')
+                    .where({CODE:'REGAPPR_MATRIX_CHK'})
+                    if(aRegisterCheck[0].SETTING&&checkApprover.length==0){
+                        bApproveWithoutMatrix=true
+                    }else{
+                        bApproveWithoutMatrix=false   
+                    }
+
+                    if(bApproveWithoutMatrix){ 
+                        var sSapVendorCode = null;      
+                        // ------------- MDG Posting Start------------------
+                        // var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
+    
+                        var iVenVendorCode = null;
+                        var oMDGResponse = null;
+                        var iMDGStatus = null;
+                        var oMDGPayload = null;
+                        var bMDGComparison = null;
+                        var bAttachmentComparison = null;
+                        var oActiveData = null;
+                        var CurrAttachment = null;
+                        var bNoChange = false;
+                        var oDataStatus = null;
+                        var ODataResponse = null;
+                        var sCompareValue = 'A';  
+                        var ResultApprove;       
+                            oMDGPayload =await lib_mdg.getMDGPayload(reqHeader,addressData,contactsData,bankData, connection);
+                            iVenVendorCode = reqHeader[0].IVEN_VENDOR_CODE || null;
+    
+                            // ------------------------START: Direct MDG Call for testing-------------------------
+                            var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
+                        
+                            iMDGStatus = MDGResult.iStatusCode;
+                            oMDGResponse = MDGResult.oResponse;
+    
+                            sChangeRequestNo =oMDGResponse.changerequestNo;
+                            sSapVendorCode = parseInt(oMDGResponse.d.Lifnr, 10) || "";
+
+                            var iRequestType = reqHeader[0].REQUEST_TYPE || null;
+                            var sSupplierEmail = reqHeader[0].REGISTERED_ID || null;
+                            var sUserId = "System";
+                            var iLevel = null     
+                            var sBuyerEmail = reqHeader[0].REQUESTER_ID || null;
+                            var sSupplerName = reqHeader[0].VENDOR_NAME1 || null;
+                            var sChangeRequestNo = null;
+                            var iVenVendorCode = reqHeader[0].IVEN_VENDOR_CODE||null;   
+                            var sCompareValue = "A";
+                            var sVendorCode=reqHeader[0].VENDOR_CODE||null;
+                            eventsData=await getApproveEventsObj()   
+    
+                        // ------------- MDG Posting End------------------
+                            const loadProcApprove = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_APPROVAL')
+    
+                            ResultApprove = await dbConn.callProcedurePromisified(loadProcApprove,
+                                [iReqNo, sEntityCode, iRequestType,
+                                    sSupplierEmail, sBuyerEmail, sUserId, iLevel, eventsData, 
+                                    sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
+                                    sCompareValue]);
+                            var responseObj = {
+                                "Message": ResultApprove.outputScalar.OUT_SUCCESS !== null ? ResultApprove.outputScalar.OUT_SUCCESS : "Approval failed!",
+                                "MDG_status": iMDGStatus,
+                                "MDG_Payload": oMDGPayload,
+                                "ODataResponse": oMDGResponse,
+                                "bMDGComparison": bMDGComparison,
+                                "bAttachmentComparison": bAttachmentComparison,
+                                "CurrAttachment": CurrAttachment,            
+                                "sChangeRequestNo": sChangeRequestNo,
+                                "sChangeRequestNo1": sChangeRequestNo       
+                                // "MDG_Response":oMDGResponse    
+                            };
+    
+                            if (ResultApprove.outputScalar.OUT_SUCCESS !== null) {
+    
+                                var oEmailData = {
+                                    "ReqNo": iReqNo,
+                                    "ReqType": iRequestType,
+                                    "SupplierName": sSupplerName,
+                                    "SupplerEmail": sSupplierEmail,
+                                    "Approver_Email": sUserId,
+                                    "Approver_Level": iLevel,
+                                    "Next_Approver": ResultApprove?.outputScalar?.OUT_EMAIL_TO||null, // Proc Manager
+                                    "Buyer": sBuyerEmail,
+                                    "ApproverRole":checkApprover[0]?.USER_ROLE||null       
+                                };        
+    
+                                action = "FINAL_APPROVAL";            
+    
+                                    // Approval done - notification to Buyer & Proc Manager
+                                    if (isEmailNotificationEnabled) {
+                                        // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
+                                        // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null);
+                                        oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
+                                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null, null)
+                                        var sCCEmail = await lib_email.setDynamicCC( null);
+                                        var sToEmail = [oEmailData.Buyer, oEmailData.SupplerEmail].toString();    
+                                        await  lib_email.sendivenEmail(sToEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                                    }
+                                    //Post to IAS for Create Normal Request
+                                    // if(iRequestType == 1)     
+    
+                                    var aIASSetting=await SELECT .from('VENDOR_PORTAL_MASTER_IVEN_SETTINGS') .where({CODE:'REGAPPR_IAS_ENABLE'});
+                                    if(aIASSetting[0].SETTING=='X')
+                                        await lib_ias.CreateVendorIdIAS(sSapVendorCode,sSupplerName,null,sSupplierEmail);    
+        
+                                statusCode = 200;
+                            } 
+                            // return responseObj;
+                            responseObj = {
+                                "Draft_Success": Result.OUT_SUCCESS !== null ? 'X' : '',
+                                "REQUEST_NO": Result.OUT_SUCCESS !== null ? iReqNo : 0,
+                                // "Message": Result.OUT_SUCCESS !== null ? "Draft saved successfully" : "Draft saving failed!",
+                                "Message":ResultApprove.outputScalar.OUT_SUCCESS,
+                                "ERROR_CODE": Result?.OUT_ERROR_CODE,
+                                "ERROR_DESC": Result?.OUT_ERROR_MESSAGE           
+                            };
+                            return req.reply(responseObj);   
+                         
+                    }
+                }     
                 else if(sAction === "RESEND")
                     Message ="Form resent successfully";
+                    
                
                     var oEmailData = {
                         "ReqNo": iReqNo,
                         "SupplierName": vendorName,
-                        "To_Email": Result.OUT_EMAIL_TO // Approver
+                        "To_Email": Result.OUT_EMAIL_TO, // Approver
+                        "ApproverRole":checkApprover[0]?.USER_ROLE||null  
                     };
                     var checkSupplier =await fnCheckSupplier(connection, oEmailData.ReqNo);
                     if (checkSupplier === null) {    
                         var sPMId = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode,'MASTER_APPROVAL_HIERARCHY_FE',1,'REG');               
                         // var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
                                
-                        if (sPMId !== "") sPMId = sPMId[0].USER_ID;
+                        if (!sPMId) sPMId = sPMId[0].USER_ID;
                         oEmailData.To_Email = sPMId;   
     
                         if (isEmailNotificationEnabled && sAction !== 'DRAFT' && sPMId !== null ) {
@@ -565,7 +692,7 @@ module.exports = cds.service.impl(function () {
             var iRequestType = inputData[0].REQUEST_TYPE || null;
             var sSupplierEmail = inputData[0].REGISTERED_ID || null;
             var sUserId = eventsData[0].USER_ID || null;
-            var iLevel = inputData[0].APPROVER_LEVEL || 0;   
+            var iLevel = Number(inputData[0].APPROVER_LEVEL) || 0;      
             var sBuyerEmail = inputData[0].REQUESTER_ID || null;
             var sIvenNo = inputData[0].IVEN_VENDOR_CODE || null;
             var sSupplerName = inputData[0].VENDOR_NAME1 || null;
@@ -664,6 +791,7 @@ module.exports = cds.service.impl(function () {
                     // ------------- MDG Posting Start------------------
                     // var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
                     var iMaxLevelCount = await lib_common.getMaxHierarchyApproverCount(connection, sEntityCode,'REG');  
+                    var checkApprover = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode,'MASTER_APPROVAL_HIERARCHY_FE',iLevel,'REG')||[];
 
                     var iVenVendorCode = null;
                     var oMDGResponse = null;
@@ -741,7 +869,8 @@ module.exports = cds.service.impl(function () {
                                 "Approver_Email": sUserId,
                                 "Approver_Level": iLevel,
                                 "Next_Approver": Result.outputScalar.OUT_EMAIL_TO, // Proc Manager
-                                "Buyer": sBuyerEmail    
+                                "Buyer": sBuyerEmail,
+                                "ApproverRole":checkApprover[0]?.USER_ROLE||null       
                             };        
 
                             action = Result.outputScalar.OUT_MAX_LEVEL == iLevel ? "FINAL_APPROVAL" : "APPROVE";
@@ -895,12 +1024,13 @@ module.exports = cds.service.impl(function () {
             var sSupplierEmail = inputData[0].REGISTERED_ID || null;
             var sBuyerEmail = inputData[0].REQUESTER_ID || null;
             var sSupplerName = inputData[0].VENDOR_NAME1 || null;
-            var sLoginId = messengerData.loginId;
+            var sLoginId = messengerData.loginId;   
+            var iStatus=inputData[0].STATUS||null;
             var sMailTo = messengerData.mailTo;
             var sVCode=inputData[0].VENDOR_CODE||null;    
 
             // var sAction = inputData[0].ACTION;
-            var aEventObj = await getEventObj(eventsData, action);
+            var aEventObj = await getEventObj(eventsData, action,iStatus);
             // var sComment = "";
             // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::COMMUNICATION_TOOL');
             // Result = execProcedure(iRegNo, sSupplerEmail, sMailTo, sAction, aEventObj);
@@ -928,7 +1058,7 @@ module.exports = cds.service.impl(function () {
                 var sAppName; 
                 var sPmId = "";                                
                 if (action === "VENDOR") {    
-                    sPmId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
+                    sPMId = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode,'MASTER_APPROVAL_HIERARCHY_FE',1,'REG');  
                     if (sPmId !== "") {
                         sPmId = sPmId[0].USER_ID;
                     }                   
@@ -1206,7 +1336,6 @@ module.exports = cds.service.impl(function () {
                 reqHeader[0].SUPPL_TYPE= reqHeader[0].SUPPL_TYPE   
                 reqHeader[0].BP_TYPE_CODE= reqHeader[0].BP_TYPE_CODE.trim() || ""
                 reqHeader[0].BP_TYPE_DESC= reqHeader[0].BP_TYPE_DESC.toUpperCase().trim() || ""
-                reqHeader[0].NEXT_APPROVER= null
                 reqHeader[0].REQUEST_TYPE= reqHeader[0].REQUEST_TYPE || 1;
                 reqHeader[0].CREATION_TYPE= reqHeader[0].REQUEST_TYPE || 1;
                 reqHeader[0].COMMENT= "Self Registration by " + reqHeader[0].VENDOR_NAME1.toUpperCase().trim() || "";
@@ -1423,7 +1552,7 @@ module.exports = cds.service.impl(function () {
             return oPayloadValue;
         }
         catch (error) {
-            throw error;
+            throw error;                
         }
     }
 
@@ -1480,7 +1609,7 @@ module.exports = cds.service.impl(function () {
 
         return array;
     }
-    async function getEventObj(oPayloadValue, action) {
+    async function getEventObj(oPayloadValue, action,status) {
 
         var iEventCode = null,
             sRemark = null;
@@ -1488,7 +1617,10 @@ module.exports = cds.service.impl(function () {
         switch (action) {
             case "VENDOR":
                 iEventCode = 10;
-                sRemark = "Vendor sent message to Buyer";
+                if(status==5||status==6||status==9)
+                    sRemark = "Vendor sent message to Approver";   
+                else
+                    sRemark = "Vendor sent message to Buyer";
                 break;
             case "BUYER":
                 iEventCode = 11;
@@ -1538,20 +1670,43 @@ module.exports = cds.service.impl(function () {
             //     whereObj['VENDOR_NAME1'] = sColumnValue
             // }
             whereObj[sColumnName] = sColumnValue;
-            if (iObrNo !== "" && sColumnValue !== "") {
-                whereObj['REQUEST_NO'] = {'!=':iObrNo}
-                aResult = await connection.run(SELECT
-                    .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                    .where(whereObj)
-                    // .where`TRADE_LIC_NO=${sColumnValue} AND REQUEST_NO=${iObrNo}`
-                );
+            if (iObrNo !== "" && sColumnValue !== "") {   
+                // whereObj['REQUEST_NO'] = {'!=':iObrNo}
+                // aResult = await connection.run(SELECT
+                //     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
+                //     .where(whereObj)
+                //     // .where`TRADE_LIC_NO=${sColumnValue} AND REQUEST_NO=${iObrNo}`
+                // );
+                var sColumnAlias="VENDOR_PORTAL_REQUEST_INFO."+sColumnName;
+                var qAndObject={ 'VENDOR_PORTAL_REQUEST_INFO.REQUEST_NO':{'!=':iObrNo}};
+                qAndObject[sColumnAlias]=sColumnValue;
+                aResult=await SELECT .columns('*','APPROVER_ROLE as APPR_ROLE') .from('VENDOR_PORTAL_REQUEST_INFO')      
+                .join('VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE')
+                .on({ 'VENDOR_PORTAL_REQUEST_INFO.APPROVER_LEVEL':'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.APPROVER_LEVEL',
+                'VENDOR_PORTAL_REQUEST_INFO.ENTITY_CODE': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.ENTITY_CODE',
+                'VENDOR_PORTAL_REQUEST_INFO.PROCESS_LEVEL': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.APPR_TYPE',
+                'VENDOR_PORTAL_REQUEST_INFO.APPROVER_ROLE': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.USER_ROLE',
+             })   
+                .and(qAndObject);                        
             }
-            else {
-                aResult = await connection.run(SELECT
-                    .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                    .where(whereObj)
-                    // .where`${sColumnName} = ${sColumnValue}`
-                );
+            else {         
+                aResult=[];
+                  
+                // aResult=await SELECT .columns('*','APPROVER_ROLE as APPR_ROLE') .from('VENDOR_PORTAL_REQUEST_INFO')      
+                // .join('VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE')
+                // .on({ 'VENDOR_PORTAL_REQUEST_INFO.APPROVER_LEVEL':'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.APPROVER_LEVEL',
+                // 'VENDOR_PORTAL_REQUEST_INFO.ENTITY_CODE': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.ENTITY_CODE',
+                // 'VENDOR_PORTAL_REQUEST_INFO.PROCESS_LEVEL': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.APPR_TYPE',
+                // 'VENDOR_PORTAL_REQUEST_INFO.APPROVER_ROLE': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.USER_ROLE',
+                // }) 
+                // .and({ 'A.REQUEST_NO':{'!=':iObrNo} });     
+                
+
+                // aResult = await connection.run(SELECT
+                //     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
+                //     .where(whereObj)
+                //     // .where`${sColumnName} = ${sColumnValue}`
+                // );
             }
             // var sQuery =
             // 	'SELECT * FROM \"VENDOR_PORTAL\".\"VENDOR_PORTAL.Table::ONBOARDING_FORM\" WHERE ' + sColumnName + ' = ? ';
@@ -1583,7 +1738,7 @@ module.exports = cds.service.impl(function () {
             let aResult = await connection.run(
                 SELECT`MAX(APPROVER_LEVEL) AS COUNT`
                     .from`${connection.entities['VENDOR_PORTAL.MATRIX_REGISTRATION_APPR']}`
-                    .where({ ENTITY_CODE: iEntityCode }));
+                    .where({ ENTITY_CODE: iEntityCode }));    
 
             if (aResult.length > 0) {
                 iCount = aResult[0].COUNT;
@@ -2326,6 +2481,21 @@ module.exports = cds.service.impl(function () {
         }
     
         return iCount;
+    }
+
+    async function getApproveEventsObj(){
+        var aEventObj=[{
+        "REQUEST_NO":100000949,
+        "EVENT_NO":1,
+        "EVENT_CODE":0,
+        "EVENT_TYPE":"ONB",
+        "USER_ID":"siddhesh.d@intellectbizware.com",
+        "USER_NAME":"Siddhesh Dingankar",
+        "REMARK":"Registration Approval",
+        "COMMENT":"Request is auto-generated for registration approval request",
+        "CREATED_ON":null
+    }]
+        return aEventObj
     }
 
 })

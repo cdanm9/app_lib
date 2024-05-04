@@ -86,7 +86,8 @@ service dashboardService {
   entity MasterIbanCountry         as projection on VENDOR_PORTAL.MASTER_IBAN_COUNTRY;
   entity MasteriVenAttachments     as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
   entity MasterIvenSettings        as projection on VENDOR_PORTAL.MASTER_IVEN_SETTINGS;          
-  entity MasterRequestEvents       as projection on VENDOR_PORTAL.MASTER_REQUEST_EVENTS;
+  entity MasterRequestEvents       as projection on VENDOR_PORTAL.MASTER_REQUEST_EVENTS;    
+  entity MasterApprovalHierarchy    as projection on VENDOR_PORTAL.MASTER_APPROVAL_HIERARCHY_FE;  
   entity MasterStatus              as projection on VENDOR_PORTAL.MASTER_STATUS{
     *,
     case when CODE = 1 then 1 

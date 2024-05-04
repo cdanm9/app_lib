@@ -15,7 +15,7 @@ service userMasterService {
   };
   entity RequestInfo          as projection on VENDOR_PORTAL.REQUEST_INFO;            
    
-  //CRUD Payload     
+  //CRUD Payload         
   type UserMasterPayload {
     ACTION         : String;
     // SR_NO          : Integer;
@@ -40,7 +40,7 @@ service userMasterService {
       EMAIL        : String(150);
       ENTITY_DESC  : String(100);
     }
-    };
+    };        
   }
   type User_Details:{
     USER_ROLE: String(50);

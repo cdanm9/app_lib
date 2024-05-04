@@ -103,7 +103,7 @@ module.exports = cds.service.impl(function () {
           var sEmailSender = aInputData[0].EMAIL_SENDER;
           // sResponse = await lib_email.sendEmail(connection, sEmailBody, sEmailSubject, aEmailTo, aEmailCC, sEmailSender)
           //To differentiate test email we are converting it into string here
-          var aEmailCCSystem=aEmailCC.toString()              
+          var aEmailCCSystem=aEmailCC.toString()                 
           var sCCEmail = await lib_email.setDynamicCC(aEmailCCSystem);           
           await  lib_email.sendivenEmail(aEmailTo,sCCEmail,'html', sEmailSubject,sEmailBody)
 
@@ -224,7 +224,7 @@ module.exports = cds.service.impl(function () {
           lib_common.postErrorLog(Result,null,sUserID,sUserRole,"System Configuration",sType,dbConn,hdbext);
           req.error({ code:iErrorCode, message:  error.message ? error.message : error }); 
         }
-      }
+      }   
       else if (sEditType === "FORM_FIELDS") {
         try{
         // conn = $.hdb.getConnection();
