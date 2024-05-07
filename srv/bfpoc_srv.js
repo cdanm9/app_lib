@@ -27,7 +27,7 @@ module.exports = cds.service.impl(function (srv) {
             var dbConn=new dbClass(client);
             const payload=req.data   
             const {REQUEST_TYPE,HEADER,ITEMS,ON_CLOUD}=req.data;
-            if (REQUEST_TYPE == "Approve") {
+            if (REQUEST_TYPE == "Approve") {     
                 var data = ON_CLOUD;
                 var SAP_DOCUMENT_NO = "";  
                 var STATUS="PENDING"        
