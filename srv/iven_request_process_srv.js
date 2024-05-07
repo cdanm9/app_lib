@@ -217,12 +217,12 @@ module.exports = cds.service.impl(function () {
                           
                             }
                         }
-                        if(bApproveWithoutMatrix){
+                        if(bApproveWithoutMatrix && type!=7){             
                             var Result2 = {
                                 OUT_SUCCESS: "Vendor Request Invited : " + sResponse.outputScalar.OUT_SUCCESS || ""
-                            };    
+                            };               
                         }else{
-                            var Result2 = {
+                            var Result2 = {                     
                                 OUT_SUCCESS: "Vendor Request Created : " + sResponse.outputScalar.OUT_SUCCESS || ""
                             };            
                         }

@@ -130,7 +130,7 @@ module.exports = cds.service.impl(function () {
                 //     aAttachFieldsObj, aAttachmentsObj);
                 // iVen_Content.postErrorLog(conn, Result, iReqNo, aMainObj[0].REGISTERED_ID, APP_NAME, "PROCEDURE");
 
-                // get connection      
+                // get connection              
              
 
                 const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_DRAFT_SUBMIT');
@@ -204,7 +204,7 @@ module.exports = cds.service.impl(function () {
                             var iVenVendorCode = reqHeader[0].IVEN_VENDOR_CODE||null;   
                             var sCompareValue = "A";
                             var sVendorCode=reqHeader[0].VENDOR_CODE||null;
-                            eventsData=await getApproveEventsObj()   
+                            eventsData=await getApproveEventsObj(reqHeader[0])   
     
                         // ------------- MDG Posting End------------------
                             const loadProcApprove = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_APPROVAL')
@@ -290,7 +290,7 @@ module.exports = cds.service.impl(function () {
                         var sPMId = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode,'MASTER_APPROVAL_HIERARCHY_FE',1,'REG');               
                         // var sPMId = await lib_common.getApproverForEntity(connection, sEntityCode, 'PM', 'MATRIX_REGISTRATION_APPR') || "";
                                
-                        if (!sPMId) sPMId = sPMId[0].USER_ID;
+                        if (sPMId) sPMId = sPMId[0].USER_ID;
                         oEmailData.To_Email = sPMId;   
     
                         if (isEmailNotificationEnabled && sAction !== 'DRAFT' && sPMId !== null ) {
@@ -804,7 +804,17 @@ module.exports = cds.service.impl(function () {
                     var bNoChange = false;
                     var oDataStatus = null;
                     var ODataResponse = null;
-                    var sCompareValue = 'A';         
+                    var sCompareValue = 'A';  
+                    var bApproveWithoutMatrix=false
+                    var aRegisterCheck=await SELECT`SETTING`
+                    .from('VENDOR_PORTAL_MASTER_IVEN_SETTINGS')
+                    .where({CODE:'REGAPPR_MATRIX_CHK'})
+                    if(aRegisterCheck[0].SETTING&&checkApprover.length==0&&iRequestType==7){
+                        bApproveWithoutMatrix=true  
+                        iLevel=null          
+                    }else{    
+                        bApproveWithoutMatrix=false        
+                    }      
 
                     if (iLevel === iMaxLevelCount) {
                         oMDGPayload =await lib_mdg.getMDGPayload(inputData,addressData,contactsData,bankData, connection);
@@ -2483,14 +2493,14 @@ module.exports = cds.service.impl(function () {
         return iCount;
     }
 
-    async function getApproveEventsObj(){
+    async function getApproveEventsObj(oReqHeader){
         var aEventObj=[{
-        "REQUEST_NO":100000949,
+        "REQUEST_NO":100000949,// Any Number
         "EVENT_NO":1,
-        "EVENT_CODE":0,
+        "EVENT_CODE":0,     
         "EVENT_TYPE":"ONB",
-        "USER_ID":"siddhesh.d@intellectbizware.com",
-        "USER_NAME":"Siddhesh Dingankar",
+        "USER_ID":oReqHeader?.REGISTERED_ID,
+        "USER_NAME":oReqHeader?.VENDOR_NAME1,       
         "REMARK":"Registration Approval",
         "COMMENT":"Request is auto-generated for registration approval request",
         "CREATED_ON":null

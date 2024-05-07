@@ -312,7 +312,7 @@ module.exports = {
 					sActionTypeText = "submitted";
 
 				} else if (sAction === "APPROVE") {
-					sActionTypeText = "approved ";
+					sActionTypeText = "approved";   
 					// greetingsTo = 'Dear User,'
 					// linkcontent ='You can check the details for the request on the TII portal using this '+"<a href=" + sLink_Portal_LoginAccess+ ">link</a>"
 					// sActionTypeText = "approved at L" + oEmailData.Approver_Level;
