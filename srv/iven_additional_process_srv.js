@@ -5,6 +5,8 @@ const hdbext = require("@sap/hdbext")
 const lib_common = require('./LIB/iven_library')
 const lib_email = require('./LIB/iven_library_email')
 const lib_email_content = require('./LIB/iven_library_email_content')
+const lib_mdg = require('./LIB/iven_library_mdg')   
+const lib_ias = require('./LIB/iven_library_ias') 
 // const lib = require('./LIB/EMPLOYEE_LIB')
 
 module.exports = cds.service.impl(function () {
@@ -44,6 +46,9 @@ module.exports = cds.service.impl(function () {
       //intialize connection to database
       var sUserId = userDetails.USER_ID || null;
       var sUserRole = userDetails.USER_ROLE || null;
+
+      var sEntityCode = reqHeader[0].ENTITY_CODE || null; 
+      var bNoApproverCheck=false;   
 
       let connection = await cds.connect.to('db');
       var isEmailNotificationEnabled = false;
@@ -114,8 +119,13 @@ module.exports = cds.service.impl(function () {
         // responseInfo(JSON.stringify(responseObj), "text/plain", statusCode);
 
       } else if (action === "INTERNAL_REQUEST") {
+           
+            
+        var checkApprover = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode, 'MASTER_APPROVAL_HIERARCHY_FE',1,'REG');                   
+        if (checkApprover === null || (checkApprover[0].USER_ID === null || checkApprover[0].USER_ID === "")) 
+          bNoApproverCheck=true
 
-        // execProcedure = conn.loadProcedure('VENDOR_PORTAL', 'VENDOR_PORTAL.Procedure::SUPPLIER_INTERNAL_REQUEST');
+        //   throw {"message":"Approver missing in approval matrix. Please contact Admin team."};   
         var iReqNo = reqHeader[0].REQUEST_NO;
         // var iStep = oPayload.VALUE.STEP_NO;
         // var iComment = oPayload.VALUE.COMMENT;
@@ -196,7 +206,7 @@ module.exports = cds.service.impl(function () {
         // 				var attachCode = iNDAAttach[0].ATTACH_CODE
         // 			} else {
         // var srNo = oPayload.VALUE./SR_NO;
-        // var attachCode = oPayload.VALUE.ATTACH_CODE;
+        // var attachCode = oPayload.VALUE.ATTACH_CODE;    
         // 			}
         // 			Result = execProcedure(iReqNo, iStep, sEntityCode, sVendorNo, sSAPVendorCode);
 
@@ -224,6 +234,129 @@ module.exports = cds.service.impl(function () {
             aAttachFieldsObj, aAttachmentsObj,
             aUpdatedFieldsObj, onbEvents, aLogsTable, srNo, attachCode]
         );
+
+
+        var aRegisterCheck=await SELECT`SETTING` .from('VENDOR_PORTAL_MASTER_IVEN_SETTINGS')
+          .where({CODE:'REGAPPR_MATRIX_CHK'})
+          if(aRegisterCheck[0]?.SETTING&&bNoApproverCheck){
+              bApproveWithoutMatrix=true
+          }else{
+              bApproveWithoutMatrix=false   
+          }
+
+          if(bApproveWithoutMatrix){ 
+              iReqNo=sResponse?.outputScalar?.OUT_SUCCESS||null;  
+              var sSapVendorCode = null;      
+              // ------------- MDG Posting Start------------------
+              // var iMaxLevelCount = await getMaxApproverCount(connection, sEntityCode);
+
+              var iVenVendorCode = null;
+              var oMDGResponse = null;
+              var iMDGStatus = null;
+              var oMDGPayload = null;
+              var bMDGComparison = null;
+              var bAttachmentComparison = null;
+              var oActiveData = null;
+              var CurrAttachment = null;
+              var bNoChange = false;
+              var oDataStatus = null;
+              var ODataResponse = null;
+              var sCompareValue = 'A';  
+              var ResultApprove;       
+                  oMDGPayload =await lib_mdg.getMDGPayload(reqHeader,addressData,contactsData,bankData, connection);
+                  iVenVendorCode = reqHeader[0].IVEN_VENDOR_CODE || null;
+
+                  // ------------------------START: Direct MDG Call for testing-------------------------
+                  var MDGResult =await  lib_mdg.PostToMDG(oMDGPayload,connection);
+              
+                  iMDGStatus = MDGResult.iStatusCode;
+                  oMDGResponse = MDGResult.oResponse;
+
+                  sChangeRequestNo =oMDGResponse.changerequestNo;
+                  sSapVendorCode = parseInt(oMDGResponse.d.Lifnr, 10) || "";
+
+                  var iRequestType = reqHeader[0].REQUEST_TYPE || null;
+                  var sSupplierEmail = reqHeader[0].REGISTERED_ID || null;
+                  var sUserId = "System";
+                  var iLevel = null     
+                  var sBuyerEmail = reqHeader[0].REQUESTER_ID || null;
+                  var sSupplerName = reqHeader[0].VENDOR_NAME1 || null;
+                  var sChangeRequestNo = null;
+                  var iVenVendorCode = reqHeader[0].IVEN_VENDOR_CODE||null;   
+                  var sCompareValue = "A";
+                  var sVendorCode=reqHeader[0].VENDOR_CODE||null;
+                  eventsData=await getApproveEventsObj(reqHeader[0])   
+
+              // ------------- MDG Posting End------------------
+                  const loadProcApprove = await dbConn.loadProcedurePromisified(hdbext, null, 'REGFORM_APPROVAL')
+
+                  ResultApprove = await dbConn.callProcedurePromisified(loadProcApprove,
+                      [iReqNo, sEntityCode, iRequestType,
+                          sSupplierEmail, sBuyerEmail, sUserId, iLevel, eventsData, 
+                          sChangeRequestNo, iVenVendorCode, sSapVendorCode, sSupplerName,
+                          sCompareValue]);
+                  var responseObj = {
+                      "Message": ResultApprove.outputScalar.OUT_SUCCESS !== null ? ResultApprove.outputScalar.OUT_SUCCESS : "Approval failed!",
+                      "MDG_status": iMDGStatus,
+                      "MDG_Payload": oMDGPayload,
+                      "ODataResponse": oMDGResponse,
+                      "bMDGComparison": bMDGComparison,
+                      "bAttachmentComparison": bAttachmentComparison,
+                      "CurrAttachment": CurrAttachment,            
+                      "sChangeRequestNo": sChangeRequestNo,
+                      "sChangeRequestNo1": sChangeRequestNo       
+                      // "MDG_Response":oMDGResponse    
+                  };
+
+                  if (ResultApprove.outputScalar.OUT_SUCCESS !== null) {
+
+                      var oEmailData = {
+                          "ReqNo": iReqNo,
+                          "ReqType": iRequestType,
+                          "SupplierName": sSupplerName,
+                          "SupplerEmail": sSupplierEmail,
+                          "Approver_Email": sUserId,
+                          "Approver_Level": iLevel,
+                          "Next_Approver": ResultApprove?.outputScalar?.OUT_EMAIL_TO||null, // Proc Manager
+                          "Buyer": sBuyerEmail,
+                          "ApproverRole":checkApprover?(checkApprover[0]?.USER_ROLE||null):null       
+                      };        
+
+                      action = "INTERNALREQ";              
+
+                          // Approval done - notification to Buyer & Proc Manager
+                          if (isEmailNotificationEnabled) {
+                              // var oEmaiContent2 = EMAIL_LIBRARY.getEmailData(action, "BUYER_NOTIFICATION", oEmailData, null);
+                              // EMAIL_LIBRARY._sendEmailV2(oEmaiContent2.emailBody, oEmaiContent2.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null);
+                              oEmaiContent = await lib_email_content.getEmailContent(connection, action, "BUYER_NOTIFICATION", oEmailData, null)
+                              // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [oEmailData.Buyer, oEmailData.Approver_Email], null, null)
+                              var sCCEmail = await lib_email.setDynamicCC( null);
+                              var sToEmail = [oEmailData.Buyer, oEmailData.SupplerEmail].toString();    
+                              await  lib_email.sendivenEmail(sToEmail,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
+                          }    
+                          //Post to IAS for Create Normal Request
+                          // if(iRequestType == 1)     
+
+                          var aIASSetting=await SELECT .from('VENDOR_PORTAL_MASTER_IVEN_SETTINGS') .where({CODE:'REGAPPR_IAS_ENABLE'});
+                          if(aIASSetting[0].SETTING=='X')
+                              await lib_ias.CreateVendorIdIAS(sSapVendorCode,sSupplerName,null,sSupplierEmail);    
+
+                      statusCode = 200;
+                  } 
+                  // return responseObj;
+                  responseObj = {
+                    "Draft_Success": sResponse.outputScalar.OUT_SUCCESS !== null ? 'X' : '',
+                    "REQUEST_NO": sResponse.outputScalar.OUT_SUCCESS !== null ? iReqNo : 0,
+                    // "Message": Result.OUT_SUCCESS !== null ? "Draft saved successfully" : "Draft saving failed!",
+                    "Message":ResultApprove.outputScalar.OUT_SUCCESS !== null ? "Internal Vendor request registered successfully" : "Internal Vendor request registration failed",
+                    "ERROR_CODE": sResponse.outputScalar?.OUT_ERROR_CODE,
+                    "ERROR_DESC": sResponse.outputScalar?.OUT_ERROR_MESSAGE           
+                  };
+                  return req.reply(responseObj);   
+                
+          }
+
+         
         responseObj = {
           "Edit_Success": sResponse.outputScalar.OUT_SUCCESS !== null ? 'X' : '',
           "REQUEST_NO": sResponse.outputScalar.OUT_SUCCESS !== null ? sResponse.outputScalar.OUT_SUCCESS : 0,
@@ -960,6 +1093,22 @@ module.exports = cds.service.impl(function () {
     }
     return payData;
   }
+
+  async function getApproveEventsObj(oReqHeader){
+    var aEventObj=[{
+      "REQUEST_NO":100000949,// Any Number
+      "EVENT_NO":1,
+      "EVENT_CODE":0,     
+      "EVENT_TYPE":"ONB",
+      "USER_ID":oReqHeader?.REGISTERED_ID,
+      "USER_NAME":oReqHeader?.VENDOR_NAME1,       
+      "REMARK":"Registration Approval",
+      "COMMENT":"Request is auto-generated for registration approval request",
+      "CREATED_ON":null
+    }]
+    return aEventObj
+  }
+
 
   function getCreateEvents(User_Id) {
     var objData = [{

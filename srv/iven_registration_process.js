@@ -805,13 +805,17 @@ module.exports = cds.service.impl(function () {
                     var oDataStatus = null;
                     var ODataResponse = null;
                     var sCompareValue = 'A';  
-                    var bApproveWithoutMatrix=false
+                    var bApproveWithoutMatrix=false;
+                    var bQuickRegistrationWithoutApprovalFlag=false;
                     var aRegisterCheck=await SELECT`SETTING`
                     .from('VENDOR_PORTAL_MASTER_IVEN_SETTINGS')
                     .where({CODE:'REGAPPR_MATRIX_CHK'})
                     if(aRegisterCheck[0].SETTING&&checkApprover.length==0&&iRequestType==7){
                         bApproveWithoutMatrix=true  
-                        iLevel=null          
+                        iLevel=null  
+                        bQuickRegistrationWithoutApprovalFlag=true;
+                        eventsData=await getApproveEventsObj(inputData[0])      
+
                     }else{    
                         bApproveWithoutMatrix=false        
                     }      
@@ -869,7 +873,7 @@ module.exports = cds.service.impl(function () {
                             // "MDG_Response":oMDGResponse    
                         };
 
-                        if (Result.outputScalar.OUT_SUCCESS !== null) {
+                        if (Result.outputScalar.OUT_SUCCESS !== null) {    
 
                             var oEmailData = {
                                 "ReqNo": iReqNo,
@@ -884,6 +888,10 @@ module.exports = cds.service.impl(function () {
                             };        
 
                             action = Result.outputScalar.OUT_MAX_LEVEL == iLevel ? "FINAL_APPROVAL" : "APPROVE";
+                            if(bQuickRegistrationWithoutApprovalFlag){//For Quick Registration Scenario as there's no level for it
+                                action="FINAL_APPROVAL";
+                                oEmailData.Approver_Email="System";    
+                            }
 
                             if (action === "APPROVE") {
                                 // pending for approval - notification to Proc Manager
@@ -1014,7 +1022,7 @@ module.exports = cds.service.impl(function () {
         var client = await dbClass.createConnectionFromEnv();
         let dbConn = new dbClass(client);
         try {
-            var { action, messengerData, inputData, eventsData,userDetails } = req.data;
+            var { action, messengerData, inputData, eventsData,userDetails } = req.data;    
             var isEmailNotificationEnabled = false;
             var sUserIdentity=userDetails.USER_ID || null;
             var sUserRole=userDetails.USER_ROLE || null;
@@ -2384,16 +2392,22 @@ module.exports = cds.service.impl(function () {
     async function getEventPayload(reqHeader, connection, sType) {
         var sRemark = null;
         var iEventCode = null;
-        var iEventNo = null;     
+        var iEventNo = null;  
+        var iComment=null;
+        
+        // var iComment="Self registration done by " + reqHeader[0].VENDOR_NAME1.toUpperCase().trim()
     
         if (sType === 1) {
             sRemark = "REG Request Created with self registration";
-            iEventNo = 1;
+            iEventNo = 1;     
             iEventCode = 1;
+            iComment="Self registration request created by " + reqHeader[0].VENDOR_NAME1.toUpperCase().trim()
         } else {
             sRemark = "Invite Sent with self registration";
             iEventNo = 2;
-            iEventCode = 2;
+            iEventCode = 2;   
+            // iComment="Self registration request invited by " + reqHeader[0].VENDOR_NAME1.toUpperCase().trim()
+            iComment="Self registration request auto-generated for invitation";  
         }
     
         var oEventObj = {
@@ -2404,7 +2418,7 @@ module.exports = cds.service.impl(function () {
             "USER_ID": reqHeader[0].REGISTERED_ID.toLowerCase().trim() || "",     
             "USER_NAME": reqHeader[0].VENDOR_NAME1.toUpperCase().trim() || "",
             "REMARK": sRemark,
-            "COMMENT": "Self registration done by " + reqHeader[0].VENDOR_NAME1.toUpperCase().trim(),      
+            "COMMENT": iComment,      
             "CREATED_ON": new Date().toISOString()             
         };
     

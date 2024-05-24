@@ -143,7 +143,7 @@ module.exports = cds.service.impl(function (srv) {
                 "GlDescription": aData[i].GL_DESCRIPTION,    
                 // "Rate": aData[i].RATE,      
                 "Rate": aData[i].RATE.toString(),      
-                "Hsncode": aData[i].HSNCOD,
+                "Hsncode": aData[i].HSNCODE,    
                 "Gst": aData[i].GST,
                 "ProfitCenter": aData[i].PROFIT_CENTER,
                 "ShipTo": aData[i].SHIP_TO_LOCATION,
@@ -197,7 +197,7 @@ module.exports = cds.service.impl(function (srv) {
             var headerData =await renamingHeaderFormatObj(payload.HEADER);
             var itemsData = await renamingItemsFormatArr(payload.ITEMS);
             var data =await getServiceFormat(headerData, itemsData);
-            var sFinal = JSON.stringify(data);
+            // var sFinal = JSON.stringify(data);   
         
             var url = "/HEADERSet";     
             url = encodeURI(url);  
@@ -205,7 +205,7 @@ module.exports = cds.service.impl(function (srv) {
 			var sResponse = await iBFPOCconnection.send({
 			  method: 'POST',
 			  path: url,
-			  data:sFinal,                          
+			  data:data,                          
 			  headers: { 'Content-Type': 'application/json',        
 						  "accept": "application/json",
 						  "X-Requested-With": "XMLHttpRequest"}

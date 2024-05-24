@@ -41,6 +41,7 @@ service registrationProcessService {
   entity MasterRequestEvents       as projection on VENDOR_PORTAL.MASTER_REQUEST_EVENTS;
   entity MasterStatus              as projection on VENDOR_PORTAL.MASTER_STATUS;
   entity MasterClientInfo          as projection on VENDOR_PORTAL.MASTER_EMAIL_CONTACT_ID;
+  @cds.query.limit.max: 5000      
   entity RequestInfo               as projection on VENDOR_PORTAL.REQUEST_INFO;
   entity MasterFormFieldsMandatory as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY;
   entity MasterFormFieldsVisible   as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_VISIBLE;

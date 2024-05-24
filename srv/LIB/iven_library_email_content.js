@@ -356,8 +356,7 @@ module.exports = {
 					"Regards," + "<br>" +
 					"Vendor Management Team";
 
-			}
-			if (sAction === "SELFREG") {
+			} else if (sAction === "SELFREG") {
 
 				var sActionTypeText = "";
 				if (iStatus === 5) {
@@ -463,18 +462,18 @@ module.exports = {
 			var sRequestTypeText;
 			var req = '';
 			if (sAction === "APPROVE" || sAction === "FINAL_APPROVAL") {
-				sRequestTypeText = " registration form ";
-				var sActionTypeText = "approved ";
+				sRequestTypeText = " registration form";
+				var sActionTypeText = " approved";
 				// 			var sActionTypeText = "approved at L" + oEmailData.Approver_Level;
 				if (oEmailData.ReqType === 5) {
 					sRequestTypeText = " update form";
 					req = 'update ';
 				}
 
-				oEmailContent.subject = "Vendor " + sRequestTypeText + " " + sActionTypeText+".";
+				oEmailContent.subject = "Vendor " + sRequestTypeText.trim() + " " + sActionTypeText.trim()+".";     
 
 				oEmailContent.emailBody = "Dear User," + "<br><br>" +
-					"Your " + req + "Request No. " + oEmailData.ReqNo + " for" + sRequestTypeText +
+					"Your " + req + "Request No. " + oEmailData.ReqNo + " for" +
 					" Vendor Registration of <span style=\"text-transform:uppercase\">" +
 					oEmailData.SupplierName + "</span> has been " + sActionTypeText + " by " + oEmailData.Approver_Email + ".<br><br>" +
 
@@ -565,6 +564,34 @@ module.exports = {
 					"Regards," + "<br>" +
 					"Vendor Management Team";
 
+			} else if(sAction==="INTERNALREQ"){
+				sRequestTypeText = " registration form";
+				var sActionTypeText = " approved";
+				// 			var sActionTypeText = "approved at L" + oEmailData.Approver_Level;
+				if (oEmailData.ReqType === 5) {
+					sRequestTypeText = " internal request form";
+					req = 'update ';
+					sActionTypeText = "submitted as Internal Request and approved";
+				}
+
+				// "Request No. " + oEmailData.ReqNo + " for " + sRequestTypeText + "Vendor Registration of <span style=\"text-transform:uppercase\">" +
+				// 	oEmailData.SupplierName + "</span>";
+
+				oEmailContent.subject = "Vendor " + sRequestTypeText.trim() + " " + sActionTypeText.trim()+".";     
+				oEmailContent.emailBody = "Dear User," + "<br><br>" +
+					"Your " + req + "Request No. " + oEmailData.ReqNo + " for" +
+					" Vendor Registration of <span style=\"text-transform:uppercase\">" +
+					oEmailData.SupplierName + "</span> has been " + sActionTypeText + " by " + oEmailData.Approver_Email + ".<br><br>" +
+
+					"You can check the details for the request on the " + sClientShortName + " portal using this " +
+					"<a href=" + sLink_Portal_LoginAccess + sLink_Request_Report  + parseInt(oEmailData.ReqNo, 10)+ ">link</a>" + "<br>" +
+
+					"<br>" +
+					"Should you have any questions, please do not hesitate to reach out to us via email at " +
+					"<strong><a href=" + sClientContactEmail + ">" + sClientContactEmail + "</a></strong> " + "<br>" +
+					"<br>" +
+					"Regards," + "<br>" +
+					"Vendor Management Team";    
 			}
 
 		} else if (sAppType === "SUPPLIER_NOTIFICATION") {
@@ -1021,8 +1048,7 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 				"Regards," + "<br>" +
 				"Vendor Management Team";
 
-		}
-		else if(sAppType === "DATA_MIGRATION"){
+		} else if(sAppType === "DATA_MIGRATION"){
 			// var sLink = null;
 			// var sReqType = '';
 			// if (oEmailData.RequestType === 5) {
