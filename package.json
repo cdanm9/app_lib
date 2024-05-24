@@ -108,14 +108,14 @@
       "BPA_TOKEN": {
         "kind": "rest",
         "credentials": {
-          "destination": "BPA_TOKEN",    
+          "destination": "BPA_TOKEN",
           "path": "/oauth/token"
         }
       },
       "BPA_DEST": {
         "kind": "rest",
         "credentials": {
-          "destination": "BPA_DEST",     
+          "destination": "BPA_DEST",
           "path": "https://spa-api-gateway-bpi-us-prod.cfapps.us10.hana.ondemand.com"
         }
       },
