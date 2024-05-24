@@ -41,7 +41,7 @@ BEGIN
 	LV_VENDOR_CODE:='SE';
 	LV_STATUS := 2;
 	LV_REQUEST_TYPE := 5;
-	LV_INVITE_CREATE_COMMENT := 'Update Request is auto-generated for Vendor Edit request';
+	LV_INVITE_CREATE_COMMENT := 'Update Request is auto-approved for Vendor Edit request';
 -- 	LV_INVITE_APPROVE_COMMENT := 'Update Request is auto-approved for Supplier Edit request';
 
 	-- Local Variable values assigning

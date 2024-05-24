@@ -432,7 +432,7 @@ BEGIN
 			LV_EVENT_CODE := 4; -- Event- OB Form Submitted
 			LV_REMARK := 'Form submitted by - ' || :IN_USER_ID;
 			
-			LV_MESSAGE := 'Registration Form Submitted for Request: '  || :IN_REQUEST_NO || '. Your form will be forwarded to Procurement Team for verification.';
+			LV_MESSAGE := 'Registration Form Submitted for Request: '  || :IN_REQUEST_NO || '. Your form will be forwarded for verification.';
 			
 		ELSEIF :IN_STATUS = 4 AND :IS_RESEND = 'X' --Sent Back
 		THEN
@@ -440,7 +440,7 @@ BEGIN
 			LV_EVENT_CODE := 8; -- Event - OB Request Resent
 			LV_REMARK := 'Form resent by - ' || :IN_USER_ID;
 			
-			LV_MESSAGE := 'Registration Form Resubmitted for Request: '  || :IN_REQUEST_NO || '. Your form will be forwarded to Procurement Team for verification.';
+			LV_MESSAGE := 'Registration Form Resubmitted for Request: '  || :IN_REQUEST_NO || '. Your form will be forwarded for verification.';
 			
 		END IF;
 		
@@ -504,13 +504,23 @@ BEGIN
 			"PROCESS_LEVEL"=:LV_PROCESS_LEVEL      
 			WHERE "REQUEST_NO" = :IN_REQUEST_NO;
 		ELSE 
-			UPDATE "VENDOR_PORTAL_REQUEST_INFO"
-			SET 
-			"STATUS" = :LV_STATUS,
-			"APPROVER_LEVEL" = NULL,
-			"APPROVER_ROLE" =NULL,
-			"PROCESS_LEVEL"=NULL
-			WHERE "REQUEST_NO" = :IN_REQUEST_NO;
+			IF LV_STATUS=5 THEN   
+				UPDATE "VENDOR_PORTAL_REQUEST_INFO"
+				SET 
+				"STATUS" = :LV_STATUS,       
+				"APPROVER_LEVEL" = 0,          
+				"APPROVER_ROLE" = :LV_NXT_APPROVER_ROLE,
+				"PROCESS_LEVEL"=:LV_PROCESS_LEVEL      
+				WHERE "REQUEST_NO" = :IN_REQUEST_NO;      
+			ELSE
+				UPDATE "VENDOR_PORTAL_REQUEST_INFO"
+				SET 
+				"STATUS" = :LV_STATUS,
+				"APPROVER_LEVEL" = NULL,
+				"APPROVER_ROLE" =NULL,
+				"PROCESS_LEVEL"=NULL
+				WHERE "REQUEST_NO" = :IN_REQUEST_NO;
+			END IF;
 		
 		END IF;
 			
