@@ -874,7 +874,7 @@ module.exports = cds.service.impl(function () {
       "USER_ID": oPayloadValue[0].USER_ID,
       "USER_NAME": oPayloadValue[0].USER_NAME,
       "REMARK": "Update Request Created",
-      "COMMENT": "Update Request is auto-generated for Supplier Internal request",
+      "COMMENT": "Update Request is auto-generated for Vendor Internal request",
       "CREATED_ON": null
     },
     {
@@ -885,7 +885,7 @@ module.exports = cds.service.impl(function () {
       "USER_ID": oPayloadValue[0].USER_ID,
       "USER_NAME": oPayloadValue[0].USER_NAME,
       "REMARK": "Update Request Approved",
-      "COMMENT": "Update Request is auto-approved for Supplier Internal request",
+      "COMMENT": "Update Request is auto-approved for Vendor Internal request",
       "CREATED_ON": null
     }
 

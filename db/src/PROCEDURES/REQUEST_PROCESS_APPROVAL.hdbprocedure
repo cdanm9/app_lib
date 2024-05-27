@@ -129,7 +129,7 @@ BEGIN
     		
     	    LV_STATUS := 2;
 			LV_EVENT_CODE := 2;      
-    	    -- LV_SUCCESS_ACTION := 'Approved';       
+    	    -- LV_SUCCESS_ACTION := 'Approved';         
 
     	    
 	        INSERT INTO "VENDOR_PORTAL_REQUEST_ACTIVE_STATUS" VALUES(:IN_REQUEST_NO,null,:IN_REQUEST_TYPE, null,:IN_IVEN_VENDOR_CODE);
