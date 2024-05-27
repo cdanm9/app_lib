@@ -36,6 +36,7 @@ service requestProcessService {
   entity MasterRegion              as projection on VENDOR_PORTAL.MASTER_REGION;
   entity MasterCurrency            as projection on VENDOR_PORTAL.MASTER_CURRENCY;
   entity MasterRequestEvents       as projection on VENDOR_PORTAL.MASTER_REQUEST_EVENTS;
+  @cds.query.limit.max: 5000 
   entity RequestInfo               as projection on VENDOR_PORTAL.REQUEST_INFO;
   entity RegFormAddress            as projection on VENDOR_PORTAL.REGFORM_ADDRESS;
   entity RegFormContacts           as projection on VENDOR_PORTAL.REGFORM_CONTACTS;

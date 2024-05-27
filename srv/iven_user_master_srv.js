@@ -23,7 +23,6 @@ module.exports = cds.service.impl(function () {
   //   }
   // });
 
-
   this.on('PostUserMaster', async (req) => {
     //Changes By Chandan M 21/11/23 Start
     // get connection
@@ -31,8 +30,7 @@ module.exports = cds.service.impl(function () {
     let dbConn = new dbClass(client)
       //Changes By Chandan M 21/11/23 End   
     try {
-      // local variables
-      // var oReqData = req.data.input;            
+      // local variables          
 
       var {action,userMaster,entityData,userDetails}=req.data
       var sUserId=userDetails.USER_ID || null;
@@ -69,17 +67,13 @@ module.exports = cds.service.impl(function () {
         
     } catch (error) {
       var sType=error.code?"Procedure":"Node Js";    
-      var iErrorCode=error.code??500;     
-      // let Result2 = {
-      //   OUT_SUCCESS: error.message || ""
-      // };
+      var iErrorCode=error.code??500; 
       let Result = {
           OUT_ERROR_CODE: iErrorCode,
           OUT_ERROR_MESSAGE:  error.message ? error.message : error
       }       
       lib_common.postErrorLog(Result,null,sUserId,sUserRole,"User Master",sType,dbConn,hdbext);
-      console.error(error)     
-      // return error.messsage     
+      console.error(error)        
       req.error({ code:iErrorCode, message:  error.message ? error.message : error });      
     }   
   })

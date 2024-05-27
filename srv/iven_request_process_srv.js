@@ -1698,7 +1698,7 @@ module.exports = cds.service.impl(function () {
         }
 
         return eventArr;
-    }
+    }     
     async function getSupplierFromRequestNo(connection, iRequestNo) {
         try {
             var sSupplierName = "";
@@ -1759,27 +1759,7 @@ module.exports = cds.service.impl(function () {
     //     catch (error) { throw error; }
     // }
 
-    async function getSupplierFromRequestNo(connection, iRequestNo) {
-        try {
-            var sSupplierName = "";
-
-            if (iRequestNo !== "" || iRequestNo !== null) {
-                // var sQuery =
-                //     'SELECT "VENDOR_NAME" AS VENDOR_NAME FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
-                // var aResult = conn.executeQuery(sQuery, iRequestNo);
-                let aResult = await connection.run(
-                    SELECT`VENDOR_NAME1`
-                        .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                        .where`REQUEST_NO=${iRequestNo}`);
-                if (aResult.length > 0) {
-                    sSupplierName = aResult[0].VENDOR_NAME1;
-                }
-            }
-
-            return sSupplierName;
-        }
-        catch (error) { throw error; }
-    }
+    
     async function getRequestType(connection, iRequestNo) {
         try {
             var iType = 0;
@@ -2057,27 +2037,6 @@ module.exports = cds.service.impl(function () {
 
         return eventArr;
     }
-    async function getSupplierFromRequestNo(connection, iRequestNo) {
-        try {
-            var sSupplierName = "";
-
-            if (iRequestNo !== "" || iRequestNo !== null) {
-                // var sQuery =
-                //     'SELECT "VENDOR_NAME" AS VENDOR_NAME FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
-                // var aResult = conn.executeQuery(sQuery, iRequestNo);
-                let aResult = await connection.run(
-                    SELECT`VENDOR_NAME1`
-                        .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                        .where`REQUEST_NO=${iRequestNo}`);
-                if (aResult.length > 0) {
-                    sSupplierName = aResult[0].VENDOR_NAME1;
-                }
-            }
-
-            return sSupplierName;
-        }
-        catch (error) { throw error; }
-    }
     async function getCurrentRequestStatus(connection, iRequestNo) {
         try {
             var iCount = 0;
@@ -2117,98 +2076,6 @@ module.exports = cds.service.impl(function () {
     //     catch (error) { throw error; }
     // }
 
-    async function getSupplierFromRequestNo(connection, iRequestNo) {
-        try {
-            var sSupplierName = "";
-
-            if (iRequestNo !== "" || iRequestNo !== null) {
-                // var sQuery =
-                //     'SELECT "VENDOR_NAME" AS VENDOR_NAME FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
-                // var aResult = conn.executeQuery(sQuery, iRequestNo);
-                let aResult = await connection.run(
-                    SELECT`VENDOR_NAME1`
-                        .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                        .where`REQUEST_NO=${iRequestNo}`);
-                if (aResult.length > 0) {
-                    sSupplierName = aResult[0].VENDOR_NAME1;
-                }
-            }
-
-            return sSupplierName;
-        }
-        catch (error) { throw error; }
-    }
-    async function getRequestType(connection, iRequestNo) {
-        try {
-            var iType = 0;
-            // var sQuery =
-            //     'SELECT "REQUEST_TYPE" AS REQUEST_TYPE FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::VENDOR_INVITATION" WHERE REQUEST_NO = ?';
-            // var aResult = conn.executeQuery(sQuery, iRequestNo);
-            let aResult = await connection.run(
-                SELECT`REQUEST_TYPE`
-                    .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                    .where`REQUEST_NO=${iRequestNo}`);
-
-            if (aResult.length > 0) {
-                iType = aResult[0].REQUEST_TYPE;
-
-            }
-
-            return iType;
-        }
-        catch (error) { throw error; }
-    }
-    async function getUserDelEventObj(connection, oPayloadValue) {
-        try {
-            var eventArr = [];
-            var oEventObj = null;
-
-            var aRequests = oPayloadValue.REQUESTS;
-            var sReqType = "";
-
-            if (aRequests !== null && aRequests.length > 0) {
-
-                for (var i = 0; i < aRequests.length; i++) {
-                    sReqType = aRequests[i].STATUS === 1 ? "Req " : "Reg ";
-
-                    oEventObj = {
-                        "REQUEST_NO": aRequests[i].REQUEST_NO,
-                        "EVENT_NO": await getNextEventCount(connection, aRequests[i].REQUEST_NO),
-                        "EVENT_CODE": 17,
-                        "USER_ID": oPayloadValue.USER_ID,
-                        "USER_NAME": oPayloadValue.USER_NAME,
-                        "REMARK": sReqType + "approval re-assigned: " + oPayloadValue.ASSIGNED_FROM + " to " + oPayloadValue.ASSIGNED_TO,
-                        "COMMENT": oPayloadValue.COMMENT,
-                        "CREATED_ON": null,
-                        "EVENT_TYPE": "DELG"
-                    };
-
-                    eventArr.push(oEventObj);
-                }
-
-            } else {
-                throw "Incorrect Data format for posting";
-            }
-
-            return eventArr;
-        }
-        catch (error) { throw error; }
-    }
-    async function getNextEventCount(connection, iReq_No) {
-        try {
-            // var sQuery =
-            //     'SELECT COUNT(*) AS COUNT FROM "VENDOR_PORTAL"."VENDOR_PORTAL.Table::REGISTERATION_EVENT_COMMENTS" WHERE REG_NO = ?';
-            // var aResult = conn.executeQuery(sQuery, iReq_No);
-            let aResult = await connection.run(
-                SELECT`COUNT(*) AS COUNT`
-                    .from`${connection.entities['VENDOR_PORTAL.REQUEST_EVENTS_LOG']}`
-                    .where`REQUEST_NO=${iReq_No}`);
-            var iCount = aResult.length > 0 ? parseInt(aResult[0].COUNT, 10) : 0;
-
-            return (iCount + 1);
-        }
-        catch (error) { throw error; }
-    }
     async function createEvents(connection,iReq_No, aEvents) {
         try {
             //Calculate event no

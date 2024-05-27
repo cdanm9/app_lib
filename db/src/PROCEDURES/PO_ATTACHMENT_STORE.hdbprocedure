@@ -32,5 +32,5 @@ BEGIN
    
    COMMIT;       
       
-   SUCCESS :='Attachment '||:LV_FILE_NAME||' Stored Sucessfully';     
+   SUCCESS :='Attachment '||:LV_FILE_NAME||' Stored Sucessfully For Document ID : '||:LV_PO_FILE_NO;         
 END
