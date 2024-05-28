@@ -25,7 +25,7 @@ using {
 service addtionalProcessService {   
 
   entity MasterClientInfo                as projection on VENDOR_PORTAL.MASTER_EMAIL_CONTACT_ID;
-  entity MasterIvenUsers                 as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;
+  entity MasterIvenUsers                 as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;   
   @cds.query.limit.max: 5000 
   entity RequestInfo                     as projection on VENDOR_PORTAL.REQUEST_INFO;
   entity MasterIbanCountry               as projection on VENDOR_PORTAL.MASTER_IBAN_COUNTRY;

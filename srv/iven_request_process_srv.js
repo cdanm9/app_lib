@@ -164,7 +164,7 @@ module.exports = cds.service.impl(function () {
                             "ReqNo": sResponse.outputScalar.OUT_SUCCESS,
                             "ReqType": aInputData[0].REQUEST_TYPE,
                             "SupplierName": aInputData[0].VENDOR_NAME1,
-                            "EntityDesc": sEntityDesc  
+                            "EntityDesc": sEntityDesc
                         }
                         aInputData[0].REQUEST_NO = sResponse.outputScalar.OUT_SUCCESS;
                         if (type === 7) {
@@ -335,7 +335,7 @@ module.exports = cds.service.impl(function () {
                             oEmaiContent = await lib_email_content.getEmailContent(connection, sAction, "REQUEST", oEmailData, null)
                             await  lib_email.sendivenEmail(aInputData[0].REQUESTER_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                             // FINAL APPROVAL STAGE THEN INVITATION
-                        // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null)
+                            // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [aInputData[0].REGISTERED_ID], null, null)
                             oEmaiContent = await lib_email_content.getEmailContent(connection, "INVITE", "REQUEST", oEmailData, null)
                             await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                         }else if(sAction=="MID_APPROVE"){       

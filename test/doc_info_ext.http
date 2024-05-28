@@ -1,7 +1,7 @@
 ### Create Attachment
 
 POST http://localhost:4004/odata/v4/doc-info-ext/AttachmentPost   
-Content-Type: application/json
+Content-Type: application/json    
 
 {
     "ACTION":"CREATE",   

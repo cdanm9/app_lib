@@ -67,7 +67,7 @@ module.exports = {
 					var req = " Update ";
 				}
 
-				Emailbody = "Dear Approver," + "<br><br>";   
+				Emailbody = "Dear Approver," + "<br><br>";      
 				// var link = "Vendor_Request_Approval-Approve&/VendorInviteList/" + parseInt(oEmailData.ReqNo, 10);
 				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
 				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
@@ -302,7 +302,7 @@ module.exports = {
 			}
 		} else if (sAppType === "REGISTER") {
 			if (sAction === "CREATE" || sAction === "APPROVE" || sAction === "RESEND" || sAction === "INTERNALREQ" || sAction === "QUICK_REG") {
-				oEmailData.ApproverRole=(oEmailData.ApproverRole==null||oEmailData.ApproverRole==undefined)?'':oEmailData.ApproverRole
+				oEmailData.ApproverRole=(oEmailData.ApproverRole==null||oEmailData.ApproverRole==undefined)?'':oEmailData.ApproverRole        
 				greetingsTo = 'Dear Approver,'
 				linkcontent = "Please click " + "<a href=" + sLink_Portal_LoginAccess + sLink_Registraion_Approval + parseInt(oEmailData.ReqNo, 10) +
 					">here</a>" + " to login to " + sClientShortName + " Portal and approve."
@@ -1060,13 +1060,13 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 			// }
 			var sLink_Portal_LoginAccess = sLink_Registation_Form;
 
-			oEmailContent.subject = "Invitation to update registration on the " + oEmailData.EntityDesc + " supplier database.";
+			oEmailContent.subject = "Invitation to update registration on the " + oEmailData.EntityDesc + " vendor database.";
 			var EmailBody = "Dear Valued Recipient," + "<br><br>";
 			var emailBodyCheck = "Once approved, you may be invited to future procurement processes by " +  oEmailData.EntityDesc +
 			". Your approved registration does not entitle you to be invited to any/all procurement processes. " +  oEmailData.EntityDesc +
 			" reserve the right to select the participants based on their discretion.";
 			var Emailbody1 = "Your company, " + oEmailData.SupplierName + " is invited to update registration with " +  oEmailData.EntityDesc  +
-		" as a supplier." + "<br>" + "<br>" +
+		" as a vendor." + "<br>" + "<br>" +    
 		"In order to perform any business with us, you need to complete this registration in full " +
 		"using the link " +
 		"<a href=" + sLink_Portal_LoginAccess +
