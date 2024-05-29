@@ -4,7 +4,7 @@ const { Connection } = require("@sap/hana-client");
 
 // App paths from portal
 // const sLink_Request_Report = "aabd5b0b-54d4-4217-b137-b0b0179f2a79.comibsplivenivenrequestreport.comibsplivenivenrequestreport-0.0.1/index.html#/RouteDetailPage/";
-const sLink_Request_Report = "/site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_report-display?&/RouteDetailPage/";   
+const sLink_Request_Report = "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_report-display?&/RouteDetailPage/";   
 const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/vendorDetails/";
 const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster/";    
 
