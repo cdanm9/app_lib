@@ -319,7 +319,7 @@ module.exports = cds.service.impl(function () {
                           "Approver_Level": iLevel,
                           "Next_Approver": ResultApprove?.outputScalar?.OUT_EMAIL_TO||null, // Proc Manager
                           "Buyer": sBuyerEmail,
-                          "ApproverRole":checkApprover?(checkApprover[0]?.USER_ROLE||null):null       
+                          "NextApproverRole":checkApprover?(checkApprover[0]?.USER_ROLE||null):null       
                       };        
 
                       action = "INTERNALREQ";              

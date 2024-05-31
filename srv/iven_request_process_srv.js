@@ -18,7 +18,7 @@ module.exports = cds.service.impl(function () {
             var sUserRole=userDetails.USER_ROLE;
             var sAction = action || null;
             var aInputData = inputData || [];
-            var aEvents = eventsData || [];
+            var aEvents = eventsData || []; 
             var isEmailNotificationEnabled = false;
             var iLevel = aInputData[0].APPROVER_LEVEL || null;     
 
@@ -200,7 +200,7 @@ module.exports = cds.service.impl(function () {
                                     await  lib_email.sendivenEmail(aInputData[0].REGISTERED_ID,sCCEmail,'html', oEmaiContent.subject, oEmaiContent.emailBody)
                                 }else{
                                     var email = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode, 'MASTER_APPROVAL_HIERARCHY_FE',1,'REQ');   
-                                    oEmailData.ApproverRole=checkApprover[0]?.USER_ROLE||null;      
+                                    oEmailData.NextApproverRole=checkApprover[0]?.USER_ROLE||null;      
                                     // var sQuery =
                                     //     'SELECT USER_ID as email FROM \"VENDOR_PORTAL\".\"VENDOR_PORTAL.Table::SUPPLIER_REQUEST_MATRIX\" WHERE ENTITY_CODE = ? AND USER_ROLE = ?';
                                     // var aResult = connection.executeQuery(sQuery, inviteReq[0].ENTITY_CODE, 'PM');
@@ -320,7 +320,7 @@ module.exports = cds.service.impl(function () {
                             "EntityDesc": sEntityDesc,
                             "NextApprover":sResponse.outputScalar.OUT_NEXT_APPROVER||null,  
                             "ApproverLevel":sResponse.outputScalar.OUT_APPROVER_LEVEL||null,
-                            "ApproverRole":sResponse.outputScalar.OUT_APPROVER_ROLE||null
+                            "NextApproverRole":sResponse.outputScalar.OUT_APPROVER_ROLE||null
                         }
 
                         // oEmaiContent = EMAIL_LIBRARY.getEmailData("APPROVE", "REQUEST", oEmailData, null);
@@ -1246,7 +1246,7 @@ module.exports = cds.service.impl(function () {
                             "EntityDesc": sEntityDesc,
                             "NextApprover":sResponse.outputScalar.OUT_NEXT_APPROVER||null,  
                             "ApproverLevel":sResponse.outputScalar.OUT_APPROVER_LEVEL||null,
-                            "ApproverRole":sResponse.outputScalar.OUT_APPROVER_ROLE||null
+                            "NextApproverRole":sResponse.outputScalar.OUT_APPROVER_ROLE||null
                         }
 
                         // oEmaiContent = EMAIL_LIBRARY.getEmailData("APPROVE", "REQUEST", oEmailData, null);

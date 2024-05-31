@@ -72,7 +72,7 @@ module.exports = {
 				// var link = "Vendor_Request_Approval-Approve&/VendorInviteList/" + parseInt(oEmailData.ReqNo, 10);
 				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
 				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
-					" has been created and is currently pending for "+oEmailData.ApproverRole+" approval." + "<br>" + "<br>" +
+					" has been created and is currently pending for "+oEmailData.NextApproverRole+" approval." + "<br>" + "<br>" +
 					"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +   
 					"<br>" + "<br>" +
 					// 			"<a href=" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "#" + link + ">" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "</a>" + "<br>" +
@@ -129,7 +129,7 @@ module.exports = {
 					oEmailContent.subject = "Vendor Registration request approved.";
 
 					oEmailContent.emailBody = "Request No. " + oEmailData.ReqNo + " for vendor " + oEmailData.SupplierName +
-						" has been approved and is pending for "+oEmailData.ApproverRole+" approval." + "<br>" + "<br>" +
+						" has been approved and is pending for "+oEmailData.NextApproverRole+" approval." + "<br>" + "<br>" +
 						"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +
 						"<br>" + "<br>" + "<br>"+
 						"Should you have any questions, please do not hesitate to reach out to us via email at <a href=" + sClientContactEmail + ">" +
@@ -145,7 +145,7 @@ module.exports = {
 					oEmailContent.subject = "Vendor update request approved.";
 					// 			subject = msg + "Invitation to update registration on the " + data[0].ENTITY_DESC + " supplier database";
 					oEmailContent.emailBody = "Request No. " + oEmailData.ReqNo + " for vendor " + oEmailData.SupplierName +
-						" has been approved and is pending for "+oEmailData.ApproverRole+" approval." + "<br>" + "<br>" +    
+						" has been approved and is pending for "+oEmailData.NextApproverRole+" approval." + "<br>" + "<br>" +    
 						"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +
 						"<br>" + "<br>" + "<br>"+   
 						"Should you have any questions, please do not hesitate to reach out to us via email at <a href=" + sClientContactEmail + ">" +
@@ -302,7 +302,7 @@ module.exports = {
 			}
 		} else if (sAppType === "REGISTER") {
 			if (sAction === "CREATE" || sAction === "APPROVE" || sAction === "RESEND" || sAction === "INTERNALREQ" || sAction === "QUICK_REG") {
-				oEmailData.ApproverRole=(oEmailData.ApproverRole==null||oEmailData.ApproverRole==undefined)?'':oEmailData.ApproverRole        
+				oEmailData.NextApproverRole=(oEmailData.NextApproverRole==null||oEmailData.NextApproverRole==undefined)?'':oEmailData.NextApproverRole        
 				greetingsTo = 'Dear Approver,'
 				linkcontent = "Please click " + "<a href=" + sLink_Portal_LoginAccess + sLink_Registraion_Approval + parseInt(oEmailData.ReqNo, 10) +
 					">here</a>" + " to login to " + sClientShortName + " Portal and approve."
@@ -347,7 +347,7 @@ module.exports = {
 					"Request No. " + oEmailData.ReqNo + " for " + sRequestTypeText + "Vendor Registration of <span style=\"text-transform:uppercase\">" +
 					oEmailData.SupplierName + "</span>";
 
-				oEmailContent.emailBody += " has been " + sActionTypeText + " and is currently pending for "+oEmailData.ApproverRole+" approval.<br>" + "<br>" +       
+				oEmailContent.emailBody += " has been " + sActionTypeText + " and is currently pending for "+oEmailData.NextApproverRole+" approval.<br>" + "<br>" +       
 					linkcontent +
 					"<br>" + "<br>" +
 					"Should you have any questions, please do not hesitate to reach out to us via email at " +

@@ -238,7 +238,7 @@ module.exports = cds.service.impl(function () {
                                     "Approver_Level": iLevel,
                                     "Next_Approver": ResultApprove?.outputScalar?.OUT_EMAIL_TO||null, // Proc Manager
                                     "Buyer": sBuyerEmail,
-                                    "ApproverRole":checkApprover[0]?.USER_ROLE||null       
+                                    "NextApproverRole":checkApprover[0]?.USER_ROLE||null       
                                 };        
     
                                 action = "FINAL_APPROVAL";            
@@ -283,7 +283,7 @@ module.exports = cds.service.impl(function () {
                         "ReqNo": iReqNo,
                         "SupplierName": vendorName,
                         "To_Email": Result.OUT_EMAIL_TO, // Approver
-                        "ApproverRole":checkApprover[0]?.USER_ROLE||null  
+                        "NextApproverRole":checkApprover[0]?.USER_ROLE||null  
                     };
                     var checkSupplier =await fnCheckSupplier(connection, oEmailData.ReqNo);
                     if (checkSupplier === null) {    
@@ -884,7 +884,7 @@ module.exports = cds.service.impl(function () {
                                 "Approver_Level": iLevel,
                                 "Next_Approver": Result.outputScalar.OUT_EMAIL_TO, // Proc Manager
                                 "Buyer": sBuyerEmail,
-                                "ApproverRole":checkApprover[0]?.USER_ROLE||null       
+                                "NextApproverRole":checkApprover[0]?.USER_ROLE||null       
                             };        
 
                             action = Result.outputScalar.OUT_MAX_LEVEL == iLevel ? "FINAL_APPROVAL" : "APPROVE";

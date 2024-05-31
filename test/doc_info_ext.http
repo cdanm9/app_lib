@@ -15,7 +15,7 @@ Content-Type: application/json
             "UPLOADED_ON":"2024-04-30T04:09:18.597Z",     
             "PO_FILE_NO":1,
             "SAP_DOCUMENT_NO":"",   
-            "INVOICE_NO":10000,   
+            "INVOICE_NO":"SEF-125",   
             "INVOICE_DATE":"2024-05-02"
         }
     ]
