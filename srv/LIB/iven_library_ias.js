@@ -165,7 +165,6 @@ module.exports = {
             return oResponseObj
         }
     },
-
     CreateVendorIdIAS: async function (sSAPVendoCode, sName1, sName2, sEmaiID) {
 
         var givenName = sName1.substring(0, 40);
