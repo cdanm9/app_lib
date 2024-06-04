@@ -20,11 +20,11 @@ service bfpocService {
 	}
 
     //ACTION
-    action VendorInvoicePost(actio returns many String;n:String,NONPO_HEADER:many NONPOHEADER,NONPO_ITEM: many NONPOITEM,USER_LOG_DETAIL: many USERLOGDETAIL)
+    action VendorInvoicePost(action:String,NONPO_HEADER:many NONPOHEADER,NONPO_ITEM: many NONPOITEM,USER_LOG_DETAIL: many USERLOGDETAIL) returns many String;
 
     // action VendorInvoicePost(action:String,NONPO_HEADER:String,NONPO_ITEM: String,USER_LOG_DETAIL: String) returns many String;
     action InvoiceApproval(REQUEST_TYPE:String,HEADER:VendorInvoiceUserLogReport,ITEMS: many NONPOITEM,ON_CLOUD: UserLog) returns many String;   
-
+   
     //VIEWS
 
     define view VendorInvoiceReport AS

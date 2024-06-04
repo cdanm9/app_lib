@@ -778,7 +778,7 @@ module.exports = cds.service.impl(function () {
                     
                     req.error({ code:iErrorCode, message:  error.message ? error.message : error });
                 }
-            }
+            }     
            
             else if (action === "APPROVE") { //-----------------------------------------------------------------------------
                 //////////////////FOrtesting 
@@ -793,7 +793,7 @@ module.exports = cds.service.impl(function () {
                     var iMaxLevelCount = await lib_common.getMaxHierarchyApproverCount(connection, sEntityCode,'REG');  
                     var checkApprover = await lib_common.getHierarchyApproverForEntity(connection, sEntityCode,'MASTER_APPROVAL_HIERARCHY_FE',iLevel,'REG')||[];
 
-                    var iVenVendorCode = null;
+                    var iVenVendorCode = inputData[0]?.IVEN_VENDOR_CODE||null;
                     var oMDGResponse = null;
                     var iMDGStatus = null;
                     var oMDGPayload = null;
