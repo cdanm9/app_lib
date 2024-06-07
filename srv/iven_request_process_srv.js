@@ -5,6 +5,7 @@ const hdbext = require("@sap/hdbext")
 const lib_common = require('./LIB/iven_library')
 const lib_email = require('./LIB/iven_library_email')
 const lib_email_content = require('./LIB/iven_library_email_content')
+const lib_dynamic_email_content = require('./LIB/iven_library_dynamic_email_content')
 const lib_ias = require('./LIB/iven_library_ias') 
 const { response } = require('express')
 
@@ -207,7 +208,7 @@ module.exports = cds.service.impl(function () {
                                     // 		mailid1 = aResult[0].EMAIL;
                                     // oEmaiContent = EMAIL_LIBRARY.getEmailData("CREATE", "REQUEST", oEmailData, null);
                                     // EMAIL_LIBRARY._sendEmailV2(oEmaiContent.emailBody, oEmaiContent.subject, [aResult[0].EMAIL], null);
-                                    oEmaiContent = await lib_email_content.getEmailContent(connection, "CREATE", "REQUEST", oEmailData, null)
+                                    oEmaiContent = await lib_dynamic_email_content.getEmailContent(connection, "CREATE", "REQUEST", oEmailData, null)
                                     // await lib_email.sendEmail(connection, 'TEST', 'Create Request', [email], [], null)
                                     // await lib_email.sendEmail(connection, oEmaiContent.emailBody, oEmaiContent.subject, [email], null, null)
                                     //  lib_email.sendivenEmail(email[0].USER_ID,"supritha.m@intellectbizware.com",'html', oEmaiContent.subject, oEmaiContent.emailBody)
