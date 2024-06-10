@@ -98,7 +98,7 @@ module.exports = {
 
 					oEmailContent.emailBody = `Request No. ${oEmailData.ReqNo} for vendor ${oEmailData.SupplierName} has been approved and is pending for ${oEmailData.NextApproverRole} approval.<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						Please click <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><a href=${link}><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;>here<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;></a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;> to login to ${sClientShortName} Portal and approve.
-						<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>"+
+						<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						Should you have any questions, please do not hesitate to reach out to us via email at <a href=${sClientContactEmail}>
 						${sClientContactEmail}</a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						<br>
@@ -110,12 +110,12 @@ module.exports = {
 					var link =`${sLink_Portal_LoginAccess}site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/${parseInt(oEmailData.ReqNo, 10)}`;
 					oEmailContent.subject = "Vendor update request approved.";
 
-					oEmailContent.emailBody = `Request No. ${oEmailData.ReqNo}  for vendor ${oEmailData.SupplierName} +
-						 has been approved and is pending for ${oEmailData.NextApproverRole}+ approval.<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>   
+					oEmailContent.emailBody = `Request No. ${oEmailData.ReqNo}  for vendor ${oEmailData.SupplierName}
+						 has been approved and is pending for ${oEmailData.NextApproverRole} approval.<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>   
 						Please click <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><a href= ${link} ><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;>here<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;></a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;> to login to ${sClientShortName}  Portal and approve.
-						<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br> +   
+						<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>   
 						Should you have any questions, please do not hesitate to reach out to us via email at <a href=${sClientContactEmail} >
-						${sClientContactEmail} +
+						${sClientContactEmail}
 						</a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						<br>
 						Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
@@ -220,7 +220,7 @@ module.exports = {
 						<br>
 						Once you submit your registration, our dedicated teams will thoroughly review and approve your request. Additional information may be requested during this process.
 						<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
-						${emailBody} + "<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
+						${emailBody}<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						If you have any inquiries, please feel free to contact us via email at <a href=${sClientContactEmail}>${sClientContactEmail} 
 						</a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						Best Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
@@ -239,13 +239,13 @@ module.exports = {
 						 as a vendor.<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						In order to perform any business with us, you need to complete this registration in full 
 						using the link 
-						<a href= ${sLink_Registation_Form} + "><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;>here<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;></a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
+						<a href= ${sLink_Registation_Form}"><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;>here<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;></a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						<br>
 						Upon submission, your registration request will be reviewed by the relevant teams. We may seek additional information as part of this process.
 						<br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
-						<u> ${emailBody} + "</u><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
+						<u> ${emailBody}</u><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						Should you have any questions, please do not hesitate to reach out to us via email at <a href= ${sClientContactEmail}>
-						${sClientContactEmail} +
+						${sClientContactEmail}
 						</a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 						Vendor Management Team
@@ -551,7 +551,7 @@ module.exports = {
 					<a href=${portallink}>link</a><p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 
 					<br>
-					Should you have any questions, please do not hesitate to reach out to us via email at " +
+					Should you have any questions, please do not hesitate to reach out to us via email at
 					<strong><a href=${sClientContactEmail}>${sClientContactEmail}</a></strong> <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 					<br>
 					Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
@@ -689,8 +689,8 @@ module.exports = {
 					  Portal and approve.
 
 					<br>
-					Should you have any questions, please do not hesitate to reach out to us via email at " +
-					<strong><a href=${sClientContactEmail}>${sClientContactEmail} + "</a></strong> <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
+					Should you have any questions, please do not hesitate to reach out to us via email at
+					<strong><a href=${sClientContactEmail}>${sClientContactEmail}</a></strong> <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 					<br>
 					Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
 					Vendor Management Team`;
@@ -907,8 +907,8 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 
 			oEmailContent.emailBody += "</TABLE class='table100-head'><br><br> " +
 				"Should you have any questions, please do not hesitate to reach out to us via email at " +
-				"<strong><a href=" + ${sClientContactEmail} + ">" + ${sClientContactEmail} + "</a></strong> <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>" +
-				"<br>" +
+				"<strong><a href=" + sClientContactEmail + ">" + sClientContactEmail + "</a></strong> <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>" +
+				"<br>" +   
 				"Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>" +
 				"Vendor Management Team";
 
@@ -921,23 +921,21 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 			}
 			var linkStatement = "";
 			if(oEmailData.Status !== 1)
-				linkStatement = "Please login to the following " + ${sClientShortName} + " portal using the link " +
-				"<a href=" + sLink + ">here</a><br><br>";
+				linkStatement = `Please login to the following ${sClientShortName} portal using the link 
+				<a href=${sLink}">here</a><br><br>`;
 
-			oEmailContent.subject = "Registered Email ID changed for - " + ${oEmailData.SupplierName}+".";
+			oEmailContent.subject = `Registered Email ID changed for - ${oEmailData.SupplierName}.`;
 
-			oEmailContent.emailBody = "Dear Vendor,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><br>" +
-				"Vendor Registred Email ID for <span style=\"text-transform:uppercase\">" +
-				${oEmailData.SupplierName} + "</span>";
-
-			oEmailContent.emailBody += " has been changed from " + oEmailData.Changed_From + " to <strong>" +
-				oEmailData.Changed_To + "</strong>.<br><br>" +
-				linkStatement +
-				"Should you have any questions, please do not hesitate to reach out to us via email at " +
-				"<strong><a href=" + ${sClientContactEmail} + ">" + ${sClientContactEmail} + "</a></strong> <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>" +
-				"<br>" +
-				"Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>" +
-				"Vendor Management Team";
+			oEmailContent.emailBody = `Dear Vendor,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br><br>
+				Vendor Registred Email ID for <span style="text-transform:uppercase">
+				${oEmailData.SupplierName}</span> has been changed from ${oEmailData.Changed_From} to <strong>
+				${oEmailData.Changed_To}</strong>.<br><br>
+				${linkStatement}
+				Should you have any questions, please do not hesitate to reach out to us via email at 
+				<strong><a href=${sClientContactEmail}>${sClientContactEmail}</a></strong> <p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
+				<br>
+				Regards,<p style=font-family:Arial, Helvetica, sans-serif;font-size:11px;color:black;><br>
+				Vendor Management Team`;
 
 		} else if (sAppType === "INVITE_REMINDER") {
 			var sLink = null;
@@ -947,7 +945,7 @@ oEmailContent.emailBody += "<br><TABLE width='650px' class='table100-head' style
 				sReqType = 'update registration';
 			} else {
 				sLink = sLink_Registation_Form;
-				sReqType = 'register';
+				sReqType = 'register';       
 			}
 
 			oEmailContent.subject = `${sClientShortName} vendor registration invite: Reminder-" ${oEmailData.Count}.`;
