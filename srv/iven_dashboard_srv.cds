@@ -503,7 +503,7 @@ service dashboardService {
   entity VendorMasterS4Hana        as projection on VENDOR_PORTAL.VENDOR_MASTER_S4_HANA{
     *,
     TO_ENTITY:Association to VENDOR_PORTAL.MASTER_ENTITY_CODE on BUKRS=TO_ENTITY.BUKRS       
-  }; 
+  };     
   entity RequestActiveStatus       as projection on VENDOR_PORTAL.REQUEST_ACTIVE_STATUS;
   entity ViewRequestActiveStatus   as projection on VIEW_REQUEST_ACTIVE_STATUS;
   //calculation views     

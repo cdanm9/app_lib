@@ -1,5 +1,5 @@
 // namespace VENDOR_PORTAL;
-using {cuid} from '@sap/cds/common';
+using {cuid,managed} from '@sap/cds/common';
 
 context VENDOR_PORTAL {
     entity MASTER_COUNTRY {
@@ -213,6 +213,23 @@ context VENDOR_PORTAL {
             TO_USER_ENTITIES : Association to many MASTER_USER_ENTITY_CODES
                                    on TO_USER_ENTITIES.USER_ID = USER_ID;
     }
+
+    // entity MASTER_IVEN_USERS_FIORI:cuid{
+    //         SR_NO            : Integer;
+    //         USER_ID          : String(50);
+    //         // USER_ROLE        : String(50);
+    //         USER_NAME        : String(500);
+    //         EMAIL            : String(150);
+    //         // COMPANY_CODE     : String(500);
+    //         EMP_NO           : String(100);
+    //         CREATED_ON       : Timestamp;
+    //         UPDATED_ON       : Timestamp;
+    //         // ACTIVE           : String(1);
+    //         TO_USER_ROLES     : Association to one MASTER_USER_ROLE
+    //                                on TO_USER_ROLE.CODE = USER_ROLE;
+    //         TO_USER_ENTITIES : Association to many MASTER_USER_ENTITY_CODES
+    //                                on TO_USER_ENTITIES.USER_ID = USER_ID;
+    // }
 
     entity MASTER_USER_ENTITY_CODES {       
         key USER_ID     : String(50);
@@ -1350,6 +1367,42 @@ context VENDOR_PORTAL {
     }    
       
     //Hierarchy Implementation End
+
+    //Fiori Elements User Master Conversion Start
+
+    @assert.unique.name:[USER_ID, EMAIL]
+    entity MASTER_IVEN_USERS_FIORI:cuid,managed{
+        SR_NO            : Integer;
+        
+        @mandatory USER_ID    : String(50);
+        @mandatory @readonly USER_NAME : String(500);    
+        @mandatory @readonly EMAIL    : String(150);    
+        EMP_NO           : String(100);   
+        ACTIVE           : String(1);
+        TO_USER_ROLES     : Composition of many MASTER_USER_ROLE_CODES_FIORI
+                                on TO_USER_ROLES.TO_USER=$self;
+        TO_USER_ENTITIES : Composition of many MASTER_USER_ENTITY_CODES_FIORI
+                                on TO_USER_ENTITIES.TO_USER = $self;       
+    }
+
+    entity MASTER_USER_ENTITY_CODES_FIORI:cuid{     
+        @readonly @mandatory USER_ID         : String(50);
+        @mandatory ENTITY_CODE     : String(50);
+        @readonly @mandatory EMAIL           : String(150);
+        TO_ENTITY_CODE  : Association to one MASTER_ENTITY_CODE
+                          on TO_ENTITY_CODE.BUKRS = ENTITY_CODE;                  
+        TO_USER: Association to MASTER_IVEN_USERS_FIORI;                  
+    }
+
+    entity MASTER_USER_ROLE_CODES_FIORI:cuid{
+        @readonly @mandatory USER_ID     : String(50);
+        @mandatory USER_ROLE   : String(50);
+        @readonly @mandatory EMAIL       : String(150);  
+        TO_ROLE: Association to one MASTER_USER_ROLE on TO_ROLE.CODE=USER_ROLE;  
+        TO_USER: Association to MASTER_IVEN_USERS_FIORI;    
+    }
+
+    //Fiori Elements User Master Conversion End
 
     //MDK Attachment Start
 

@@ -1,0 +1,7 @@
+### Update MasterIvenUsers
+PATCH http://localhost:4004/odata/v4/fiori-user-master/MasterIvenUsers(ID=58d1026f-af1f-4987-93c7-6be87509c533,IsActiveEntity=false)
+Content-Type: application/json  
+          
+{
+    "USER_ID":"P000003"   
+}

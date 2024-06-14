@@ -5,6 +5,7 @@ const hdbext = require("@sap/hdbext")
 const lib_common = require('./LIB/iven_library')
 const lib_email = require('./LIB/iven_library_email')
 const lib_email_content = require('./LIB/iven_library_email_content')
+// const lib_email_content = require('./LIB/iven_library_dynamic_email_content')
 const connect = require('passport/lib/framework/connect')
 const lib_mdg = require('./LIB/iven_library_mdg')   
 const lib_ias = require('./LIB/iven_library_ias') 
@@ -1676,25 +1677,8 @@ module.exports = cds.service.impl(function () {
             var aResult = null;
             // aDataObjects = [];
             var whereObj = {};
-            // var whereString ;
-            // if (sColumnName === 'TRADE_LIC_NO') {
-            //     whereObj['TRADE_LIC_NO'] = sColumnValue
-            //     // whereString = `TRADE_LIC_NO = ${sColumnValue}`;
-            // }
-            // else if (sColumnName === 'VAT_REG_NUMBER') {
-            //     whereObj['VAT_REG_NUMBER'] = sColumnValue
-            // }
-            // else if (sColumnName === 'VENDOR_NAME1') {
-            //     whereObj['VENDOR_NAME1'] = sColumnValue
-            // }
             whereObj[sColumnName] = sColumnValue;
             if (iObrNo !== "" && sColumnValue !== "") {   
-                // whereObj['REQUEST_NO'] = {'!=':iObrNo}
-                // aResult = await connection.run(SELECT
-                //     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                //     .where(whereObj)
-                //     // .where`TRADE_LIC_NO=${sColumnValue} AND REQUEST_NO=${iObrNo}`
-                // );
                 var sColumnAlias="VENDOR_PORTAL_REQUEST_INFO."+sColumnName;
                 var qAndObject={ 'VENDOR_PORTAL_REQUEST_INFO.REQUEST_NO':{'!=':iObrNo}};
                 qAndObject[sColumnAlias]=sColumnValue;
@@ -1708,39 +1692,8 @@ module.exports = cds.service.impl(function () {
                 .and(qAndObject);                        
             }
             else {         
-                aResult=[];
-                  
-                // aResult=await SELECT .columns('*','APPROVER_ROLE as APPR_ROLE') .from('VENDOR_PORTAL_REQUEST_INFO')      
-                // .join('VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE')
-                // .on({ 'VENDOR_PORTAL_REQUEST_INFO.APPROVER_LEVEL':'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.APPROVER_LEVEL',
-                // 'VENDOR_PORTAL_REQUEST_INFO.ENTITY_CODE': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.ENTITY_CODE',
-                // 'VENDOR_PORTAL_REQUEST_INFO.PROCESS_LEVEL': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.APPR_TYPE',
-                // 'VENDOR_PORTAL_REQUEST_INFO.APPROVER_ROLE': 'VENDOR_PORTAL_MASTER_APPROVAL_HIERARCHY_FE.USER_ROLE',
-                // }) 
-                // .and({ 'A.REQUEST_NO':{'!=':iObrNo} });     
-                
-
-                // aResult = await connection.run(SELECT
-                //     .from`${connection.entities['VENDOR_PORTAL.REQUEST_INFO']}`
-                //     .where(whereObj)
-                //     // .where`${sColumnName} = ${sColumnValue}`
-                // );
+                aResult=[];   
             }
-            // var sQuery =
-            // 	'SELECT * FROM \"VENDOR_PORTAL\".\"VENDOR_PORTAL.Table::ONBOARDING_FORM\" WHERE ' + sColumnName + ' = ? ';
-
-            // if (iObrNo !== "" && sColumnValue !== "") {
-            // 	sQuery +=
-            // 		'AND OBR_NO != ?';
-            // 	aResult = conn.executeQuery(sQuery, sColumnValue, iObrNo);
-            // }
-
-            // if (aResult != null) {
-            // 	aDataObjects = Object.keys(aResult).map(function(key) {
-            // 		return aResult[key];
-            // 	});
-            // }
-            // return aDataObjects;
             return aResult
         }
         catch (error) { throw error; }

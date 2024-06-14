@@ -20,12 +20,12 @@ module.exports = cds.service.impl(function () {
               await lib_ias.getIASUser();
               console.log('done');
        
-        } catch (error) {
+        } catch (error) {    
             
             var sType=error.code?"Procedure":"Node Js";    
             var iErrorCode=error.code??500;
             let Result = {
-                OUT_ERROR_CODE: iErrorCode,
+                OUT_ERROR_CODE: iErrorCode,    
                 OUT_ERROR_MESSAGE:  error.message ? error.message : error
             }
             lib_common.postErrorLog(Result,null,null,null,"FetchIASUser Job",sType,dbConn,hdbext);
@@ -38,12 +38,12 @@ module.exports = cds.service.impl(function () {
         
         try {
             var sResponse = null;
-      var connection = await cds.connect.to('db');
-              var client = await dbClass.createConnectionFromEnv();
-              var dbConn = new dbClass(client);
-              const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'AUTO_DELETE_ERROR_LOG')
-              sResponse = await dbConn.callProcedurePromisified(loadProc,[]);
-             console.log(sResponse)
+            var connection = await cds.connect.to('db');
+            var client = await dbClass.createConnectionFromEnv();
+            var dbConn = new dbClass(client);
+            const loadProc = await dbConn.loadProcedurePromisified(hdbext, null, 'AUTO_DELETE_ERROR_LOG')
+            sResponse = await dbConn.callProcedurePromisified(loadProc,[]);
+            console.log(sResponse)
             //   let errorLogLimit = await connection.run(
             //     SELECT`SETTING`
             //       .from`${connection.entities['VENDOR_PORTAL.MASTER_IVEN_SETTINGS']}`
