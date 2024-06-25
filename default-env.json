@@ -42,15 +42,15 @@
 		},
 		{
 			"name": "IAS_DEST",
-			"url": "https://a7j2yrgmc.accounts.ondemand.com",
-			"username": "39c971a0-30ce-44f5-9d4b-3d26a500383b",
-			"password": "/J9D]Y.TI]yPo=ASkxf_s3c-I_ei5x?QK"
+			"url": "https://advznrju4.trial-accounts.ondemand.com/",
+			"username": "aa9a7cb7-5756-4c52-97bf-8c710d929bee",
+			"password": "yTsJkWBVg?sVM5qOpDe9TqeEtKwmBZFCzs"   
 		},
 		{
-			"name": "ERP",
-			"url": "http://a17.hana.com:17/",
-			"username": "BTPADMIN",
-			"password": "Intellect@123"
+			"name": "A17_Cloud",
+			"url": "https://portal.intellectbizware.com:80/",     
+			"username": "ABAP_FIORI",
+			"password": "1INR=100ps"
 		},
 		{
 			"name":"BTP_DMS_Token",

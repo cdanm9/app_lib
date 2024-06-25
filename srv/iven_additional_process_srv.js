@@ -644,7 +644,7 @@ module.exports = cds.service.impl(function () {
       var dbConn = new dbClass(client);
       // var {sapClient,destFileName} = req.data;
       var response = { "onPremiseSrv": null, "cloudSrv": null };
-      var sapClient = '';
+      var sapClient = '';   
 
       if (onPremiseSrv) {
         //   set connection to ZIVN_VENDOR_REG_SRV Destination
@@ -655,7 +655,7 @@ module.exports = cds.service.impl(function () {
           path: '/BPTypeSet',
           // path:'/',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json',   
             "sap-client": sapClient
           }
         })

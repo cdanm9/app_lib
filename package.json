@@ -38,10 +38,10 @@
   "cds": {
     "requires": {
       "db": "hana",
-      "ERP": {
+      "A17_Cloud": {
         "kind": "rest",
         "credentials": {
-          "destination": "ERP",
+          "destination": "A17_Cloud",
           "path": "/sap/opu/odata/sap/"
         }
       },
@@ -65,7 +65,7 @@
         "csrf": true,
         "csrfInBatch": true,
         "credentials": {
-          "destination": "ERP",
+          "destination": "A17_Cloud",
           "path": "sap/opu/odata/sap/ZIVN_VENDOR_REG_SRV",
           "forwardAuthToken": true,
           "timeout": 100000
@@ -77,7 +77,7 @@
         "csrf": true,
         "csrfInBatch": true,
         "credentials": {
-          "destination": "ERP",
+          "destination": "A17_Cloud",
           "path": "/sap/opu/odata/sap/ZMDG_VENDOR_REG_SRV"
         }
       },
@@ -87,7 +87,7 @@
         "csrf": true,
         "csrfInBatch": true,
         "credentials": {
-          "destination": "ERP",
+          "destination": "A17_Cloud",
           "path": "/sap/opu/odata/sap/ZIBS_BFPOC_SRV"
         }
       },

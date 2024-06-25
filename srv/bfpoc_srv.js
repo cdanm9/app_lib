@@ -51,61 +51,61 @@ module.exports = cds.service.impl(function (srv) {
         }
     })
 
-    async function demoPayload() {
-        // 			"VENDOR_INV_DATE": "2020-11-24T00:00:00.000Z",
-        // 			"EXPENSE_START_DATE": "2020-11-25T00:00:00.000Z",
-        // 			"EXPENSE_END_DATE": "2020-12-01T00:00:00.000Z",
-        // 		VendorInvDate: oData.VENDOR_INV_DATE,
-        // 		ExpensesDate: oData.EXPENSE_START_DATE,
-        // 		ExpenseeDate: oData.EXPENSE_END_DATE,
-        var data = {
-            "REQUEST_TYPE": "Approve",
-            "ON_CLOUD": {
-                "LEVEL": 3,
-                "REQUEST_NO": 1000000015,
-                "APPROVER_CODE": "P1942962395",
-                "REMARKS": "test remark",
-                "ACTION_TIME": "2020-11-20T09:41:43.792Z"
-            },
-            "HEADER": {
-                "REQUEST_NO": 1000000015,
-                "VENDOR_CODE": 1827,
-                "VENDOR_NAME": 'Prabhu Chemical Products',
-                "VENDOR_INV": '445577',
-                "VENDOR_STATE": 'Tamil Nadu',
-                "VENDOR_GST": '33AAHFP6342F1ZE',
-                "VENDOR_INV_AMT": '500',
-                "COMPANY_STATE": 'Andra Pradesh',
-                "COMPANY_GST": '37XXXXX0000X0X0',
-                "COMPANY_BP": 'AP01',
-                "CREDIT_TYPE": '50',
-                "ORG_UNIT": 'HR',
-                "STATUS": 'PENDING',
-                "LEVEL": 3,
-                "SAP_DOCUMENT_NO": '',
-                "FISCAL_YEAR": 2020,
-                "NEXT_APPROVER_ID": 'P1942872075',
-                "APPROVER_CODE": 'P1942962395',
-                "APPROVER_NAME": 'SWAROOP KUMAR',
-                "APPROVER_EMAIL": 'swaroop.n@intellectbizware.com'
-            },
-            "ITEMS": [{
-                "REQUEST_NO": 1000000015,
-                "INVOICE_ITEM": 1,
-                "GL_CODE": '24520600',
-                "RATE": '200',
-                "HSNCODE": '6555',
-                "GST": '5445',
-                "PROFIT_CENTER": '454',
-                "SHIP_TO_LOCATION": 'pune',
-                "COST_CENTER": '1044103',
-                "COST_ALLOCATION": '40',
-                "GL_DESCRIPTION": 'Kotak Mahindra Bank Ltd Main'
-        }]
-        };
+    // async function demoPayload() {
+    //     // 			"VENDOR_INV_DATE": "2020-11-24T00:00:00.000Z",
+    //     // 			"EXPENSE_START_DATE": "2020-11-25T00:00:00.000Z",
+    //     // 			"EXPENSE_END_DATE": "2020-12-01T00:00:00.000Z",
+    //     // 		VendorInvDate: oData.VENDOR_INV_DATE,
+    //     // 		ExpensesDate: oData.EXPENSE_START_DATE,
+    //     // 		ExpenseeDate: oData.EXPENSE_END_DATE,
+    //     var data = {
+    //         "REQUEST_TYPE": "Approve",
+    //         "ON_CLOUD": {
+    //             "LEVEL": 3,
+    //             "REQUEST_NO": 1000000015,
+    //             "APPROVER_CODE": "P1942962395",
+    //             "REMARKS": "test remark",
+    //             "ACTION_TIME": "2020-11-20T09:41:43.792Z"
+    //         },
+    //         "HEADER": {
+    //             "REQUEST_NO": 1000000015,
+    //             "VENDOR_CODE": 1827,
+    //             "VENDOR_NAME": 'Prabhu Chemical Products',
+    //             "VENDOR_INV": '445577',
+    //             "VENDOR_STATE": 'Tamil Nadu',
+    //             "VENDOR_GST": '33AAHFP6342F1ZE',
+    //             "VENDOR_INV_AMT": '500',
+    //             "COMPANY_STATE": 'Andra Pradesh',
+    //             "COMPANY_GST": '37XXXXX0000X0X0',
+    //             "COMPANY_BP": 'AP01',
+    //             "CREDIT_TYPE": '50',
+    //             "ORG_UNIT": 'HR',
+    //             "STATUS": 'PENDING',
+    //             "LEVEL": 3,
+    //             "SAP_DOCUMENT_NO": '',
+    //             "FISCAL_YEAR": 2020,
+    //             "NEXT_APPROVER_ID": 'P1942872075',
+    //             "APPROVER_CODE": 'P1942962395',
+    //             "APPROVER_NAME": 'SWAROOP KUMAR',
+    //             "APPROVER_EMAIL": 'swaroop.n@intellectbizware.com'
+    //         },
+    //         "ITEMS": [{
+    //             "REQUEST_NO": 1000000015,
+    //             "INVOICE_ITEM": 1,
+    //             "GL_CODE": '24520600',
+    //             "RATE": '200',
+    //             "HSNCODE": '6555',
+    //             "GST": '5445',
+    //             "PROFIT_CENTER": '454',
+    //             "SHIP_TO_LOCATION": 'pune',
+    //             "COST_CENTER": '1044103',
+    //             "COST_ALLOCATION": '40',
+    //             "GL_DESCRIPTION": 'Kotak Mahindra Bank Ltd Main'
+    //     }]
+    //     };
     
-        return data;
-    }
+    //     return data;
+    // }
     
     async function renamingHeaderFormatObj(oData) {
         var dataFormat = {

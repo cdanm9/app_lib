@@ -1,0 +1,55 @@
+### Update MasterIvenUsers
+POST http://localhost:4004/odata/v4/request-process/RequestProcess
+Content-Type: application/json  
+          
+{
+    "action": "CREATE",
+    "inputData": [    
+        {
+            "REQUEST_NO": 1000,
+            "SAP_VENDOR_CODE": null,
+            "VENDOR_NAME1": "TEST VENDOR 1",
+            "VENDOR_NAME2": "",
+            "VENDOR_CODE": "NR",
+            "REGISTERED_ID": "testvendor1@gmail.com",
+            "ENTITY_CODE": "1000",
+            "SUPPL_TYPE_DESC": "HIERARCHY NODE",
+            "SUPPL_TYPE": "0012",
+            "BP_TYPE_CODE": "9001",
+            "BP_TYPE_DESC": "MANAGER",
+            "NDA_TYPE": null,
+            "STATUS": 15,
+            "CREATED_ON": "2024-06-18T04:55:05.141Z",
+            "LAST_UPDATED_ON": "2024-06-18T04:55:05.141Z",
+            "REQUEST_TYPE": 1,
+            "CREATION_TYPE": 1,
+            "COMMENT": "Request Creation",     
+            "REQUESTER_ID": "siddhesh.d@intellectbizware.com",
+            "REMINDER_COUNT": null,
+            "BUYER_ASSIGN_CHECK": null
+        }
+    ],
+    "eventsData": [
+        {
+            "REQUEST_NO": 1000,
+            "EVENT_NO": 0,
+            "EVENT_CODE": 1,
+            "EVENT_TYPE": "REQ",
+            "USER_ID": "siddhesh.d@intellectbizware.com",
+            "USER_NAME": "Siddhesh Dingankar",
+            "REMARK": "REG Request Created",    
+            "COMMENT": "Request Creation",
+            "CREATED_ON": "2024-06-18T04:55:05.141Z"
+        }
+    ],
+    "userDetails": {
+        "USER_ROLE": "PM,ISP",
+        "USER_ID": "siddhesh.d@intellectbizware.com"
+    }
+}
+
+
+# POST http://localhost:4004/odata/v4/registration-process/PostRegFormData
+
+
+# POST http://localhost:4004/odata/v4/registration-process/RegFormDataApproval
