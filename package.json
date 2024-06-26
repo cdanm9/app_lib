@@ -29,8 +29,7 @@
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
-    "@sap/cds-dk": "^7",
-    "@sap/hdi-deploy": "^4.8.0"
+    "@sap/cds-dk": "^7"
   },
   "scripts": {
     "start": "cds-serve"
@@ -120,7 +119,7 @@
         }
       },
       "auth": {
-        "kind": "mocked"
+        "kind": "mocked"    
       },
       "connectivity": true,
       "destinations": true

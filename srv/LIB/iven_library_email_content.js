@@ -5,7 +5,8 @@ const { Connection } = require("@sap/hana-client");
 // App paths from portal
 // const sLink_Request_Report = "aabd5b0b-54d4-4217-b137-b0b0179f2a79.comibsplivenivenrequestreport.comibsplivenivenrequestreport-0.0.1/index.html#/RouteDetailPage/";
 const sLink_Request_Report = "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_report-display?&/RouteDetailPage/";   
-const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/vendorDetails/";
+// const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/vendorDetails/";
+const sLink_Registraion_Approval = "site?siteId=98c2c225-1800-4441-a3c9-d32ee173bfd2#iven_registration_approval-display?sap-ui-app-id-hint=saas_approuter_com.ibs.ibsappivenregistrationapproval&/vendorDetails/";
 const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster/";    
 
 module.exports = {
@@ -51,7 +52,8 @@ module.exports = {
 		// var sLink_Portal_LoginAccess = sDetails.PORTAL_LINK + "/iven";
 		var sLink_Portal_LoginAccess = sDetails.PORTAL_LINK ;
 
-		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "31f0823a-bdc7-470e-ad35-1f94f827afd5.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome";
+		// var sLink_Registation_Form =  sLink_Portal_GuestAccess + "31f0823a-bdc7-470e-ad35-1f94f827afd5.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome";
+		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "ab60f63c-85f1-40e6-a417-afe4f0d480c1.Iven-Vendor-Management.comibsibsappivenregistrationform-0.0.1/index.html#/Routehome";
 					
 		
 		var greetingsTo;
@@ -70,7 +72,8 @@ module.exports = {
 
 				Emailbody = "Dear Approver," + "<br><br>";      
 				// var link = "Vendor_Request_Approval-Approve&/VendorInviteList/" + parseInt(oEmailData.ReqNo, 10);
-				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+				var link =sLink_Portal_LoginAccess+"site?siteId=98c2c225-1800-4441-a3c9-d32ee173bfd2#iven_request_approval-display?sap-ui-app-id-hint=saas_approuter_com.ibs.ibsappivenrequestapproval&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+				// var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
 				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
 					" has been created and is currently pending for "+oEmailData.NextApproverRole+" approval." + "<br>" + "<br>" +
 					"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +   
@@ -101,7 +104,9 @@ module.exports = {
 
 				Emailbody = "Dear Vendor," + "<br><br>";
 				// var link = "Vendor_Request_Approval-Approve&/VendorInviteList/" + parseInt(oEmailData.ReqNo, 10);
-				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+				// var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+				var link =sLink_Portal_LoginAccess+"site?siteId=98c2c225-1800-4441-a3c9-d32ee173bfd2#iven_request_approval-display?sap-ui-app-id-hint=saas_approuter_com.ibs.ibsappivenrequestapproval&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+
 				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
 					" has been created." + "<br>" + "<br>" +
 					"<br>" + "<br>" +
@@ -123,7 +128,8 @@ module.exports = {
 			}else if(sAction ==="MID_APPROVE"){
 				var req_Type = oEmailData.ReqType.toString();
 				             
-				var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);    
+				// var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10); 
+				var link =sLink_Portal_LoginAccess+"site?siteId=98c2c225-1800-4441-a3c9-d32ee173bfd2#iven_request_approval-display?sap-ui-app-id-hint=saas_approuter_com.ibs.ibsappivenrequestapproval&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
 
 				if (req_Type === "1" || req_Type === "2" || req_Type === "3" || req_Type === "6") {
 					oEmailContent.subject = "Vendor Registration request approved.";
@@ -141,7 +147,7 @@ module.exports = {
 						"<br><br>";
 
 				} else {
-					var link =sLink_Portal_LoginAccess + "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_approval-display?&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
+					var link =sLink_Portal_LoginAccess+"site?siteId=98c2c225-1800-4441-a3c9-d32ee173bfd2#iven_request_approval-display?sap-ui-app-id-hint=saas_approuter_com.ibs.ibsappivenrequestapproval&/RouteMaster/"+ parseInt(oEmailData.ReqNo, 10);
 					oEmailContent.subject = "Vendor update request approved.";
 					// 			subject = msg + "Invitation to update registration on the " + data[0].ENTITY_DESC + " supplier database";
 					oEmailContent.emailBody = "Request No. " + oEmailData.ReqNo + " for vendor " + oEmailData.SupplierName +
