@@ -23,19 +23,40 @@ using {
 } from '../db/TRANSACTION_TABLES';
 
 service addtionalProcessService {   
-
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin']},
+  //   { grant: 'READ', to:['Approver']},
+  //   { grant: 'READ', to:['PM']},
+  //   { grant: 'READ', to:['Buyer']},
+  //   { grant: 'READ', to:['Vendor']}
+  // ]
   entity MasterClientInfo                as projection on VENDOR_PORTAL.MASTER_EMAIL_CONTACT_ID;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterIvenUsers                 as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;   
   @cds.query.limit.max: 5000 
   entity RequestInfo                     as projection on VENDOR_PORTAL.REQUEST_INFO;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterIbanCountry               as projection on VENDOR_PORTAL.MASTER_IBAN_COUNTRY;
   entity RegSupplierLog                  as projection on VENDOR_PORTAL.SUPPLIER_PROFILE_LOG;
   entity ViewRequestActiveStatus         as projection on VIEW_REQUEST_ACTIVE_STATUS;
   entity RegFormCMS                      as projection on VENDOR_PORTAL.REGFORM_ATTACHMENTS_CMS;
   entity RegFormDiscQaCertif             as projection on VENDOR_PORTAL.REGFORM_DISCLOSURE_QACERT;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterCountry                   as projection on VENDOR_PORTAL.MASTER_COUNTRY;
   //  entity NdaAttachments          as projection on VENDOR_PORTAL.NDA_ATTACHMENTS;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterStatus                    as projection on VENDOR_PORTAL.MASTER_STATUS;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity RegFormAddress                  as projection on VENDOR_PORTAL.REGFORM_ADDRESS;
   entity RegFormContacts                 as projection on VENDOR_PORTAL.REGFORM_CONTACTS;
   entity RegFormBanks                    as projection on VENDOR_PORTAL.REGFORM_BANKS;
@@ -45,20 +66,44 @@ service addtionalProcessService {
   entity RegFormCapacity                 as projection on VENDOR_PORTAL.REGFORM_CAPACITY;
   entity RegFormCustomers                as projection on VENDOR_PORTAL.REGFORM_CUSTOMERS;
   entity RegFormOEM                      as projection on VENDOR_PORTAL.REGFORM_OEM;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterFormFieldsMandatory       as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterFormFieldsVisible         as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_VISIBLE;
   entity MasterFormFieldsUpdated         as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_UPDATED;
   entity RegFormDiscInfo                 as projection on VENDOR_PORTAL.REGFORM_DISCLOSURE_FIELDS;
   entity RegFormDiscRelatives            as projection on VENDOR_PORTAL.REGFORM_DISCLOSURE_RELATIVES;
   entity RegFormAttachFields             as projection on VENDOR_PORTAL.REGFORM_ATTACH_FIELDS;
   entity RegFormAttachments              as projection on VENDOR_PORTAL.REGFORM_ATTACHMENTS;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterRequestType               as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterEntityCode                as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterTelecode                  as projection on VENDOR_PORTAL.MASTER_TELECODE;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterPostalcode                as projection on VENDOR_PORTAL.MASTER_REGEX_POSTALCODE;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterRegion                    as projection on VENDOR_PORTAL.MASTER_REGION;
   entity RequestActiveStatus             as projection on VENDOR_PORTAL.REQUEST_ACTIVE_STATUS;
   entity RegEventsLog                    as projection on VENDOR_PORTAL.REQUEST_EVENTS_LOG;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasteriVenAttachments           as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
   entity DataMigrationFieldConfiguration as projection on VENDOR_PORTAL.DATA_MIGRATION_FIELD_CONFIGURATION;
   entity ViewDataMigrationFields         as projection on VIEW_DATA_MIGRATION_FIELDS;

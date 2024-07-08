@@ -56,6 +56,7 @@ service dashboardService {
          ]
       }
     }
+    
   entity RequestInfo              as projection on VENDOR_PORTAL.REQUEST_INFO{
     *,
     REQUEST_NO as REQUEST_NUM: String,                                                   

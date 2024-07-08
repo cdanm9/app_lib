@@ -21,19 +21,55 @@ using {
 
 
 service pluginService {
-
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterIvenUsers           as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasteriVenAttachments     as projection on VENDOR_PORTAL.MASTER_IVEN_ATTACHMENTS;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterRequestType         as projection on VENDOR_PORTAL.MASTER_REQUEST_TYPE;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterStatus              as projection on VENDOR_PORTAL.MASTER_STATUS;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterEntityCode          as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterCountry             as projection on VENDOR_PORTAL.MASTER_COUNTRY;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterFormFieldsMandatory as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_MANDATORY;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterFormFieldsVisible   as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_VISIBLE;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterFormFieldsUpdated   as projection on VENDOR_PORTAL.MASTER_REGFORM_FIELDS_UPDATED;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterRegion              as projection on VENDOR_PORTAL.MASTER_REGION;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterCurrency            as projection on VENDOR_PORTAL.MASTER_CURRENCY;
+  // @restrict: [
+  //   { grant: 'READ', to:['Admin','Approver','PM','Buyer','Vendor']}
+  // ]
   entity MasterRequestEvents       as projection on VENDOR_PORTAL.MASTER_REQUEST_EVENTS;
+  
   entity RequestInfo               as projection on VENDOR_PORTAL.REQUEST_INFO;
   entity RegFormAddress            as projection on VENDOR_PORTAL.REGFORM_ADDRESS;
   entity RegFormContacts           as projection on VENDOR_PORTAL.REGFORM_CONTACTS;

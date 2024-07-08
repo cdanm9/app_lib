@@ -4,7 +4,7 @@ const { Connection } = require("@sap/hana-client");
 
 // App paths from portal
 // const sLink_Request_Report = "aabd5b0b-54d4-4217-b137-b0b0179f2a79.comibsplivenivenrequestreport.comibsplivenivenrequestreport-0.0.1/index.html#/RouteDetailPage/";
-const sLink_Request_Report = "site?siteId=dfe9a08b-9dd0-4282-b092-59cf8a8da401#iven_request_report-display?&/RouteDetailPage/";   
+const sLink_Request_Report = "site?siteId=98c2c225-1800-4441-a3c9-d32ee173bfd2#iven_request_report-display?sap-ui-app-id-hint=saas_approuter_com.ibs.ibsappivenrequestreport&/RouteDetailPage/";   
 // const sLink_Registraion_Approval = "site/iven#iven_registration_approval-display&/vendorDetails/";
 const sLink_Registraion_Approval = "site?siteId=98c2c225-1800-4441-a3c9-d32ee173bfd2#iven_registration_approval-display?sap-ui-app-id-hint=saas_approuter_com.ibs.ibsappivenregistrationapproval&/vendorDetails/";
 const sLink_Request_Approval = "site/iven#iven_request_approval-display&/RouteMaster/";    
@@ -53,7 +53,7 @@ module.exports = {
 		var sLink_Portal_LoginAccess = sDetails.PORTAL_LINK ;
 
 		// var sLink_Registation_Form =  sLink_Portal_GuestAccess + "31f0823a-bdc7-470e-ad35-1f94f827afd5.comibsplivenivenregistrationform.comibsplivenivenregistrationform-0.0.1/index.html#/Routehome";
-		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "ab60f63c-85f1-40e6-a417-afe4f0d480c1.Iven-Vendor-Management.comibsibsappivenregistrationform-0.0.1/index.html#/Routehome";
+		var sLink_Registation_Form =  sLink_Portal_GuestAccess + "84abff85-3bab-4fc0-af08-fb49ed8b92ce.comibsibsappivenregistrationform.comibsibsappivenregistrationform-0.0.1/index.html#/Routehome";
 					
 		
 		var greetingsTo;

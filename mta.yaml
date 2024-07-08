@@ -27,6 +27,7 @@ modules:
       - name: VENDOR_PORTAL-db
       - name: VENDOR_PORTAL-destination
       - name: VENDOR_PORTAL-connectivity
+      - name: IBS_VENDOR_PORTAL-auth
   - name: VENDOR_PORTAL-db-deployer
     type: hdb
     path: gen/db
@@ -35,6 +36,22 @@ modules:
       memory: 500M
     requires:
       - name: VENDOR_PORTAL-db
+
+  - name: VENDOR_PORTAL
+    type: approuter.nodejs
+    path: app/router
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: IBS_VENDOR_PORTAL-auth
 resources:
   - name: VENDOR_PORTAL-db
     type: com.sap.xs.hdi-container
@@ -52,3 +69,12 @@ resources:
     parameters:
       service: connectivity
       service-plan: lite
+  - name: IBS_VENDOR_PORTAL-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: ibs-vendor-portal-dev
+        tenant-mode: dedicated

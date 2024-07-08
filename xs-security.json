@@ -1,0 +1,68 @@
+{
+  "xsappname": "ibs-vendor-portal-dev",
+  "tenant-mode": "dedicated",    
+  "scopes": [
+    {
+      "name": "uaa.user",
+      "description": "UAA"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Admin"   
+    },
+    {
+      "name": "$XSAPPNAME.Approver",
+      "description": "Approver"
+    },
+    {
+      "name": "$XSAPPNAME.PM",
+      "description": "PM"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "Token_Exchange",
+      "description": "UAA",
+      "scope-references": [     
+        "uaa.user"
+      ]        
+    },
+    {
+      "name": "Admin",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Admin"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Approver",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.Approver"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "PM",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.PM"
+      ],
+      "attribute-references": []
+    }
+  ],
+  "oauth2-configuration": {
+    "redirect-uris": [
+      "http://localhost:5000/",
+      "https://port5000-workspaces-ws-q5vjd.us10.trial.applicationstudio.cloud.sap/",
+      "https://*.applicationstudio.cloud.sap/**",
+      "https://a205e616trial-dev-vendor-portal.cfapps.us10-001.hana.ondemand.com/",
+      "https://a205e616trial-dev-vendor-portal-srv.cfapps.us10-001.hana.ondemand.com/",
+      "https://port8080-workspaces-ws-6fhwx.us10.trial.applicationstudio.cloud.sap/",
+      "https://port4004-workspaces-ws-q5vjd.us10.trial.applicationstudio.cloud.sap/"
+    ]
+  }
+
+}

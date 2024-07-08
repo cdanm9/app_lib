@@ -26,7 +26,7 @@ using {
 } from '../db/TRANSACTION_TABLES';
 
 
-service registrationProcessService {       
+service registrationApprovalService {       
   //@restrict: [
     //{ grant: 'READ', to:['Admin','Approver','Buyer','Vendor']}
   // ]

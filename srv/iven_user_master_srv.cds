@@ -1,19 +1,37 @@
 using {VENDOR_PORTAL} from '../db/MASTER_TABLES';
-using {
-  VENDOR_PORTAL.REQUEST_INFO
-} from '../db/TRANSACTION_TABLES';
+// using {
+//   VENDOR_PORTAL.REQUEST_INFO
+// } from '../db/TRANSACTION_TABLES';
 
 service userMasterService {
-
-  entity MasterIasUsers       as projection on VENDOR_PORTAL.MASTER_IAS_USER;
+  //@requires:['Admin','Approver','PM']    
+  @restrict: [
+    { grant: 'READ', to:['Admin']}
+  ]
+  entity MasterIasUsers as projection on VENDOR_PORTAL.MASTER_IAS_USER;
+  //@requires:['Admin','Approver','PM']
+  @restrict: [
+    { grant: ['READ','WRITE'], to:['Admin']}
+  ]
   entity MasterIvenUsers      as projection on VENDOR_PORTAL.MASTER_IVEN_USERS;
+  //@requires:['Admin','Approver','PM']
+  @restrict: [
+    { grant: 'READ', to:['Admin']}
+  ]
   entity MasterEntityCode     as projection on VENDOR_PORTAL.MASTER_ENTITY_CODE;
+  //@requires:['Admin','Approver','PM']
+  @restrict: [
+    { grant: 'READ', to:['Admin']}
+  ]
   entity MasterUserRole       as projection on VENDOR_PORTAL.MASTER_USER_ROLE;
+  //@requires:['Admin','Approver','PM']
+  @restrict: [
+    { grant: ['READ','WRITE'], to:['Admin']}
+  ]   
   entity MasterIvenUserEntity as projection on VENDOR_PORTAL.MASTER_USER_ENTITY_CODES{
     *,
     TO_ROLE:Association to one MasterUserRole on TO_ROLE.CODE=USER_ROLE       
-  };
-  entity RequestInfo          as projection on VENDOR_PORTAL.REQUEST_INFO;            
+  };          
    
   //CRUD Payload         
   type UserMasterPayload {
@@ -47,7 +65,7 @@ service userMasterService {
     USER_ID: String(50);
   }
 
-//CRUD operation action      
-// action PostUserMaster(input : UserMasterPayload) returns String;
-action PostUserMaster(action: String,userMaster:many MasterIvenUsers,entityData:many MasterIvenUserEntity,userDetails:User_Details)  returns String;
+//CRUD operation action          
+// action PostUserMaster(input : UserMasterPayload) returns String;     
+action PostUserMaster @(requires:['Admin']) (action: String,userMaster:many MasterIvenUsers,entityData:many MasterIvenUserEntity,userDetails:User_Details)  returns String;
 }  
