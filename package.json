@@ -31,7 +31,8 @@
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
-    "@sap/cds-dk": "^7"
+    "@sap/cds-dk": "^7",
+    "@sap/hdi-deploy": "4.9.5"
   },
   "scripts": {
     "start": "cds-serve"
@@ -121,12 +122,12 @@
         }
       },
       "auth": {
-        "kind": "xsuaa"
+        "kind": "mocked"
       },
       "connectivity": true,
       "destinations": true,
       "[hybrid]": {
-        "auth": "xsuaa"
+        "auth": "mocked"
       }
     },
     "hana": {

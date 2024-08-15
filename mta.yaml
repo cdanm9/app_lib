@@ -8,7 +8,7 @@ build-parameters:
   before-all:
     - builder: custom
       commands:
-        - npm ci
+        - npx ci
         - npx cds build --production
 modules:
   - name: VENDOR_PORTAL-srv
@@ -16,7 +16,7 @@ modules:
     path: gen/srv
     parameters:
       buildpack: nodejs_buildpack
-      memory: 750M
+      memory: 500M  
     build-parameters:
       builder: npm
     provides:

@@ -1,10 +1,10 @@
 {
   "xsappname": "ibs-vendor-portal-dev",
-  "tenant-mode": "dedicated",    
+  "tenant-mode": "dedicated",        
   "scopes": [
     {
       "name": "uaa.user",
-      "description": "UAA"
+      "description": "UAA"    
     },
     {
       "name": "$XSAPPNAME.Admin",

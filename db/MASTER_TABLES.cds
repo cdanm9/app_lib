@@ -1404,6 +1404,24 @@ context VENDOR_PORTAL {
 
     //Fiori Elements User Master Conversion End
 
+    //EMail Content Start
+    entity MASTER_EMAIL_CONTENT{     
+        key ACTION: String(25);
+        key APP_TYPE: String(25);
+        REQ_TYPE:String(25);    
+        APP_LINK:String(200);   
+        SUBJECT:String(250);
+        BODY:String;     
+        SUPPORT_MSG:String(500);
+        APP_LINK_MSG:String(500);
+        INFO_MSG:String(500);
+        CLOSING_MSG:String(500);
+        AUTOGEN_MSG:String(500);   
+        END_EMAIL_BODY1:String(250);
+        END_EMAIL_BODY2:String(250);  
+    }
+    //EMail Content End
+
     //MDK Attachment Start
 
      entity MASTER_IVEN_MDK_ATTACHMENTS {                 

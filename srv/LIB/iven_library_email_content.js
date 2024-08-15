@@ -67,7 +67,7 @@ module.exports = {
 				if (req_Type === "1" || req_Type === "2" || req_Type === "3" || req_Type === "6") {
 					var req = "";
 				} else {
-					var req = " Update ";
+					var req = " Update ";   
 				}
 
 				Emailbody = "Dear Approver," + "<br><br>";      
@@ -77,7 +77,7 @@ module.exports = {
 				oEmailContent.emailBody = req + "Request No. " + oEmailData.ReqNo + " for Vendor " + oEmailData.SupplierName +
 					" has been created and is currently pending for "+oEmailData.NextApproverRole+" approval." + "<br>" + "<br>" +
 					"Please click " + "<a href=" +  link + ">" + "here" + "</a>" + " to login to " + sClientShortName + " Portal and approve." +   
-					"<br>" + "<br>" +
+					"<br>" + "<br>" +  
 					// 			"<a href=" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "#" + link + ">" + EMAIL_LIBRARY.sLink_Portal_AdminAccess + "</a>" + "<br>" +
 					// 			"<a href=" + "https://flpnwc-ww4hph2jbz.dispatcher.ae1.hana.ondemand.com/sites/iven#Home-show" +
 					// 			">https://flpnwc-ww4hph2jbz.dispatcher.ae1.hana.ondemand.com/sites/iven#Home-show</a>" + "<br>" +

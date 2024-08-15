@@ -396,7 +396,7 @@ module.exports = cds.service.impl(function () {
     } catch (error) {
       req.error({ code: "500", message: error.message ? error.message : error});
     }
-  })
+  })    
 
   this.on('TestOnPremiseConnection',async(req) =>{
     try{
