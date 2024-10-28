@@ -1,33 +1,13 @@
 {
-  "name": "VENDOR_PORTAL",
+  "name": "ToolPage",
   "version": "1.0.0",
-  "description": "A simple CAP project.",
+  "description": "ToolPage Application",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@cap-js-community/odata-v2-adapter": "^1.11.6",
-    "@sap-cloud-sdk/core": "^1.54.2",
-    "@sap-cloud-sdk/http-client": "^3.4.0",
-    "@sap-cloud-sdk/openapi": "^3.13.0",
-    "@sap-cloud-sdk/resilience": "^3.4.0",
-    "@sap/cds": "^7.3.1",
-    "@sap/cds-hana": "^2",
-    "@sap/hana-client": "^2.19.21",
-    "@sap/hdbext": "^7.7.6",
-    "@sap/xssec": "^3",
-    "approuter": "^0.0.1-security",
-    "axios": "^1.6.8",
-    "core-util-is": "^1.0.3",
-    "crypto": "^1.0.1",
-    "express": "^4",
-    "form-data": "^4.0.0",
-    "nodemailer": "^6.9.7",
-    "npm": "^10.2.5",
-    "passport": "^0.6.0",
-    "sap-cf-axios": "^0.4.10",
-    "sap-hdbext-promisfied": "2.202307.1",
-    "stream": "^0.0.2"
+    "@sap/cds": "^8.3.1",
+    "express": "^4.21.1"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1",
@@ -38,103 +18,24 @@
     "start": "cds-serve"
   },
   "cds": {
+    "server": {
+      "index": true
+    },
     "requires": {
-      "db": "hana",
-      "A17_Cloud": {
+      "db":"hana",
+      "auth":"mocked",
+      "ROLE_CONFIG": {
         "kind": "rest",
         "credentials": {
-          "destination": "A17_Cloud",
-          "path": "/sap/opu/odata/sap/"
+          "destination": "ROLE_CONFIG",
+          "path": "/sap/rest/authorization/v2"       
         }
-      },
-      "EMAIL_DEST": {
-        "kind": "rest",
-        "credentials": {
-          "destination": "EMAIL_DEST",
-          "path": "/iVenEmail_V2"
-        }
-      },
-      "IAS_DEST": {
-        "kind": "rest",
-        "credentials": {
-          "destination": "IAS_DEST",
-          "path": "/scim"
-        }
-      },
-      "ZIVN_VENDOR_REG_SRV": {
-        "kind": "odata-v2",
-        "model": "srv/external/ZIVN_VENDOR_REG_SRV",
-        "csrf": true,
-        "csrfInBatch": true,
-        "credentials": {
-          "destination": "A17_Cloud",
-          "path": "sap/opu/odata/sap/ZIVN_VENDOR_REG_SRV",
-          "forwardAuthToken": true,
-          "timeout": 100000
-        }
-      },
-      "ZMDG_VENDOR_REG_SRV": {
-        "kind": "rest",
-        "model": "srv/external/ZMDG_VENDOR_REG_SRV",
-        "csrf": true,
-        "csrfInBatch": true,
-        "credentials": {
-          "destination": "A17_Cloud",
-          "path": "/sap/opu/odata/sap/ZMDG_VENDOR_REG_SRV"
-        }
-      },
-      "ZIBS_BFPOC_SRV": {
-        "kind": "rest",
-        "model": "srv/external/ZIBS_BFPOC_SRV",
-        "csrf": true,
-        "csrfInBatch": true,
-        "credentials": {
-          "destination": "A17_Cloud",
-          "path": "/sap/opu/odata/sap/ZIBS_BFPOC_SRV"
-        }
-      },
-      "BTP_DMS_Token": {
-        "kind": "rest",
-        "credentials": {
-          "destination": "BTP_DMS_Token",
-          "path": "/oauth/token"
-        }
-      },
-      "BTP_DMS_Dest": {
-        "kind": "rest",
-        "credentials": {
-          "destination": "BTP_DMS_Dest",
-          "path": ""
-        }
-      },
-      "BPA_TOKEN": {
-        "kind": "rest",
-        "credentials": {
-          "destination": "BPA_TOKEN",
-          "path": "/oauth/token"
-        }
-      },
-      "BPA_DEST": {
-        "kind": "rest",
-        "credentials": {
-          "destination": "BPA_DEST",
-          "path": "https://spa-api-gateway-bpi-us-prod.cfapps.us10.hana.ondemand.com"
-        }
-      },
-      "auth": {
-        "kind": "mocked"
       },
       "connectivity": true,
       "destinations": true,
       "[hybrid]": {
         "auth": "mocked"
       }
-    },
-    "hana": {
-      "deploy-format": "hdbtable"
-    },
-    "cov2ap": {
-      "plugin": true
     }
   }
 }

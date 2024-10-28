@@ -1,7 +1,7 @@
 _schema-version: '3.1'
-ID: VENDOR_PORTAL
+ID: ToolPage
 version: 1.0.0
-description: A simple CAP project.
+description: ToolPage
 parameters:
   enable-parallel-deployments: true
 build-parameters:
@@ -11,7 +11,7 @@ build-parameters:
         - npx ci
         - npx cds build --production
 modules:
-  - name: VENDOR_PORTAL-srv
+  - name: ToolPage-srv
     type: nodejs
     path: gen/srv
     parameters:
@@ -24,20 +24,20 @@ modules:
         properties:
           srv-url: '${default-url}'
     requires:
-      - name: VENDOR_PORTAL-db
-      - name: VENDOR_PORTAL-destination
-      - name: VENDOR_PORTAL-connectivity
-      - name: IBS_VENDOR_PORTAL-auth
-  - name: VENDOR_PORTAL-db-deployer
+      - name: ToolPage-db
+      - name: ToolPage-destination
+      - name: ToolPage-connectivity
+      - name: ToolPage-auth
+  - name: ToolPage-db-deployer
     type: hdb
     path: gen/db
     parameters:
       buildpack: nodejs_buildpack
       memory: 500M
     requires:
-      - name: VENDOR_PORTAL-db
+      - name: ToolPage-db
 
-  - name: VENDOR_PORTAL
+  - name: ToolPage
     type: approuter.nodejs
     path: app/router
     parameters:
@@ -51,25 +51,25 @@ modules:
           name: srv-api # must be used in xs-app.json as well
           url: ~{srv-url}
           forwardAuthToken: true
-      - name: IBS_VENDOR_PORTAL-auth
+      - name: ToolPage-auth
 resources:
-  - name: VENDOR_PORTAL-db
+  - name: ToolPage-db
     type: com.sap.xs.hdi-container
     parameters:
       service: hana
       service-plan: hdi-shared
-  - name: VENDOR_PORTAL-destination
+  - name: ToolPage-destination
     type: org.cloudfoundry.managed-service
     description: iVen Service Destination
     parameters:
       service: destination
       service-plan: lite
-  - name: VENDOR_PORTAL-connectivity
+  - name: ToolPage-connectivity
     type: org.cloudfoundry.managed-service
     parameters:
       service: connectivity
       service-plan: lite
-  - name: IBS_VENDOR_PORTAL-auth
+  - name: ToolPage-auth
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
