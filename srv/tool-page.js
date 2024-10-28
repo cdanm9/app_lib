@@ -1,10 +1,10 @@
 const cds=require('@sap/cds')
-module.exports=cds.service.impl(function(srv){
+module.exports=cds.service.impl(function(srv){   
     const {MasterApps,MasterSubApps,MasterRoleCollections,MasterAppResources}=this.entities;  
     this.on('getAccessibleApps', async (req) => {  
         try {
-          let connRoleConfig = await cds.connect.to('ROLE_CONFIG');   
-          let userEmail=req.req.authInfo.getEmail();
+          let connRoleConfig = await cds.connect.to('RoleConfig');         
+          let userEmail=req.req.authInfo.getEmail();   
           let sDecodeToken=Buffer.from(req.req.authInfo.getAppToken().split('.')[1], 'base64').toString();
           let oDecodedToken=JSON.parse(sDecodeToken)
           let aRoleCollections=oDecodedToken["xs.system.attributes"]["xs.rolecollections"];
@@ -30,16 +30,16 @@ module.exports=cds.service.impl(function(srv){
 
     this.on('READ',MasterRoleCollections, async (req) => {
       try {  
-        let connRoleConfig = await cds.connect.to('ROLE_CONFIG');  
+        let connRoleConfig = await cds.connect.to('RoleConfig');  
         let aAllAppsRole = await connRoleConfig.send({
           method: 'GET',
           path: "/rolecollections",
-          headers: { 'Content-Type': 'application/json',
+          headers: { 'Content-Type': 'application/json',   
                 "accept": "application/json",
                 "X-Requested-With": "XMLHttpRequest"}
         })      
         let i=0;  
-        aAllAppsRole=aAllAppsRole.filter(function(item){return item.name.includes('ZIVEN')})      
+        // aAllAppsRole=aAllAppsRole.filter(function(item){return item.name.includes('ZIVEN')})      
         for(i in aAllAppsRole){
           delete aAllAppsRole[i].roleReferences   
         }     

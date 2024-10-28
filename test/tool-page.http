@@ -1,56 +1,11 @@
-
-##Delete App
-DELETE http://localhost:4004/odata/v4/app-sa-info/MasterAppResources('IVEN_WLC_6')
-Content-Type: application/json
-
-### Update PO 
-POST http://localhost:4004/odata/v4/app-sa-info/MasterAppResources   
+## Master App Resources 
+POST http://localhost:4004/odata/v4/tool-page/MasterAppResources   
 Content-Type: application/json
 
 {
-    "APP_CODE":"IVEN_SA", 
-    "APP_NAME":"iVen(Vendor Management)",
-    "LOGO_TYPE":"image/jpg",   
-    "LOGO_NAME":"Nihilent.jpg"  
+    "resourceType":"LGO",    
+    "appName":"iVen(Vendor Management)",
+    "mimeType":"image/jpg",   
+    "name":"Nihilent.jpg"  
 }  
-
-###Patch PO Header
-PUT http://localhost:4004/odata/v4/app-sa-info/MasterAppResources(ID=f9ac4e01-5fb2-43ea-96cd-6698ee76e7cf,IsActiveEntity=true)/LOGO
-Content-Type: image/jpeg
-
-< ./Nihilent.jpg
-
-
-
-###Patch PO Header
-PATCH http://localhost:4004/odata/v4/app-sa-info/MasterAppResources(ID=8b4e6c69-0983-4098-9e9a-aa339f756626,IsActiveEntity=false)
-Content-Type: application/json
-
-{
-    "APP_CODE":"IVEN_SA", 
-    "APP_NAME":"iVen(Vendor Management)",
-    "LOGO_TYPE":"image/jpg",   
-    "LOGO_NAME":"Nihilent.jpg"  
-} 
-
-###POST
-POST http://localhost:4004/odata/v4/app-sa-info/MasterAppResources(ID=8b4e6c69-0983-4098-9e9a-aa339f756626,IsActiveEntity=false)/AdminService.draftPrepare
-Content-Type: application/json
-
-{}
-
-### Upload File
-PUT http://localhost:4004/odata/v4/app-sa-info/MasterAppResources(8b4e6c69-0983-4098-9e9a-aa339f756626)/LOGO
-Content-Type: image/jpg
-
-< ./Nihilent.jpg
-
-### Update Fields       
-PATCH http://localhost:4004/odata/v4/app-sa-info/MasterAppResources('IVEN_WLC_2')   
-Content-Type: application/json
-
-{
-    "LOGO_URL":"/odata/v4/app-sa-info/MasterAppResources('IVEN_WLC_2')/LOGO"      
-}
-
-
+   

@@ -15,7 +15,7 @@ context tools{
         desc:String(300);
     }
 
-    entity MasterApps:cuid{    
+    entity MasterApps:cuid{       
         @readonly sequence:Integer64;     
         name: String(100);
         iconUri:String(250);
@@ -36,10 +36,12 @@ context tools{
     }
 
     entity MasterAppTypes{
-    key code:String(20);    
+        key code:String(20);    
         desc:String(500);        
     }
 
+    @cds.persistence.exists 
+    @cds.persistence.calcview      
     entity MasterRoleCollections{
         key name:String(100);    
         description:String(500);        

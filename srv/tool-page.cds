@@ -1,5 +1,5 @@
 using {tools} from '../db/tools';   
-service appSaInfoService { 
+service toolPage { 
     @odata.draft.enabled:true
     entity MasterApps as projection on tools.MasterApps;
     entity MasterSubApps as projection on tools.MasterSubApps;  
@@ -11,3 +11,5 @@ service appSaInfoService {
     entity MasterAppResourceTypes as projection on tools.MasterAppResourceTypes;          
     function getAccessibleApps() returns many String;     
 }
+
+
