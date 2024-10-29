@@ -16,11 +16,17 @@
   "devDependencies": {
     "@cap-js/sqlite": "^1",
     "@sap/cds-dk": "^7",
-    "@sap/hdi-deploy": "4.9.5"
+    "@sap/hdi-deploy": "4.9.5",
+    "rimraf": "^5.0.5",
+    "@sap/ux-specification": "UI5-1.129"
   },
   "scripts": {
     "start": "cds-serve",
-    "build-deploy":"mbt build && cf deploy mta_archives/ToolPage_1.0.0.mtar"      
+    "build-deploy": "mbt build && cf deploy mta_archives/ToolPage_1.0.0.mtar",
+    "watch-manage-site": "cds watch --open manage-site/webapp/index.html?sap-ui-xx-viewCache=false",
+    "undeploy": "cf undeploy ToolPage --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
   },
   "cds": {
     "server": {
@@ -29,7 +35,7 @@
     "requires": {
       "db": "hana",
       "auth": "xsuaa",
-      "RoleConfig": {   
+      "RoleConfig": {
         "kind": "rest",
         "credentials": {
           "destination": "RoleConfig",
@@ -45,5 +51,8 @@
     "hana": {
       "deploy-format": "hdbtable"
     }
-  }
+  },
+  "sapux": [
+    "app/manage-site"
+  ]
 }

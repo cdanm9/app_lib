@@ -1,5 +1,5 @@
 {
-  "authenticationMethod": "route",   
+  "authenticationMethod": "route",
   "logout": {
     "logoutEndpoint": "/app-logout",
     "logoutPage": "/"
@@ -29,5 +29,6 @@
       "csrfProtection": true,
       "authenticationType": "xsuaa"
     }
-  ]
+  ],
+  "welcomeFile": "/comibsmanagesite"
 }
