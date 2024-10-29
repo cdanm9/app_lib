@@ -38,3 +38,5 @@ gen/db/.env
 .env1
 # auto generated wildcard
 .env2
+resources/comibsmanagesite.zip
+.gitignore
