@@ -4,8 +4,12 @@ module.exports=cds.service.impl(function(srv){
     this.on('getAccessibleApps', async (req) => {  
         try {
           let connRoleConfig = await cds.connect.to('RoleConfig');         
-          let userEmail=req.req.authInfo.getEmail();   
-          let sDecodeToken=Buffer.from(req.req.authInfo.getAppToken().split('.')[1], 'base64').toString();
+          let userEmail=req?.req?.authInfo?.getEmail();
+          if(!userEmail)
+              userEmail=req.user.attr.email  
+
+          // let sDecodeToken=Buffer.from(req.req.authInfo.getAppToken().split('.')[1], 'base64').toString();
+          let sDecodeToken=Buffer.from(req.user.tokenInfo['jwt'].split('.')[1], 'base64').toString();
           let oDecodedToken=JSON.parse(sDecodeToken)
           let aRoleCollections=oDecodedToken["xs.system.attributes"]["xs.rolecollections"];
           // let aAllApps=await SELECT .from(MasterIvenPOSubAppInfo[`S_btpRole in ${aRoleCollections}`].MasterIvenPOAppInfo);
@@ -94,9 +98,9 @@ module.exports=cds.service.impl(function(srv){
       await UPDATE(MasterSubApps.drafts).set({icon: appSubIconUri }).where({ ID: id });  
     }  
 
-    this.before('CREATE',MasterAppResources, req => {         
+    this.before('CREATE',MasterAppResources, req => {             
       // req.data.LOGO_URL = `/odata/v4/app-sa-info/MasterAppResources('${req.data.APP_CODE}')/LOGO`          
-      req.data.LOGO_URL = `/odata/v4/app-sa-info/MasterAppResources(ID=${req.data.ID},IsActiveEntity=true)/resource`           
+      req.data.url = `/odata/v4/app-sa-info/MasterAppResources(ID=${req.data.ID},IsActiveEntity=true)/resource`           
     })
 
     this.before ("SAVE",MasterApps, req => {   

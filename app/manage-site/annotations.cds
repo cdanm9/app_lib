@@ -57,13 +57,13 @@ annotate service.MasterApps with @(
         },
         {
             $Type : 'UI.DataField',
-            Label : 'Application',
-            Value : name,
+            Label : 'Icon',
+            Value : icon,
         },
         {
             $Type : 'UI.DataField',
-            Label : 'Icon',
-            Value : icon,
+            Label : 'Application',
+            Value : name,
         },
         {
             $Type : 'UI.DataField',
@@ -125,10 +125,14 @@ annotate service.MasterApps with {
                     LocalDataProperty : btpRole,
                     ValueListProperty : 'name',
                 },
+                {
+                    $Type : 'Common.ValueListParameterDisplayOnly',
+                    ValueListProperty : 'description',
+                },
             ],
             Label : 'Application Role',
         },
-        Common.ValueListWithFixedValues : true,
+        Common.ValueListWithFixedValues : false,
     )
 };
 
@@ -160,10 +164,7 @@ annotate service.MasterAppTypes with {
 };
 
 annotate service.MasterRoleCollections with {
-    name @Common.Text : {
-        $value : description,
-        ![@UI.TextArrangement] : #TextOnly,
-    }
+    name @Common.Text : description
 };
 
 annotate service.MasterSubApps with @(
@@ -237,11 +238,6 @@ annotate service.MasterAppResources with @(
             },
             {
                 $Type : 'UI.DataField',
-                Value : name,
-                Label : 'Name',
-            },
-            {
-                $Type : 'UI.DataField',
                 Value : resource,
                 Label : 'Resource',
             },
@@ -262,4 +258,31 @@ annotate service.MasterAppResources with @(
         ImageUrl : resource,
     },
 );
+
+annotate service.MasterAppResources with {
+    resourceType @(Common.ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'MasterAppResourceTypes',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : resourceType,
+                    ValueListProperty : 'code',
+                },
+            ],
+            Label : 'Resource Type',
+        },
+        Common.ValueListWithFixedValues : true,
+        Common.Text : {
+            $value : to_ResourceType.desc,
+            ![@UI.TextArrangement] : #TextOnly,
+        },
+)};
+
+annotate service.MasterAppResourceTypes with {
+    code @Common.Text : {
+        $value : desc,
+        ![@UI.TextArrangement] : #TextOnly,
+    }
+};
 

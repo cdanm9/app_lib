@@ -1,0 +1,1 @@
+using toolPage as service from '../../srv/tool-page';

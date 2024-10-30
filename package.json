@@ -14,10 +14,10 @@
     "express": "^4.21.1"
   },
   "devDependencies": {
-    "@cap-js/sqlite": "^1",
-    "@sap/cds-dk": "^7",
-    "@sap/hdi-deploy": "4.9.5",
-    "rimraf": "^5.0.5",
+    "@cap-js/sqlite": "^1.7.5",
+    "@sap/cds-dk": "^8.4.0",
+    "@sap/hdi-deploy": "^5.3.2",
+    "rimraf": "^6.0.1",
     "@sap/ux-specification": "UI5-1.129"
   },
   "scripts": {
@@ -26,7 +26,8 @@
     "watch-manage-site": "cds watch --open manage-site/webapp/index.html?sap-ui-xx-viewCache=false",
     "undeploy": "cf undeploy ToolPage --delete-services --delete-service-keys --delete-service-brokers",
     "build": "rimraf resources mta_archives && mbt build --mtar archive",
-    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-tool-page-ui": "cds watch --open tool-page-ui/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "cds": {
     "server": {

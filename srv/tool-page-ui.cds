@@ -7,7 +7,7 @@ annotate toolPage.MasterApps @(
         ],
         TargetProperties:[
             icon
-        ]
+        ]   
     }
 );
 

@@ -11,7 +11,6 @@ modules:
   - name: ToolPage-destination
   - name: ToolPage-connectivity
   - name: ToolPage-auth
-  
   provides:
   - name: srv-api
     properties:
@@ -60,9 +59,23 @@ modules:
       - comibsmanagesite.zip
       name: comibsmanagesite
       target-path: resources/
+    - artifacts:
+      - comibstoolpageui.zip
+      name: comibstoolpageui
+      target-path: resources/
 - name: comibsmanagesite
   type: html5
   path: app/manage-site
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: comibstoolpageui
+  type: html5
+  path: app/tool-page-ui
   build-parameters:
     build-result: dist
     builder: custom
@@ -86,14 +99,14 @@ resources:
   description: ToolPage Service Destination
   parameters:
     config:
-      HTML5Runtime_enabled: true   
+      HTML5Runtime_enabled: false
       init_data:
         instance:
           destinations:
           - Authentication: NoAuthentication
             Name: ui5
             ProxyType: Internet
-            Type: HTTP   
+            Type: HTTP
             URL: https://ui5.sap.com
           existing_destinations_policy: update
     service: destination

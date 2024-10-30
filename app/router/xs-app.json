@@ -2,7 +2,7 @@
   "authenticationMethod": "route",
   "logout": {
     "logoutEndpoint": "/app-logout",
-    "logoutPage": "/"
+    "logoutPage": "/comibsmanagesite/index.html"   
   },
   "routes": [
     {
