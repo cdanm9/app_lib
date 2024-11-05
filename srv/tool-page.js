@@ -1,12 +1,13 @@
 const cds=require('@sap/cds')
-module.exports=cds.service.impl(function(srv){   
+module.exports=cds.service.impl(function(srv){  
+    const {path}=srv 
     const {MasterApps,MasterSubApps,MasterRoleCollections,MasterAppResources}=this.entities;  
     this.on('getAccessibleApps', async (req) => {  
         try {
           let connRoleConfig = await cds.connect.to('RoleConfig');         
           let userEmail=req?.req?.authInfo?.getEmail();
           if(!userEmail)
-              userEmail=req.user.attr.email  
+              userEmail=req.user.attr.email       
 
           // let sDecodeToken=Buffer.from(req.req.authInfo.getAppToken().split('.')[1], 'base64').toString();
           let sDecodeToken=Buffer.from(req.user.tokenInfo['jwt'].split('.')[1], 'base64').toString();
@@ -42,8 +43,7 @@ module.exports=cds.service.impl(function(srv){
                 "accept": "application/json",
                 "X-Requested-With": "XMLHttpRequest"}
         })      
-        let i=0;  
-        // aAllAppsRole=aAllAppsRole.filter(function(item){return item.name.includes('ZIVEN')})      
+        let i=0;         
         for(i in aAllAppsRole){
           delete aAllAppsRole[i].roleReferences   
         }     
@@ -98,9 +98,9 @@ module.exports=cds.service.impl(function(srv){
       await UPDATE(MasterSubApps.drafts).set({icon: appSubIconUri }).where({ ID: id });  
     }  
 
-    this.before('CREATE',MasterAppResources, req => {             
-      // req.data.LOGO_URL = `/odata/v4/app-sa-info/MasterAppResources('${req.data.APP_CODE}')/LOGO`          
-      req.data.url = `/odata/v4/app-sa-info/MasterAppResources(ID=${req.data.ID},IsActiveEntity=true)/resource`           
+    this.before('CREATE',MasterAppResources, req => {                  
+           
+      req.data.url = `${path}/MasterAppResources(ID=${req.data.ID},IsActiveEntity=true)/resource`           
     })
 
     this.before ("SAVE",MasterApps, req => {   

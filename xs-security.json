@@ -21,7 +21,8 @@
     "redirect-uris": [
       "http://localhost:5000/",
       "https://port5000-workspaces-ws-jwjwz.us10.trial.applicationstudio.cloud.sap/",
-      "https://9da603b4trial-dev-toolpage.cfapps.us10-001.hana.ondemand.com/"      
+      "https://9da603b4trial-dev-toolpage.cfapps.us10-001.hana.ondemand.com/",    
+      "https://com-sap-toolpage.cfapps.us10-001.hana.ondemand.com/"      
     ]
   }
 

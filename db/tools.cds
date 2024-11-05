@@ -39,9 +39,7 @@ context tools{
         key code:String(20);    
         desc:String(500);        
     }
-
-    @cds.persistence.exists 
-    @cds.persistence.calcview      
+     
     entity MasterRoleCollections{
         key name:String(100);    
         description:String(500);        

@@ -1,11 +1,4 @@
-## Master App Resources 
-POST http://localhost:4004/odata/v4/tool-page/MasterAppResources   
-Content-Type: application/json
-
-{
-    "resourceType":"LGO",    
-    "appName":"iVen(Vendor Management)",
-    "mimeType":"image/jpg",   
-    "name":"Nihilent.jpg"  
-}  
+##Get Master App Resources   
+@link= http://localhost:4004/odata/v4/tool-page
+GET {{link}}/MasterAppResources     
    
