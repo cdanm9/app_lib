@@ -13,18 +13,13 @@ function (Controller,Fragment,Filter,FilterOperator,JSONModel,MessageBox,Message
     let that,localStorage;
     return Controller.extend("com.ibs.toolpageui.controller.Master", {
         onInit: function() {  
-            that=this;    
-            // that.oDataModel = this.getOwnerComponent().getModel("checkServiceAvailibilty")    
+            that=this;     
             that.oDataToolModel = this.getOwnerComponent().getModel();          
-            that.idNavigationList=this.getView().byId("idNavigationList");  
-            // URLListValidator.add("https", "ibs-portal-dev.launchpad.cfapps.us10.hana.ondemand.com", undefined, "/8526cdcb-5c31-4934-a365-72dce07a9b8d.ibs_bs_iven_po.comibsibsappiveninvoicepaymentrpt-0.0.1/index.html");
-            // URLListValidator.add("https", "ibs-portal-dev.launchpad.cfapps.us10.hana.ondemand.com");
-            // URLListValidator.add(undefined, "ibs-portal-dev.launchpad.cfapps.us10.hana.ondemand.com");
-            // URLListValidator.add("https", "ibs-portal-dev.launchpad.cfapps.us10.hana.ondemand.com", undefined, "/8526cdcb-5c31-4934-a365-72dce07a9b8d.ibs_bs_iven_po.comibsibsappiveninvoicepaymentrpt-0.0.1/index.html");
-            // URLListValidator.add("https", "ibs-portal-dev-ibs-portal-dev-ibs-mta-iven-sa-approuter.cfapps.us10.hana.ondemand.com/comibsibsappivensaanalytical/odata/v4/app-sa-info/MasterIvenSAInfo(ID=d0f10c33-8ab4-4daf-9d82-ee57e9c8414a,IsActiveEntity=true)/LOGO");
-            // URLListValidator.add("https", "ibs-portal-dev-ibs-portal-dev-ibs-mta-iven-sa-approuter.cfapps.us10.hana.ondemand.com",undefined,"/comibsibsappivensaanalytical/odata/v4/app-sa-info/MasterIvenSAInfo(ID=d0f10c33-8ab4-4daf-9d82-ee57e9c8414a,IsActiveEntity=true)/LOGO");
-            // URLListValidator.add("https://ibs-portal-dev-ibs-portal-dev-ibs-mta-iven-sa-approuter.cfapps.us10.hana.ondemand.com/comibsibsappivensaanalytical/odata/v4/app-sa-info/MasterIvenSAInfo(ID=d0f10c33-8ab4-4daf-9d82-ee57e9c8414a,IsActiveEntity=true)/LOGO");      
-            
+            that.idNavigationList=this.getView().byId("idNavigationList");     
+
+            URLListValidator.add("https", "9da603b4trial-dev-toolpage.cfapps.us10-001.hana.ondemand.com");
+            URLListValidator.add("https", "com-sap-toolpage.cfapps.us10-001.hana.ondemand.com");  
+            URLListValidator.add("https", "ibs-portal-dev.launchpad.cfapps.us10.hana.ondemand.com");    
             let oAppDetails = {    
               UserFullName:"",    
               UserInitials:"",      
@@ -146,7 +141,7 @@ function (Controller,Fragment,Filter,FilterOperator,JSONModel,MessageBox,Message
               } 
               that.oAppPlugin=oResponse.filter(function(oAppInfo){
                 return oAppInfo.appType=='PLG'  
-              })      
+              })           
               oResponse=oResponse.filter(function(oAppInfo){
                 return oAppInfo.appType!='PLG'    
               })
@@ -180,11 +175,7 @@ function (Controller,Fragment,Filter,FilterOperator,JSONModel,MessageBox,Message
             //     this._getLoginDetails();
             // }
             
-          },
-          onLogout:function(oEvent){      
-            // sap.m.URLHelper.redirect("https://9da603b4trial.launchpad.cfapps.us10.hana.ondemand.com/a22d66b3-3e78-4e57-ba53-762df11839fe.comibsibsappivensaanalytical.comibsibsappivensaanalytical-0.0.1/logout-page.html", false); 
-            sap.m.URLHelper.redirect("/logout-page.html", false);                
-          },
+          },  
           onSideNavButtonPress: function() {
             var oToolPage = this.getView().byId("toolPage");
             var bSideExpanded = oToolPage.getSideExpanded();

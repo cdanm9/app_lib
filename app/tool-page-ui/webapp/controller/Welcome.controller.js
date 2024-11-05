@@ -39,7 +39,7 @@ sap.ui.define([
 				  for(i in aWelcomeApps){          
 					aWelcomeApps[i].url=that.appModulePath+aWelcomeApps[i].url 
 					oCarouselContent=that._loadImage(aWelcomeApps[i].url);
-					if(aWelcomeApps[i].LOGO_TYPE=='text/html')
+					if(aWelcomeApps[i].mimeType=='text/html')  
 						oCarouselContent=that._loadIframe(aWelcomeApps[i].url);   
 					oCarousel.addPage(oCarouselContent);              
 				  }

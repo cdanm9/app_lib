@@ -62,7 +62,8 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
-        "sap.fe.templates": {}
+        "sap.fe.templates": {},
+        "sap.f": {}
       }
     },
     "contentDensities": {
@@ -94,22 +95,36 @@
       "css": []
     },
     "routing": {
-      "config": {},
+      "config": {
+        "flexibleColumnLayout": {
+          "defaultTwoColumnLayoutType": "TwoColumnsBeginExpanded",
+          "defaultThreeColumnLayoutType": "ThreeColumnsMidExpanded"
+        },
+        "routerClass": "sap.f.routing.Router"
+      },
       "routes": [
         {
           "pattern": ":?query:",
           "name": "MasterAppsList",
-          "target": "MasterAppsList"
+          "target": [
+            "MasterAppsList"
+          ]
         },
         {
           "pattern": "MasterApps({key}):?query:",
           "name": "MasterAppsObjectPage",
-          "target": "MasterAppsObjectPage"
+          "target": [
+            "MasterAppsList",
+            "MasterAppsObjectPage"
+          ]
         },
         {
           "name": "MasterAppResourcesObjectPage",
           "pattern": "MasterAppResources({MasterAppResourcesKey}):?query:",
-          "target": "MasterAppResourcesObjectPage"
+          "target": [
+            "MasterAppsList",
+            "MasterAppResourcesObjectPage"
+          ]
         }
       ],
       "targets": {
@@ -155,7 +170,9 @@
                 ]
               }
             }
-          }
+          },
+          "controlAggregation": "beginColumnPages",
+          "contextPattern": ""
         },
         "MasterAppsObjectPage": {
           "type": "Component",
@@ -167,7 +184,9 @@
               "contextPath": "/MasterApps",
               "navigation": {}
             }
-          }
+          },
+          "controlAggregation": "midColumnPages",
+          "contextPattern": "/MasterApps({key})"
         },
         "MasterAppResourcesObjectPage": {
           "type": "Component",
@@ -178,9 +197,17 @@
               "navigation": {},
               "contextPath": "/MasterAppResources"
             }
-          }
+          },
+          "controlAggregation": "midColumnPages",
+          "contextPattern": "/MasterAppResources({MasterAppResourcesKey})"
         }
       }
+    },
+    "rootView": {
+      "viewName": "sap.fe.templates.RootContainer.view.Fcl",
+      "type": "XML",
+      "async": true,
+      "id": "appRootView"
     }
   },
   "sap.fiori": {
