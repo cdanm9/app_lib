@@ -1,8 +1,8 @@
 {
-  "name": "ToolPage",
+  "name": "app_lib",
   "version": "1.0.0",
-  "description": "ToolPage Application",
-  "repository": "<Add your repository here>",
+  "description": "App Library Application",
+  "repository": "app_lib",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
@@ -18,7 +18,6 @@
     "@cap-js/sqlite": "^1.7.5",
     "@sap/cds-dk": "^8.4.0",
     "@sap/hdi-deploy": "^5.3.2",
-    "@sap/ux-specification": "UI5-1.129",
     "rimraf": "^6.0.1"
   },
   "scripts": {
@@ -53,8 +52,5 @@
     "hana": {
       "deploy-format": "hdbtable"
     }
-  },
-  "sapux": [
-    "app/manage-site"
-  ]
+  }
 }

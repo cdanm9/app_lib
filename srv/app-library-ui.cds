@@ -1,6 +1,6 @@
-using {toolPage} from './tool-page';
+using {appLibraryService} from './app-library';
 
-annotate toolPage.MasterApps @(
+annotate appLibraryService.MasterApps @(
     Common.SideEffects #IconView : {
         SourceProperties : [
             iconUri   
@@ -11,7 +11,7 @@ annotate toolPage.MasterApps @(
     }
 );
 
-annotate toolPage.MasterApps@(
+annotate appLibraryService.MasterApps@(
     Common.SideEffects #SubIconView: {
         SourceEntities  : [
             to_SubApp

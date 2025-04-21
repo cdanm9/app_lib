@@ -1,5 +1,5 @@
 using { cuid } from '@sap/cds/common';
-context tools{   
+context app_lib{   
     entity MasterAppResources:cuid{   
         resourceType:String(100);       
         appName:String(250);

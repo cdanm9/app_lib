@@ -1,5 +1,5 @@
 {
-  "xsappname": "ToolPage-xsappname",
+  "xsappname": "app_lib-xsappname",
   "tenant-mode": "dedicated",        
   "scopes": [
     {
@@ -19,10 +19,9 @@
   ],
   "oauth2-configuration": {
     "redirect-uris": [
-      "http://localhost:5000/",
-      "https://port5000-workspaces-ws-jwjwz.us10.trial.applicationstudio.cloud.sap/",
-      "https://9da603b4trial-dev-toolpage.cfapps.us10-001.hana.ondemand.com/",    
-      "https://com-sap-toolpage.cfapps.us10-001.hana.ondemand.com/"      
+      "http://*.localhost:4004/**",
+      "https://*.hana.ondemand.com/**",
+      "https://*.applicationstudio.cloud.sap/**"     
     ]
   }
 
