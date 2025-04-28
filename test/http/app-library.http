@@ -1,0 +1,31 @@
+
+@link= http://localhost:4004
+
+###Get Master App Resources   
+# @name MasterAppResources_GET
+GET {{link}}/odata/v4/app-library/MasterAppResources 
+
+###Post Master App Resources
+# @name MasterAppResources_POST
+
+POST {{link}}/odata/v4/app-library/MasterAppResources
+Content-Type: application/json
+
+{
+    "resourceType": "WLC",
+    "appName": "Welcome to React Portal",
+    "name": "React_Portal.png",
+    "mimeType": "image/png"
+}
+
+### Result from POST request above
+@draftID = {{MasterAppResources_POST.response.body.$.ID}}
+
+##PUT Master App Resources
+PUT {{link}}/odata/v4/app-library/MasterApps(ID={{draftID}},IsActiveEntity=true)/resource
+Content-Type: image/png
+
+< ./React_Portal.png
+
+
+   

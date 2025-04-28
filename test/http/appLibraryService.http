@@ -1,0 +1,311 @@
+@server = http://localhost:4004
+
+
+### MasterApps
+# @name MasterApps_GET
+GET {{server}}/odata/v4/app-library/MasterApps
+
+
+
+### MasterApps Drafts GET
+# @name MasterApps_Drafts_GET
+GET {{server}}/odata/v4/app-library/MasterApps?$filter=(IsActiveEntity eq false)
+
+
+
+### MasterApps Draft POST
+# @name MasterApps_Draft_POST
+POST {{server}}/odata/v4/app-library/MasterApps
+Content-Type: application/json
+
+{
+  "sequence": 91,
+  "name": "name-22638564",
+  "iconUri": "iconUri-22638564",
+  "icon": "icon-22638564",
+  "btpRole": "btpRole-22638564",
+  "appType": "appType-22638564",
+  "to_AppType": {
+    "code": "terAppTypes-13053351"
+  },
+  "to_SubApp": [
+    {
+      "ID": "7884739b-f15a-4f06-94f4-13b1be6905b0",
+      "name": "name-7884739",
+      "icon": "icon-7884739",
+      "iconUri": "iconUri-7884739",
+      "appUrl": "appUrl-7884739"
+    },
+    {
+      "ID": "7884740b-4e26-4ed9-b633-b40f8143e387",
+      "name": "name-7884740",
+      "icon": "icon-7884740",
+      "iconUri": "iconUri-7884740",
+      "appUrl": "appUrl-7884740"
+    }
+  ]
+}
+
+
+### Result from POST request above
+@draftID = {{MasterApps_Draft_POST.response.body.$.ID}}
+
+
+### MasterApps Draft PATCH
+# @name MasterApps_Draft_Patch
+PATCH {{server}}/odata/v4/app-library/MasterApps(ID={{draftID}},IsActiveEntity=false)
+Content-Type: application/json
+
+{
+  "sequence": 91,
+  "name": "name-22638564",
+  "iconUri": "iconUri-22638564",
+  "icon": "icon-22638564",
+  "btpRole": "btpRole-22638564",
+  "appType": "appType-22638564",
+  "to_AppType": {
+    "code": "terAppTypes-13053351"
+  },
+  "to_SubApp": [
+    {
+      "ID": "7884739b-f15a-4f06-94f4-13b1be6905b0",
+      "name": "name-7884739",
+      "icon": "icon-7884739",
+      "iconUri": "iconUri-7884739",
+      "appUrl": "appUrl-7884739"
+    },
+    {
+      "ID": "7884740b-4e26-4ed9-b633-b40f8143e387",
+      "name": "name-7884740",
+      "icon": "icon-7884740",
+      "iconUri": "iconUri-7884740",
+      "appUrl": "appUrl-7884740"
+    }
+  ]
+}
+
+
+### MasterApps Draft Prepare
+# @name MasterApps_Draft_Prepare
+POST {{server}}/odata/v4/app-library/MasterApps(ID={{draftID}},IsActiveEntity=false)/AdminService.draftPrepare
+Content-Type: application/json
+
+{}
+
+
+### MasterApps Draft Activate
+# @name MasterApps_Draft_Activate
+POST {{server}}/odata/v4/app-library/MasterApps(ID={{draftID}},IsActiveEntity=false)/AdminService.draftActivate
+Content-Type: application/json
+
+{}
+
+
+### MasterSubApps
+# @name MasterSubApps_GET
+GET {{server}}/odata/v4/app-library/MasterSubApps
+
+
+
+### MasterSubApps
+# @name MasterSubApps_POST
+POST {{server}}/odata/v4/app-library/MasterSubApps
+Content-Type: application/json
+
+{
+  "ID": "7884739b-f15a-4f06-94f4-13b1be6905b0",
+  "name": "name-7884739",
+  "icon": "icon-7884739",
+  "iconUri": "iconUri-7884739",
+  "appUrl": "appUrl-7884739"
+}
+
+
+### MasterSubApps
+# @name MasterSubApps_PATCH
+PATCH {{server}}/odata/v4/app-library/MasterSubApps/7884739b-f15a-4f06-94f4-13b1be6905b0
+Content-Type: application/json
+
+{
+  "ID": "7884739b-f15a-4f06-94f4-13b1be6905b0",
+  "name": "name-7884739",
+  "icon": "icon-7884739",
+  "iconUri": "iconUri-7884739",
+  "appUrl": "appUrl-7884739"
+}
+
+
+### MasterSubApps
+# @name MasterSubApps_DELETE
+DELETE {{server}}/odata/v4/app-library/MasterSubApps/7884739b-f15a-4f06-94f4-13b1be6905b0
+Content-Type: application/json
+
+
+### MasterAppTypes
+# @name MasterAppTypes_GET
+GET {{server}}/odata/v4/app-library/MasterAppTypes
+
+
+
+### MasterAppTypes
+# @name MasterAppTypes_POST
+POST {{server}}/odata/v4/app-library/MasterAppTypes
+Content-Type: application/json
+
+{
+  "code": "terAppTypes-13053351",
+  "desc": "desc-13053351"
+}
+
+
+### MasterAppTypes
+# @name MasterAppTypes_PATCH
+PATCH {{server}}/odata/v4/app-library/MasterAppTypes/terAppTypes-13053351
+Content-Type: application/json
+
+{
+  "code": "terAppTypes-13053351",
+  "desc": "desc-13053351"
+}
+
+
+### MasterAppTypes
+# @name MasterAppTypes_DELETE
+DELETE {{server}}/odata/v4/app-library/MasterAppTypes/terAppTypes-13053351
+Content-Type: application/json
+
+
+### MasterRoleCollections
+# @name MasterRoleCollections_GET
+GET {{server}}/odata/v4/app-library/MasterRoleCollections
+
+
+
+### MasterRoleCollections
+# @name MasterRoleCollections_POST
+POST {{server}}/odata/v4/app-library/MasterRoleCollections
+Content-Type: application/json
+
+{
+  "name": "MasterRoleCollections-9870183",
+  "description": "description-9870183",
+  "isReadOnly": false
+}
+
+
+### MasterRoleCollections
+# @name MasterRoleCollections_PATCH
+PATCH {{server}}/odata/v4/app-library/MasterRoleCollections/MasterRoleCollections-9870183
+Content-Type: application/json
+
+{
+  "name": "MasterRoleCollections-9870183",
+  "description": "description-9870183",
+  "isReadOnly": false
+}
+
+
+### MasterRoleCollections
+# @name MasterRoleCollections_DELETE
+DELETE {{server}}/odata/v4/app-library/MasterRoleCollections/MasterRoleCollections-9870183
+Content-Type: application/json
+
+
+### MasterAppResources
+# @name MasterAppResources_GET
+GET {{server}}/odata/v4/app-library/MasterAppResources
+
+
+
+### MasterAppResources Drafts GET
+# @name MasterAppResources_Drafts_GET
+GET {{server}}/odata/v4/app-library/MasterAppResources?$filter=(IsActiveEntity eq false)
+
+
+
+### MasterAppResources Draft POST
+# @name MasterAppResources_Draft_POST
+POST {{server}}/odata/v4/app-library/MasterAppResources
+Content-Type: application/json
+
+{
+  "resourceType": "resourceType-5621800",
+  "appName": "appName-5621800",
+  "mimeType": "mimeType-5621800",
+  "name": "name-5621800",
+  "url": "url-5621800",
+  "to_ResourceType": {
+    "code": "MasterAppResourceTypes-14822740"
+  }
+}
+
+
+### Result from POST request above
+@draftID = {{MasterAppResources_Draft_POST.response.body.$.ID}}
+
+
+### MasterAppResources Draft PATCH
+# @name MasterAppResources_Draft_Patch
+PATCH {{server}}/odata/v4/app-library/MasterAppResources(ID={{draftID}},IsActiveEntity=false)
+Content-Type: application/json
+
+{
+  "resourceType": "resourceType-5621800",
+  "appName": "appName-5621800",
+  "mimeType": "mimeType-5621800",
+  "name": "name-5621800",
+  "url": "url-5621800",
+  "to_ResourceType": {
+    "code": "MasterAppResourceTypes-14822740"
+  }
+}
+
+
+### MasterAppResources Draft Prepare
+# @name MasterAppResources_Draft_Prepare
+POST {{server}}/odata/v4/app-library/MasterAppResources(ID={{draftID}},IsActiveEntity=false)/AdminService.draftPrepare
+Content-Type: application/json
+
+{}
+
+
+### MasterAppResources Draft Activate
+# @name MasterAppResources_Draft_Activate
+POST {{server}}/odata/v4/app-library/MasterAppResources(ID={{draftID}},IsActiveEntity=false)/AdminService.draftActivate
+Content-Type: application/json
+
+{}
+
+
+### MasterAppResourceTypes
+# @name MasterAppResourceTypes_GET
+GET {{server}}/odata/v4/app-library/MasterAppResourceTypes
+
+
+
+### MasterAppResourceTypes
+# @name MasterAppResourceTypes_POST
+POST {{server}}/odata/v4/app-library/MasterAppResourceTypes
+Content-Type: application/json
+
+{
+  "code": "MasterAppResourceTypes-14822740",
+  "desc": "desc-14822740"
+}
+
+
+### MasterAppResourceTypes
+# @name MasterAppResourceTypes_PATCH
+PATCH {{server}}/odata/v4/app-library/MasterAppResourceTypes/MasterAppResourceTypes-14822740
+Content-Type: application/json
+
+{
+  "code": "MasterAppResourceTypes-14822740",
+  "desc": "desc-14822740"
+}
+
+
+### MasterAppResourceTypes
+# @name MasterAppResourceTypes_DELETE
+DELETE {{server}}/odata/v4/app-library/MasterAppResourceTypes/MasterAppResourceTypes-14822740
+Content-Type: application/json

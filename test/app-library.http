@@ -1,4 +1,0 @@
-##Get Master App Resources   
-@link= http://localhost:4004/odata/v4/tool-page
-GET {{link}}/MasterAppResources     
-   
