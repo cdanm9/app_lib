@@ -1,4 +1,8 @@
 const cds=require('@sap/cds')
+const fs=require('fs')
+const nodePath=require('path')
+const simpleGit = require('simple-git');
+// const lib = require('../srv/samples/userEntity.json')
 module.exports=cds.service.impl(function(srv){  
     const {path}=srv 
     const {MasterApps,MasterSubApps,MasterRoleCollections,MasterAppResources}=this.entities;  
@@ -132,4 +136,94 @@ module.exports=cds.service.impl(function(srv){
     this.on('error',async (req,res)=>{
        
     });
+    this.on('getUserData',async (req,res)=>{
+      try {
+        const fileName = 'userEntity.json';
+        const filePath = nodePath.join("./srv/samples/userEntity.json");  
+        if (!fs.existsSync(filePath)) {
+          return 'Text file not found.';
+        }
+        const content = fs.readFileSync(filePath, 'utf8');
+        // console.log(content);
+        var a = content.replaceAll('\n',"");
+        return JSON.parse(a);
+      }
+      catch(error){
+        return error;
+      }
+    });
+    this.on('createUserData',async (req,res)=>{
+      try {
+        // console.log(req)
+        if(req.data.fileName){
+          var oldData = await fetchTextData(req.data.fileName);
+          console.log(oldData);
+          // var newData = {
+          //     Name : req.data.Name,
+          //     Email : req.data.Email,
+          //     Age : req.data.Age
+          // }
+          var newData = {
+            "code":"AB",
+            "name":" About",
+            "description":"About Section"
+          }
+          console.log(21);
+          var content;
+          // if(oldData.Data.length >= 0){
+          oldData.userEntity.push(newData);
+          console.log(23);
+          content = JSON.stringify(oldData);
+          const fileName = 'userEntity.json';
+          console.log(28);
+          // const filePath = nodePath.join("./srv/samples/"+fileName+""); 
+          const filePath = nodePath.join("./srv/samples/userEntity.json")
+          fs.writeFileSync(filePath, content, 'utf8');
+          await githubFetch();
+          return "Text File As Been Created";
+        }
+      }
+      catch(error){
+        return error;
+      }
+    });
+
+
+    async function fetchTextData(fileName){
+      // const fileName = 'userEntity.json';
+      // const filePath = nodePath.join("./srv/samples/"+fileName+"");  
+      const filePath = nodePath.join("./srv/samples/userEntity.json")
+      if (!fs.existsSync(filePath)) {
+        return 'Text file not found.';
+      }
+      const content = fs.readFileSync(filePath, 'utf8');
+      // console.log(content);
+      var a = content.replaceAll('\n',"");
+      return JSON.parse(a);
+    }
+
+
+    async function githubFetch(req) {
+      try {
+        console.log(32);
+        const filePath = nodePath.join('../srv/samples/userEntity.json')
+        console.log(34);
+        var oldData = await fetchTextData();
+        console.log(filePath);
+        var content = JSON.stringify(oldData);
+        fs.writeFileSync(filePath, content);
+        console.log(filePath);
+        const git = simpleGit(nodePath.join(__dirname,'..'));
+        // const status = await git.status();
+        // console.log(status);
+        console.log(45);
+        await git.add('../srv/samples/userEntity.json');
+        await git.commit('Updated file via githubFetch function');
+        await git.push('app_lib', 'main');
+      } catch (err) {
+        console.error('Git operation failed:', err);
+        req.error(500, 'Git push failed');
+      }
+      return 'File updated and pushed to GitHub';
+  }
 })

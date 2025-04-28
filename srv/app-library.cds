@@ -9,7 +9,9 @@ service appLibraryService {
     @odata.draft.enabled:true
     entity MasterAppResources as projection on app_lib.MasterAppResources;    
     entity MasterAppResourceTypes as projection on app_lib.MasterAppResourceTypes;          
-    function getAccessibleApps() returns many String;     
+    function getAccessibleApps() returns many String;   
+    function getUserData() returns many String;  
+    function createUserData(fileName:String) returns many String;  
 }
 
 

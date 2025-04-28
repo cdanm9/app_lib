@@ -6,13 +6,15 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@cap-js/sqlite": "^1.11.0",
     "@cap-js-community/odata-v2-adapter": "^1.14.3",
+    "@cap-js/sqlite": "^1.11.0",
     "@sap-cloud-sdk/http-client": "^3.22.2",
     "@sap-cloud-sdk/resilience": "^3.22.2",
     "@sap/cds": "^8.3.1",
-    "@sap/xssec": "^4.2.6",
-    "express": "^4.21.1"
+    "@sap/xssec": "^4.6.0",
+    "express": "^4.21.1",
+    "fs": "^0.0.1-security",
+    "simple-git": "^3.27.0"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1.11.0",
@@ -50,7 +52,7 @@
       "destinations": true,
       "[hybrid]": {
         "auth": "xsuaa",
-        "db":{
+        "db": {
           "kind": "sqlite"
         }
       }
